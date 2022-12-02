@@ -12,8 +12,7 @@ NewProject::NewProject(QWidget *parent) :
     ui(new Ui::NewProject)
 {
     ui->setupUi(this);
-
-    this->ui->lineEdit_path->setText(QDir::homePath());
+    this->setWindowTitle("New Project");
 }
 
 NewProject::~NewProject()
@@ -34,6 +33,7 @@ void NewProject::on_pushButton_clicked()
         return;
     }
 
+    // nacteni a overeni nazvu projektu
     QString name = this->ui->lineEdit_name->text();
     if(name.length() < PROJECT_MIN_NAME_LENGTH) {
        QMessageBox::warning(
@@ -43,7 +43,15 @@ void NewProject::on_pushButton_clicked()
        return;
     }
 
+    // nacteni a overeni cesty projektu
     QString path = this->ui->lineEdit_path->text();
+    if(path.length() == 0) {
+       QMessageBox::warning(
+                   this,
+                   tr("New Project"),
+                   tr("Path of project is not set"));
+       return;
+    }
     QFile file(path);
     if (file.exists())
     {
@@ -58,7 +66,7 @@ void NewProject::on_pushButton_clicked()
         }
     }
 
-
+    // nacteni velikosti obrazku
     int width = this->ui->spinBox_width->value();
     int height = this->ui->spinBox_height->value();
 
@@ -66,6 +74,7 @@ void NewProject::on_pushButton_clicked()
     Project *project = new Project(name, path, QSize(width, height));
     this->context->workspace->setProject(project);
 
+    // info + zavreni okna
     QMessageBox::information(this, tr("New Project"), tr("New project successfully created"));
     this->close();
 }
