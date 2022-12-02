@@ -8,7 +8,24 @@ MainWindow::MainWindow(QWidget *parent)
 {
     /*****************************************************************************/
     // zakladni inicializace UI
-    ui->setupUi(this);
+    this->ui->setupUi(this);
+    // setaveni toolbaru
+    this->colorPicker = new ColorPicker(this->ui->toolBar);
+    this->ui->toolBar->addWidget(this->colorPicker);
+    this->ui->toolBar->addAction(this->ui->actionZoom_in);
+    this->ui->toolBar->addAction(this->ui->actionZoom_out);
+    this->ui->toolBar->addSeparator();
+    this->ui->toolBar->addAction(this->ui->actionPen);
+    this->ui->toolBar->addAction(this->ui->actionEraser);
+    this->ui->toolBar->addAction(this->ui->actionBrush);
+    this->ui->toolBar->addAction(this->ui->actionFill);
+    this->ui->toolBar->addAction(this->ui->actionText);
+    this->ui->toolBar->addSeparator();
+    this->ui->toolBar->addAction(this->ui->actionCircle);
+    this->ui->toolBar->addAction(this->ui->actionRectangle);
+    this->ui->toolBar->addAction(this->ui->actionPolygon);
+    this->ui->toolBar->addSeparator();
+    // scroll area pro workspace
     this->scrollArea_workspace = new QScrollArea(this);
     /*****************************************************************************/
 
@@ -40,7 +57,14 @@ MainWindow::MainWindow(QWidget *parent)
     this->setCentralWidget(this->splitter_horizontal);
     /*****************************************************************************/
 
-    this->statusBar()->showMessage("Project: project1 (/home/martin/Desktop/project1.qbe)");
+
+    /*****************************************************************************/
+    // inicializace oken
+    this->window_newProject = new NewProject();
+    /*****************************************************************************/
+
+
+    this->statusBar()->showMessage("Project: None");
 }
 
 MainWindow::~MainWindow()
@@ -51,6 +75,8 @@ MainWindow::~MainWindow()
     if(toolController) delete toolController;
     if(layerManager) delete layerManager;
 
+    if(colorPicker) delete colorPicker;
+
     if(splitter_horizontal) delete splitter_horizontal;
     if(splitter_vertical) delete splitter_vertical;
     if(scrollArea_workspace) delete scrollArea_workspace;
@@ -59,7 +85,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionNew_project_triggered()
 {
-
+    this->window_newProject->show();
 }
 
 
@@ -123,6 +149,12 @@ void MainWindow::on_actionText_triggered()
 }
 
 
+void MainWindow::on_actionRectangle_triggered()
+{
+
+}
+
+
 void MainWindow::on_actionCircle_triggered()
 {
 
@@ -152,9 +184,4 @@ void MainWindow::on_actionRemove_layer_triggered()
 
 }
 
-
-void MainWindow::on_actionRectangle_triggered()
-{
-
-}
 

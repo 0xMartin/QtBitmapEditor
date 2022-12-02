@@ -6,16 +6,15 @@ Workspace::Workspace(QWidget *parent): QWidget(parent)
 {
     this->setBackgroundRole(QPalette::Base);
     this->setAutoFillBackground(true);
+    this->setMinimumSize(QSize(400, 400));
 }
 
-QSize Workspace::sizeHint() const
-{
-    return QSize(1000, 1000);
+void Workspace::setProject(Project *project) {
+    this->project = project;
 }
 
-QSize Workspace::minimumSizeHint() const
-{
-    return QSize(250, 250);
+Project *Workspace::getProject() const {
+    return this->project;
 }
 
 void Workspace::paintEvent(QPaintEvent *event) {

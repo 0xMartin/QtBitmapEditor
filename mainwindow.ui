@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1041</width>
-    <height>648</height>
+    <width>1071</width>
+    <height>728</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1041</width>
+     <width>1071</width>
      <height>23</height>
     </rect>
    </property>
@@ -44,9 +44,11 @@
     </property>
     <addaction name="actionNew_project"/>
     <addaction name="actionOpen_project"/>
+    <addaction name="separator"/>
     <addaction name="actionImport_image"/>
     <addaction name="actionExport_image"/>
     <addaction name="actionPrint"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -61,6 +63,9 @@
     <addaction name="actionCircle"/>
     <addaction name="actionRectangle"/>
     <addaction name="actionPolygon"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoom_in"/>
+    <addaction name="actionZoom_out"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -83,7 +88,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string>Tool bar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -91,16 +96,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionPen"/>
-   <addaction name="actionEraser"/>
-   <addaction name="actionBrush"/>
-   <addaction name="actionFill"/>
-   <addaction name="actionText"/>
-   <addaction name="separator"/>
-   <addaction name="actionCircle"/>
-   <addaction name="actionRectangle"/>
-   <addaction name="actionPolygon"/>
-   <addaction name="separator"/>
   </widget>
   <action name="actionNew_project">
    <property name="icon">
@@ -245,6 +240,24 @@
    </property>
    <property name="text">
     <string>Rectangle</string>
+   </property>
+  </action>
+  <action name="actionZoom_in">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/zoom_in.png</normaloff>:/src/icons/zoom_in.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/zoom_out.png</normaloff>:/src/icons/zoom_out.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom out</string>
    </property>
   </action>
  </widget>

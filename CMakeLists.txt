@@ -26,6 +26,15 @@ set(PROJECT_SOURCES
         component/toolcontroller.cpp
         component/workspace.h
         component/workspace.cpp
+        utility/colorpicker.h
+        utility/colorpicker.cpp
+        objects/layer.h
+        objects/layer.cpp
+        newproject.h
+        newproject.cpp
+        newproject.ui
+        objects/project.h
+        objects/project.cpp
         icons.qrc
         theme.qrc
 )
