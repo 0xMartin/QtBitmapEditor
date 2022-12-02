@@ -6,6 +6,10 @@ Layer::Layer(const QString &name)
     this->visibility = true;
 }
 
+Layer::~Layer() {
+
+}
+
 void Layer::setVisible(bool visibility) {
     this->visibility = visibility;
 }

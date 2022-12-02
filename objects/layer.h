@@ -11,12 +11,15 @@ class Layer
 protected:
     bool visibility; /** Viditelnost vrstvy */
     QString name; /** Nazev vrstvy */
+
 public:
     /**
      * @brief Konstruktor abstraktni tridy pro vrstvu
      * @param name - Jmeno vrstvy
      */
     Layer(const QString &name);
+
+    virtual ~Layer();
 
     /**
      * @brief Nastavi viditelnost vrstvy

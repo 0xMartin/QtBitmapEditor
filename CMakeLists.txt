@@ -36,6 +36,8 @@ set(PROJECT_SOURCES
         newproject.ui
         objects/project.h
         objects/project.cpp
+        objects/bitmaplayer.h
+        objects/bitmaplayer.cpp
         icons.qrc
         theme.qrc
 )
