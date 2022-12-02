@@ -68,14 +68,13 @@ MainWindow::MainWindow(QWidget *parent)
     this->window_newProject = new NewProject();
     this->window_newProject->setComponents(&this->context);
     /*****************************************************************************/
-
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 
-    destructAppContext(this->context);
+    AptCntx_destructAppContext(&this->context);
 
     if(this->colorPicker) delete this->colorPicker;
 

@@ -8,10 +8,6 @@
  */
 class Layer
 {
-protected:
-    bool visibility; /** Viditelnost vrstvy */
-    QString name; /** Nazev vrstvy */
-
 public:
     /**
      * @brief Konstruktor abstraktni tridy pro vrstvu
@@ -51,6 +47,10 @@ public:
      * @param offset - Offset vykreslovani
      */
     virtual void paintEvent(QPainter &painter, const QPoint &offset) = 0;
+
+protected:
+    bool visibility; /** Viditelnost vrstvy */
+    QString name; /** Nazev vrstvy */
 
 };
 

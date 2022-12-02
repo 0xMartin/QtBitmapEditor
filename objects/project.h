@@ -16,7 +16,7 @@
 /**
  * @brief Datovy typ pro vektor vrstev obrazu
  */
-typedef std::vector<Layer> Layers_t;
+typedef std::vector<Layer*> Layers_t;
 
 /**
  * @brief Trida udrzujici veskere informace o projektu. Pokud projekt pouziva nejake
@@ -24,18 +24,6 @@ typedef std::vector<Layer> Layers_t;
  */
 class Project
 {
-protected:
-    // jmeno projektu
-    QString name;
-
-    // cesta k souboru s ulozenym projektem
-    QString path;
-
-    // velikost obrazku
-    QSize size;
-
-    // vektor vrstev
-    Layers_t layers;
 public:
     /**
      * @brief Vytvori projekt
@@ -44,6 +32,8 @@ public:
      * @param size - Velikost obrazku
      */
     Project(const QString &name, const QString &path, const QSize &size);
+
+    ~Project();
 
     /**
      * @brief Navrati nazev projektu
@@ -82,7 +72,6 @@ public:
      */
     QSize &getSize();
 
-
     /**
      * @brief Navrati referenci na vektr vrstev
      * @return Layers_t
@@ -90,10 +79,30 @@ public:
     const Layers_t &getLayers() const;
 
     /**
+     * @brief Prida novou vrstvu do projektu. Vrstavy budou odstraneni
+     * z pameti pri volani destruktoru projektu.
+     * @param layer - Pointer na vrstva
+     * @return True -> vrstva uspesne pridana
+     */
+    bool addLayer(Layer *layer);
+
+    /**
      * @brief Ulozi projekt na disk
      * @return True -> projekt uspesne ulozen
      */
     bool saveProject() const;
+
+    /**
+     * @brief Navrati aktualne vybranou vrstvu
+     * @return Layer
+     */
+    Layer *getSelectedLayer() const;
+
+    /**
+     * @brief Nastavi aktualne vybranou vrstvu
+     * @param newSelected_layer - Layer
+     */
+    void setSelectedLayer(Layer *newSelected_layer);
 
     /**
      * @brief Paint event. Vykresli  projekt do workspacu (projekt = obrazek slozeny z vice vrstev)
@@ -107,6 +116,22 @@ public:
      * @param painter - QPainter
      */
     void exportEvent(QPainter &painter);
+
+protected:
+    // jmeno projektu
+    QString name;
+
+    // cesta k souboru s ulozenym projektem
+    QString path;
+
+    // velikost obrazku
+    QSize size;
+
+    // vektor vrstev
+    Layers_t layers;
+
+    // aktualne vybrana vrstva (focus)
+    Layer *selected_layer;
 };
 
 #endif // PROJECT_H

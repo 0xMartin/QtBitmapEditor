@@ -71,8 +71,8 @@ void NewProject::on_pushButton_clicked()
     int height = this->ui->spinBox_height->value();
 
     // vytvori novy projekt a priradi ho do workspacu
-    Project *project = new Project(name, path, QSize(width, height));
-    this->context->workspace->setProject(project);
+    Project *p = new Project(name, path, QSize(width, height));
+    AptCntx_setProject(this->context, p);
 
     // info + zavreni okna
     QMessageBox::information(this, tr("New Project"), tr("New project successfully created"));

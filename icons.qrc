@@ -11,7 +11,6 @@
         <file>src/icons/remove_layer.png</file>
         <file>src/icons/new_layer.png</file>
         <file>src/icons/icon.png</file>
-        <file>src/icons/icon.ico</file>
         <file>src/icons/zoom_in.png</file>
         <file>src/icons/zoom_out.png</file>
     </qresource>

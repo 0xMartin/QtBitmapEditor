@@ -6,6 +6,7 @@
 
 #include "../objects/project.h"
 
+
 /**
  * @brief Tato komponenta se stara o spravne vykreslovani projektu (obrazku) a
  * grafickou manipulaci s nim
@@ -24,8 +25,7 @@ public:
     ~Workspace();
 
     /**
-     * @brief Nastavi projekt se ktery se bude pracovat. Projekt bude
-     * automaticky odstranendz pameti pri destrukci teto tridy.
+     * @brief Nastavi projekt se ktery se bude pracovat
      * @param project - Pointer na projekt
      */
     void setProject(Project *project);
@@ -47,12 +47,28 @@ public:
      * @return meritko
      */
     float getScale() const;
+
+    /**
+     * @brief Navrati font meritek
+     * @return QFont
+     */
+    const QFont &getFont() const;
+
+    /**
+     * @brief Nastavi novy font pro meritka
+     * @param newFont - Novy font
+     */
+    void setFont(const QFont &newFont);
+
 protected:
-    // projekt
+    // aktualni projekt
     Project *project;
 
     // merito zobrazeni
     float scale;
+
+    // font meritek
+    QFont font;
 
     /**
      * @brief QWidget paint event

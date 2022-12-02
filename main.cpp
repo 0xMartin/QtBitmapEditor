@@ -1,25 +1,40 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QSplashScreen>
 #include <QFile>
+#include <QTimer>
+
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
 
+    // spash screen
+    QPixmap pixmap(":/src/splash/splash.png");
+    QSplashScreen splash(pixmap);
+    splash.show();
+
+    // nacteni theme
     QFile theme(":/src/theme/Combinear.qss");
     if(theme.open(QFile::ReadOnly)) {
         qDebug() << "Theme load ... ok";
     } else {
         qDebug() << "Theme load ... fail";
     }
-    a.setStyleSheet(theme.readAll());
+    app.setStyleSheet(theme.readAll());
 
-    QCoreApplication::setOrganizationName("UTB");
-    QCoreApplication::setOrganizationDomain("utb.cz");
-    QCoreApplication::setApplicationName("QtBitmapEditor");
+    // zakladni nastaveni aplikace
+    app.setOrganizationName("UTB");
+    app.setOrganizationDomain("utb.cz");
+    app.setApplicationName("QtBitmapEditor");
 
-    MainWindow w;
-    w.show();
-    return a.exec();
+    // hlavni okno aplikace
+    MainWindow window;
+    window.setWindowState(Qt::WindowState::WindowActive);
+
+    // spusteni aplikace
+    QTimer::singleShot(1500, &splash, SLOT(close()));
+    QTimer::singleShot(1500, &window, SLOT(show()));
+    return app.exec();
 }
