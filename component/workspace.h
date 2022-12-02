@@ -25,7 +25,7 @@ public:
 
     /**
      * @brief Nastavi projekt se ktery se bude pracovat. Projekt bude
-     * automaticky odstranen z pameti pri destrukci teto tridy.
+     * automaticky odstranendz pameti pri destrukci teto tridy.
      * @param project - Pointer na projekt
      */
     void setProject(Project *project);
@@ -35,12 +35,36 @@ public:
      * @return Pointer na projekt
      */
     Project *getProject() const;
+
+    /**
+     * @brief Nastavi nove meritko pro zobrazovani obrazku
+     * @param scale - Meritko
+     */
+    void setScale(float scale);
+
+    /**
+     * @brief Navrati meritko
+     * @return meritko
+     */
+    float getScale() const;
 protected:
     // projekt
     Project *project;
 
-    // QWidget paint event
+    // merito zobrazeni
+    float scale;
+
+    /**
+     * @brief QWidget paint event
+     * @param event - QPaintEvent
+     */
     void paintEvent(QPaintEvent *event) override;
+
+    /**
+     * @brief Obnoveni velikosti workspacu (minimalni velikost == velikost parent objektu,
+     * aktualni velikost vzdy odpovida tak aby se na workspace vesel cely obrazek i po aplikace scale)
+     */
+    void updateSizeOfWorkaspace();
 
 };
 

@@ -6,17 +6,14 @@
 #include <QListWidget>
 #include <QWidget>
 #include <QSplitter>
+#include <QLabel>
 
-// hlavni komponenty
-#include "component/workspace.h"
-#include "component/toolcontroller.h"
-#include "component/layermanager.h"
-
-// utility
+#include "app_context.h"
 #include "utility/colorpicker.h"
-
-// windows
 #include "newproject.h"
+
+
+
 
 /**
  * Hlavni okno aplikace
@@ -34,10 +31,8 @@ public:
     ~MainWindow();
 
 protected:
-    // hlavni komponenty
-    Workspace * workspace;
-    ToolController * toolController;
-    LayerManager * layerManager;
+    // kontext aplikace
+    AppContext_t context;
 
     // utility
     ColorPicker *colorPicker;
@@ -45,6 +40,8 @@ protected:
     // windows
     NewProject * window_newProject;
 
+    // focus in event
+    void mousePressEvent(QMouseEvent *event) override;
 private slots:
     /**
      * @brief Otevre okno pro vytvoreni noveho projektu
@@ -55,6 +52,11 @@ private slots:
      * @brief Otevre file dialog pro otevreni existujiciho projektu
      */
     void on_actionOpen_project_triggered();
+
+    /**
+     * @brief Ulozi projekt na disk
+     */
+    void on_actionSave_project_triggered();
 
     /**
      * @brief Otevre file dialog pro importovani obrazku do projektu
@@ -137,6 +139,7 @@ private:
     QSplitter* splitter_horizontal;
     QSplitter* splitter_vertical;
     QScrollArea *scrollArea_workspace;
+    QLabel *statusLabel;
 
 };
 #endif // MAINWINDOW_H

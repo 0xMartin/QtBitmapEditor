@@ -17,14 +17,14 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 
     // add layer
     this->button_addLayer = new QPushButton();
-    this->button_addLayer->setToolTip(QString("Add layer"));
+    this->button_addLayer->setToolTip(QString(tr("Add layer")));
     this->button_addLayer->setIcon(QIcon(":/src/icons/new_layer.png"));
     this->button_addLayer->setIconSize(QSize(22, 22));
     this->buttonsLayout->addWidget(this->button_addLayer);
 
     // remove layer
     this->button_removeLayer = new QPushButton();
-    this->button_removeLayer->setToolTip(QString("Remove layer"));
+    this->button_removeLayer->setToolTip(QString(tr("Remove layer")));
     this->button_removeLayer->setIcon(QIcon(":/src/icons/remove_layer.png"));
     this->button_removeLayer->setIconSize(QSize(22, 22));
     this->buttonsLayout->addWidget(this->button_removeLayer);

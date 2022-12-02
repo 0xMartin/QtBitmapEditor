@@ -1,9 +1,13 @@
 #include "project.h"
 
-Project::Project(const QString &name, const QSize &size)
+#include <QDir>
+#include <QPainter>
+
+Project::Project(const QString &name, const QString &path, const QSize &size)
 {
-    this->name = name;
-    this->size = size;
+    this->setName(name);
+    this->setPath(path);
+    this->setSize(size);
 }
 
 const QString &Project::getName() const
@@ -12,9 +16,19 @@ const QString &Project::getName() const
 }
 
 bool Project::setName(const QString &name) {
-    if(name.length() < 3) return false;
+    if(name.length() < PROJECT_MIN_NAME_LENGTH) return false;
     this->name = name;
     return true;
+}
+
+const QString &Project::getPath() const
+{
+    return this->path;
+}
+
+void Project::setPath(const QString &path)
+{
+    this->path = path;
 }
 
 bool Project::setSize(const QSize &size) {
@@ -31,17 +45,35 @@ const Layers_t &Project::getLayers() const {
     return this->layers;
 }
 
-void Project::paintEvent(QPaintEvent *event) {
+bool Project::saveProject() const
+{
+    if(path.length() == 0) return false;
+
+    QFile file(path);
+    if(!file.open(QIODevice::WriteOnly)) {
+        return false;
+    }
+
+    file.close();
+
+    return true;
+}
+
+void Project::paintEvent(QPainter &painter, const QPoint &offset) {
     // outline
+    painter.setPen(Qt::red);
+    painter.drawRect(offset.x(), offset.y(), this->size.width(), this->size.height());
+
     // vykresli vrstvy
     for(Layer &layer : this->layers) {
-        layer.paintEvent(event);
+        layer.paintEvent(painter, offset);
     }
 }
 
-void Project::exportEvent(QPaintEvent *event) {
+void Project::exportEvent(QPainter &painter) {
     // vykresli vrstvy
+    QPoint offset(0, 0);
     for(Layer &layer : this->layers) {
-        layer.paintEvent(event);
+        layer.paintEvent(painter, offset);
     }
 }

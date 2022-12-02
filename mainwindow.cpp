@@ -27,14 +27,19 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->toolBar->addSeparator();
     // scroll area pro workspace
     this->scrollArea_workspace = new QScrollArea(this);
+    // label pro status bar
+    this->statusLabel = new QLabel(this->ui->statusbar);
+    this->statusLabel->setAlignment(Qt::AlignLeft);
+    this->statusLabel->setText(tr("Project: None"));
+    this->statusBar()->addPermanentWidget(this->statusLabel, 1);
     /*****************************************************************************/
 
 
     /*****************************************************************************/
-    // inicializace hlavnich komponent
-    this->workspace = new Workspace(this->scrollArea_workspace);
-    this->toolController = new ToolController(this);
-    this->layerManager = new LayerManager(this);
+    // inicializace kontextu
+    this->context.workspace = new Workspace(this->scrollArea_workspace);
+    this->context.toolController = new ToolController(this);
+    this->context.layerManager = new LayerManager(this);
     /*****************************************************************************/
 
 
@@ -43,15 +48,15 @@ MainWindow::MainWindow(QWidget *parent)
     this->splitter_horizontal = new QSplitter(Qt::Horizontal);
 
     // leva strana (pracovani plocha pro upravu bitmapove grafiky)
-    this->scrollArea_workspace->setWidget(this->workspace);
+    this->scrollArea_workspace->setWidget(this->context.workspace);
     this->splitter_horizontal->addWidget(this->scrollArea_workspace);
 
     // prava strany (manazer vrstev + ovladani aktualne vybraneho nastroje)
     this->splitter_vertical = new QSplitter(Qt::Vertical);
     // horni strana (ovladani nastroje)
-    this->splitter_vertical->addWidget(this->toolController);
+    this->splitter_vertical->addWidget(this->context.toolController);
     // dolni strana (manazer vrstev)
-    this->splitter_vertical->addWidget(this->layerManager);
+    this->splitter_vertical->addWidget(this->context.layerManager);
 
     this->splitter_horizontal->addWidget(this->splitter_vertical);
     this->setCentralWidget(this->splitter_horizontal);
@@ -61,27 +66,35 @@ MainWindow::MainWindow(QWidget *parent)
     /*****************************************************************************/
     // inicializace oken
     this->window_newProject = new NewProject();
+    this->window_newProject->setComponents(&this->context);
     /*****************************************************************************/
 
-
-    this->statusBar()->showMessage("Project: None");
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 
-    if(workspace) delete workspace;
-    if(toolController) delete toolController;
-    if(layerManager) delete layerManager;
+    destructAppContext(this->context);
 
-    if(colorPicker) delete colorPicker;
+    if(this->colorPicker) delete this->colorPicker;
 
-    if(splitter_horizontal) delete splitter_horizontal;
-    if(splitter_vertical) delete splitter_vertical;
-    if(scrollArea_workspace) delete scrollArea_workspace;
+    if(this->splitter_horizontal) delete this->splitter_horizontal;
+    if(this->splitter_vertical) delete this->splitter_vertical;
+    if(this->scrollArea_workspace) delete this->scrollArea_workspace;
+    if(this->statusLabel) delete this->statusLabel;
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if(this->context.workspace == NULL) return;
+    Project *p = this->context.workspace->getProject();
+    if(p == NULL) {
+        this->statusLabel->setText(tr("Project: None"));
+    } else {
+        this->statusLabel->setText(QString(tr("Project: %1 (%2)")).arg(p->getName(), p->getPath()));
+    }
+}
 
 void MainWindow::on_actionNew_project_triggered()
 {
@@ -92,6 +105,12 @@ void MainWindow::on_actionNew_project_triggered()
 void MainWindow::on_actionOpen_project_triggered()
 {
 
+}
+
+
+void MainWindow::on_actionSave_project_triggered()
+{
+    this->statusLabel->setText(tr("Project saved"));
 }
 
 

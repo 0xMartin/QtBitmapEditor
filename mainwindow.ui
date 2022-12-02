@@ -45,6 +45,7 @@
     <addaction name="actionNew_project"/>
     <addaction name="actionOpen_project"/>
     <addaction name="separator"/>
+    <addaction name="actionSave_project"/>
     <addaction name="actionImport_image"/>
     <addaction name="actionExport_image"/>
     <addaction name="actionPrint"/>
@@ -105,6 +106,9 @@
    <property name="text">
     <string>New project</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionOpen_project">
    <property name="icon">
@@ -113,6 +117,9 @@
    </property>
    <property name="text">
     <string>Open project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionImport_image">
@@ -250,6 +257,9 @@
    <property name="text">
     <string>Zoom in</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
   </action>
   <action name="actionZoom_out">
    <property name="icon">
@@ -258,6 +268,20 @@
    </property>
    <property name="text">
     <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionSave_project">
+   <property name="icon">
+    <iconset theme="document-save"/>
+   </property>
+   <property name="text">
+    <string>Save project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

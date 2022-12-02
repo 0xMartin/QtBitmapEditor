@@ -44,9 +44,10 @@ public:
 
     /**
      * @brief Paint event. Vykresli vrstvu do workspacu
-     * @param event - QPaintEvent
+     * @param painter - QPainter
+     * @param offset - Offset vykreslovani
      */
-    virtual void paintEvent(QPaintEvent *event) = 0;
+    virtual void paintEvent(QPainter &painter, const QPoint &offset) = 0;
 
 };
 
