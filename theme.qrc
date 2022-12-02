@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>src/theme/Combinear.qss</file>
+    </qresource>
+</RCC>

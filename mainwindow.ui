@@ -6,17 +6,250 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1041</width>
+    <height>648</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>QT Bitmap Editor</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar"/>
+  <property name="windowIcon">
+   <iconset resource="icons.qrc">
+    <normaloff>:/src/icons/icon.png</normaloff>:/src/icons/icon.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="widget_tool_control" native="true">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>330</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1041</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew_project"/>
+    <addaction name="actionOpen_project"/>
+    <addaction name="actionImport_image"/>
+    <addaction name="actionExport_image"/>
+    <addaction name="actionPrint"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionPen"/>
+    <addaction name="actionEraser"/>
+    <addaction name="actionBrush"/>
+    <addaction name="actionFill"/>
+    <addaction name="actionText"/>
+    <addaction name="actionCircle"/>
+    <addaction name="actionRectangle"/>
+    <addaction name="actionPolygon"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit_2">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionAdd_layer"/>
+    <addaction name="actionRemove_layer"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit_2"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuHelp"/>
+  </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPen"/>
+   <addaction name="actionEraser"/>
+   <addaction name="actionBrush"/>
+   <addaction name="actionFill"/>
+   <addaction name="actionText"/>
+   <addaction name="separator"/>
+   <addaction name="actionCircle"/>
+   <addaction name="actionRectangle"/>
+   <addaction name="actionPolygon"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionNew_project">
+   <property name="icon">
+    <iconset theme="document-new">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>New project</string>
+   </property>
+  </action>
+  <action name="actionOpen_project">
+   <property name="icon">
+    <iconset theme="document-open">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Open project</string>
+   </property>
+  </action>
+  <action name="actionImport_image">
+   <property name="text">
+    <string>Import image</string>
+   </property>
+  </action>
+  <action name="actionExport_image">
+   <property name="text">
+    <string>Export</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset theme="document-print">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>Print</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset theme="dialog-information">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionPen">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/pen.png</normaloff>:/src/icons/pen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pen</string>
+   </property>
+  </action>
+  <action name="actionBrush">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/brush.png</normaloff>:/src/icons/brush.png</iconset>
+   </property>
+   <property name="text">
+    <string>Brush</string>
+   </property>
+  </action>
+  <action name="actionFill">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/fill.png</normaloff>:/src/icons/fill.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fill</string>
+   </property>
+  </action>
+  <action name="actionText">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/text.png</normaloff>:/src/icons/text.png</iconset>
+   </property>
+   <property name="text">
+    <string>Text</string>
+   </property>
+  </action>
+  <action name="actionCircle">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/circle.png</normaloff>:/src/icons/circle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Circle</string>
+   </property>
+  </action>
+  <action name="actionPolygon">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/polygon.png</normaloff>:/src/icons/polygon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Polygon</string>
+   </property>
+  </action>
+  <action name="actionEraser">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/eraser.png</normaloff>:/src/icons/eraser.png</iconset>
+   </property>
+   <property name="text">
+    <string>Eraser</string>
+   </property>
+  </action>
+  <action name="actionAdd_layer">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/new_layer.png</normaloff>:/src/icons/new_layer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add layer</string>
+   </property>
+  </action>
+  <action name="actionRemove_layer">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/remove_layer.png</normaloff>:/src/icons/remove_layer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Remove layer</string>
+   </property>
+  </action>
+  <action name="actionRectangle">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/rect.png</normaloff>:/src/icons/rect.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rectangle</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
