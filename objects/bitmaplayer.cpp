@@ -28,10 +28,18 @@ const QPixmap &BitmapLayer::getPixmap() const
     return this->pixmap;
 }
 
-void BitmapLayer::paintEvent(QPainter &painter, const QPoint &offset)
+void BitmapLayer::paintEvent(QPainter &painter)
 {
+    /*
     painter.drawPixmap(
                 offset.x(), offset.y(),
                 this->size.width(), this->size.height(),
                 this->pixmap);
+                */
+
+    // test
+    painter.fillRect(
+                20, 20,
+                30, 50,
+                QBrush(QColor(37, 37, 37), Qt::SolidPattern));
 }

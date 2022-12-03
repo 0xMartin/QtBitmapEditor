@@ -6,26 +6,46 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
-#include <QAbstractListModel>
-#include <QList>
+#include <QListWidget>
+#include <QLabel>
+#include <QCheckBox>
+#include <QSpacerItem>
+
 
 #include "../objects/project.h"
 
 /**
- * @brief Listmodel s vrstvama projektu
+ * @brief Widget pro vrstvu. Urcen pro vkladani do list widgetu.
  */
-class LayerListModel : public QAbstractListModel
-{
+class LayerWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit LayerListModel(QObject *parent = 0);
-    QVariant data(const QModelIndex &index, int role) const override;
-    int rowCount(const QModelIndex &parent) const override;
-    void setList(Layers_t *list);
-    Layer *getLayerAt(size_t index);
-private:
-    Layers_t *list;
+    /**
+     * @brief Vytvori widget vrstvy
+     * @param layer - Vrstva
+     * @param height - Vyska widgetu
+     */
+    explicit LayerWidget(Layer *layer, size_t height);
+    ~LayerWidget();
+    Layer *getLayer() const;
+protected:
+    Layer * layer; /** Vrstva ktere tento widget patri*/
+
+    // UI
+    QHBoxLayout *hBoxLayout;
+    QLabel *image;
+    QLabel *label;
+    QCheckBox *checkBox_visible;
+
+private slots:
+    /**
+     * @brief Zmena viditelnosti vrstvy
+     * @param visible - Viditelnost
+     */
+    void on_checkBox_visible_toggle(bool visible);
+
 };
+
 
 /**
  * @brief Komponenta pro spravu vrstev projektu
@@ -55,22 +75,29 @@ public:
      */
     Project *getProject() const;
 
+    /**
+     * @brief updateLayerList
+     */
+    void updateLayerList();
+
 protected:
     // aktualni projekt
     Project *project;
 
-    // list view model
-    LayerListModel *listModel;
+    // hlavni komponenty manazeru vrstev
+    QListWidget * listWidget; /** List se vsema vrstvama projektu */
+    QPushButton * button_addLayer; /** Tlacitko pro pridani nove vrstvy */
+    QPushButton * button_removeLayer; /** Tlacikto pro odebrani vybrane vrstvy */
+    QPushButton * button_up; /** Tlacitko pro presunuti vrstvy nahoru */
+    QPushButton * button_down; /** Tlacikto pro presunuti vrstvy dolu */
 
     // layout
     QHBoxLayout *buttonsLayout;
     QVBoxLayout *mainLayout;
-    QWidget * buttons;
+    QWidget *buttons;
+    QSpacerItem *spacer;
 
-    // hlavni komponenty manazeru vrstev
-    QListView * listView; /** List se vsema vrstvama projektu */
-    QPushButton * button_addLayer; /** Tlacitko pro pridani nove vrstvy */
-    QPushButton * button_removeLayer; /** Tlacikto pro odebrani vybrane vrstvy */
+    virtual void changeEvent(QEvent *);
 
 private slots:
     /**
@@ -84,9 +111,20 @@ private slots:
     void on_button_removeLayer_clicked();
 
     /**
+     * @brief Presunuti aktualne vybrane vrstvy o jedno nahoru
+     */
+    void on_button_up_clicked();
+
+    /**
+     * @brief Presunuti aktualne vybrane vrstvy o jedno dolu
+     */
+    void on_button_down_clicked();
+
+    /**
      * @brief V projektu nastavi aktualne vybranou vrstvu z listu
      */
-    void on_listView_clicked(const QModelIndex &index);
+    void on_listWidget_itemSelectionChanged();
+
 };
 
 #endif // LAYERMANAGER_H

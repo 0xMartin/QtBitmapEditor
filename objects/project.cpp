@@ -1,6 +1,6 @@
 #include "project.h"
 
-
+#include <QWidget>
 #include <QPainter>
 #include <QtMath>
 #include <QFile>
@@ -70,6 +70,27 @@ bool Project::addLayer(Layer *layer)
     return true;
 }
 
+bool Project::removeLayer(Layer *layer)
+{
+    if(layer == NULL) return false;
+    if(this->layers == NULL) return false;
+
+    qsizetype index = 0;
+    for(Layer *l : *this->layers) {
+        if(l == layer) {
+            // odstrani vrstvu (delete + odebrani z listu)
+            delete (this->layers->takeAt(index));
+            // pokud odebrana vrstava byla v projektu oznacena tak zrusi oznaceni
+            if(layer == this->selected_layer)
+                this->selected_layer = NULL;
+            return true;
+        }
+        ++index;
+    }
+
+    return false;
+}
+
 bool Project::saveProject() const
 {
     if(path.length() == 0) return false;
@@ -94,43 +115,65 @@ void Project::setSelectedLayer(Layer *newSelected_layer)
     this->selected_layer = newSelected_layer;
 }
 
-void Project::paintEvent(QPainter &painter, const QPoint &offset) {
-    // vykresleni pozadi obrazku (sachovnice)
-    painter.fillRect(
-                offset.x(),
-                offset.y(),
-                this->size.width(),
-                this->size.height(),
-                QBrush(Qt::white, Qt::SolidPattern));
-
-    QBrush brush(QColor(200, 200, 200), Qt::SolidPattern);
-    int step = qMax(this->size.width(), this->size.height()) / 40;
-    int step2 = 2 * step;
-    int y_end = offset.y() + this->size.height();
-    int x_end = offset.x() + this->size.width();
-
-    int x, x_offset, step_x, step_y;
-    for(int y = offset.y(), i = 0; y < y_end; y += step) {
-        x_offset = i++ % 2 == 0 ? 0.0f : step;
-        step_y = y + step < y_end ? step : (y_end - y);
-        for(x = offset.x() + x_offset; x < x_end; x += step2) {
-            step_x = x + step < x_end ? step : (x_end - x);
-            painter.fillRect(x, y, step_x, step_y, brush);
-        }
+void Project::requestRepaint()
+{
+    QObject *parent = this->parent();
+    if(parent) {
+        ((QWidget*) parent)->repaint();
     }
+}
+
+bool Project::moveSelectedLayerUp()
+{
+    if(this->selected_layer == NULL) return false;
+    qsizetype index = 0;
+    for(Layer *l : *this->layers) {
+        if(l == this->selected_layer) {
+            if(index + 1 < this->layers->size()) {
+                Layer *layer = this->layers->takeAt(index);
+                this->layers->insert(index + 1, layer);
+                return true;
+            }
+        }
+        ++index;
+    }
+    return false;
+}
+
+bool Project::moveSelectedLayerDown()
+{
+    if(this->selected_layer == NULL) return false;
+    qsizetype index = 0;
+    for(Layer *l : *this->layers) {
+        if(l == this->selected_layer) {
+            if(index > 0) {
+                Layer *layer = this->layers->takeAt(index);
+                this->layers->insert(index - 1, layer);
+                return true;
+            }
+        }
+        ++index;
+    }
+    return true;
+}
+
+void Project::paintEvent(QPainter &painter) {
+    // vykresleni pozadi obrazku (sachovnice)
+    Layer_paintBgGrid(painter, this->size, 16);
 
     // vykresli vrstvy projektu
     if(this->layers) {
         for(Layer *layer : *this->layers) {
             if(layer) {
-                layer->paintEvent(painter, offset);
+                if(!layer->isVisible()) continue;
+                layer->paintEvent(painter);
             }
         }
     }
 
     // outline
     painter.setPen(Qt::black);
-    painter.drawRect(offset.x(), offset.y(), this->size.width(), this->size.height());
+    painter.drawRect(0, 0, this->size.width(), this->size.height());
 }
 
 void Project::exportEvent(QPainter &painter) {
@@ -139,7 +182,7 @@ void Project::exportEvent(QPainter &painter) {
     if(this->layers) {
         for(Layer *layer : *this->layers) {
             if(layer) {
-                layer->paintEvent(painter, offset);
+                layer->paintEvent(painter);
             }
         }
     }

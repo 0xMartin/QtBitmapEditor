@@ -2,10 +2,11 @@
 #define LAYER_H
 
 #include <QObject>
-#include <QPaintEvent>
+#include <QPainter>
+#include <QPixmap>
 
 /**
- * @brief Abstraktni trida vrstvy. Vysledny bitmapovy obrazek se bude skladat z techto vrstev.
+ * @brief Abstraktni trida vrstvy. Reprezentuje jednu vrstvu bitmapoveho obrazku.
  */
 class Layer : public QObject
 {
@@ -57,16 +58,34 @@ public:
     void setOpacity(float newOpacity);
 
     /**
+     * @brief Vyzada prekresleni
+     */
+    void requestRepaint();
+
+    /**
+     * @brief Navrati rozmery vrstvy (prebere z parent objektu = Projekt)
+     * @return Rozmery vrstvy
+     */
+    QSize getSize() const;
+
+    /**
      * @brief Paint event. Vykresli vrstvu do workspacu
      * @param painter - QPainter
-     * @param offset - Offset vykreslovani
      */
-    virtual void paintEvent(QPainter &painter, const QPoint &offset) = 0;
+    virtual void paintEvent(QPainter &painter) = 0;
 
 protected:
     QString name; /** Nazev vrstvy */
     bool visibility; /** Viditelnost vrstvy */
     float opacity; /** Nepruhlednost vrstvy */
 };
+
+/**
+ * @brief Vykresleni "sachovnice" do pozadi
+ * @param painter - QPainter
+ * @param size - Velikost pozadi vrstvy
+ * @param step - Velikost jednoho ctverecku pozadi
+ */
+Q_DECL_EXPORT void Layer_paintBgGrid(QPainter &painter, const QSize &size, const size_t step);
 
 #endif // LAYER_H

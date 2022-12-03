@@ -4,7 +4,7 @@
 
 ColorPicker::ColorPicker( QWidget* parent ): QPushButton(parent)
 {
-    this->connect( this, SIGNAL(clicked()), this, SLOT(changeColor()));
+    connect( this, SIGNAL(clicked()), this, SLOT(changeColor()));
     this->setToolTip(QString("Current color"));
     this->color.setRgb(0, 0, 0);
     this->updateColor();

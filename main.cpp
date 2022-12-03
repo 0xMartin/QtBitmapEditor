@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     window.setWindowState(Qt::WindowState::WindowActive);
 
     // spusteni aplikace
-    QTimer::singleShot(1500, &splash, SLOT(close()));
-    QTimer::singleShot(1500, &window, SLOT(show()));
+    QTimer::singleShot(150, &splash, SLOT(close()));
+    QTimer::singleShot(150, &window, SLOT(show()));
     return app.exec();
 }

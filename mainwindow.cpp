@@ -68,6 +68,11 @@ MainWindow::MainWindow(QWidget *parent)
     this->window_newProject = new NewProject();
     this->window_newProject->setComponents(&this->context);
     /*****************************************************************************/
+
+
+    // TEST
+    Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", QSize(500, 500));
+    AptCntx_setProject(&this->context, p);
 }
 
 MainWindow::~MainWindow()

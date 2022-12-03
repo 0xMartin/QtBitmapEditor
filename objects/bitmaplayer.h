@@ -34,7 +34,7 @@ public:
      */
     const QPixmap &getPixmap() const;
 
-    virtual void paintEvent(QPainter &painter, const QPoint &offset) override;
+    virtual void paintEvent(QPainter &painter) override;
 
 protected:
     QSize size; /** Velikost bitmapy */

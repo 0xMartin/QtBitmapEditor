@@ -23,6 +23,7 @@ Workspace::Workspace(QWidget *parent): QWidget(parent)
 
 void Workspace::setProject(Project *project) {
     this->project = project;
+    this->project->setParent(this);
     this->repaint();
 }
 
@@ -68,7 +69,9 @@ void Workspace::paintEvent(QPaintEvent *event) {
         QPoint offset((this->width() - s.width()) / 2, (this->height() - s.height()) / 2);
 
         // vykresleni projektu
-        this->project->paintEvent(painter, offset);
+        painter.translate(offset);
+        this->project->paintEvent(painter);
+        painter.translate(-offset);
 
         // vykresleni ramecku meritek
         painter.fillRect(26, 0, this->width(), 26, QBrush(QColor(50, 50, 50), Qt::SolidPattern));
@@ -77,7 +80,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         painter.setFont(this->font);
         painter.setPen(QColor(150, 150, 150));
 
-        // x osa
+        // x osa meritko
         int parts = qRound((float)s.width() / RULE_STEP_PX);
         int px_step = s.width() / parts;
         int step = px_step;
@@ -87,7 +90,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
             painter.drawLine(x - 5, 4, x - 5, 22);
         }
 
-        // y osa
+        // y osa meritko
         parts = qRound((float)s.height() / RULE_STEP_PX);
         px_step = s.height() / parts;
         step = px_step;

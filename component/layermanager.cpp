@@ -2,53 +2,77 @@
 
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QPainter>
+#include <QtMath>
+#include <QDropEvent>
 
 #include "../dialogs.h"
 #include "../objects/bitmaplayer.h"
 
-
 /**********************************************************************************************/
-// LayerListModel
+// LayerListWidgetItem
 /**********************************************************************************************/
 
-LayerListModel::LayerListModel(QObject *parent) : QAbstractListModel(parent)
+LayerWidget::LayerWidget(Layer *layer, size_t height) : QWidget()
 {
-    this->list = NULL;
+    this->layer = layer;
+    if(this->layer == NULL) return;
+    this->hBoxLayout = new QHBoxLayout(this);
+
+    // ovladani viditelnosti vrstvy
+    this->checkBox_visible = new QCheckBox(this);
+    this->checkBox_visible->setFixedSize(QSize(height/2, height/2));
+    this->checkBox_visible->setStyleSheet("QCheckBox::indicator { width:20px; height: 20px;}");
+    this->checkBox_visible->setToolTip(tr("Visibility"));
+    this->checkBox_visible->setChecked(this->layer->isVisible());
+    connect(this->checkBox_visible, SIGNAL(toggled(bool)), this, SLOT(on_checkBox_visible_toggle(bool)));
+    this->hBoxLayout->addWidget(this->checkBox_visible);
+
+    // nahled vrstvy
+    this->image = new QLabel(this);
+    this->image->setFixedSize(QSize(height, height));
+    this->image->setStyleSheet("border-width: 2px;");
+    QPixmap *pixmap = new QPixmap(height, height);
+    if(pixmap) {
+        QPainter painter(pixmap);
+        float scale = (float)height / qMax(layer->getSize().width(), layer->getSize().height());
+        Layer_paintBgGrid(painter, QSize(height, height), 8);
+        painter.scale(scale, scale);
+        layer->paintEvent(painter);
+        painter.end();
+        this->image->setPixmap(*pixmap);
+        delete pixmap;
+    }
+    this->hBoxLayout->addWidget(this->image);
+
+    // nazev vrstvy
+    this->label = new QLabel(layer->getName(), this);
+    this->hBoxLayout->addWidget(this->label);
+
+    // final
+    this->setLayout(this->hBoxLayout);
 }
 
-QVariant LayerListModel::data(const QModelIndex &index, int role) const
-{
-    if(this->list == NULL)
-        return QVariant();
-    if (!index.isValid())
-        return QVariant();
-    if (index.row() >= this->list->size())
-        return QVariant();
-
-    if (role == Qt::DisplayRole)
-        return QVariant(QString("row [%1]").arg((this->list->at(index.row()))->getName()));
-    else
-        return QVariant();
+LayerWidget::~LayerWidget() {
+    if(this->hBoxLayout) delete this->hBoxLayout;
+    if(this->image) delete this->image;
+    if(this->label) delete this->label;
+    if(this->checkBox_visible) delete this->checkBox_visible;
 }
 
-int LayerListModel::rowCount(const QModelIndex &parent) const
+Layer *LayerWidget::getLayer() const
 {
-    Q_UNUSED(parent);
-    if(this->list == NULL) return 0;
-    return this->list->size();
+    return this->layer;
 }
 
-void LayerListModel::setList(Layers_t *list)
+void LayerWidget::on_checkBox_visible_toggle(bool visible)
 {
-    this->list = list;
+    if(this->layer) {
+        this->layer->setVisible(visible);
+        this->layer->requestRepaint();
+    }
 }
 
-Layer *LayerListModel::getLayerAt(size_t index)
-{
-    if(this->list == NULL) return NULL;
-    if(index >= this->list->size()) return NULL;
-    return this->list->at(index);
-}
 
 /**********************************************************************************************/
 // LayerManager
@@ -62,21 +86,22 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->mainLayout = new QVBoxLayout(this);
 
     // list s vrstvama
-    this->listView = new QListView(this);
-    this->listModel = new LayerListModel();
-    this->listView->setResizeMode(QListView::Adjust);
-    this->listView->setSelectionMode(QAbstractItemView::SingleSelection);
-    this->listView->setModel(this->listModel);
-    this->connect(this->listView, QAbstractItemView::clicked, this, LayerListModel::on_button_removeLayer_clicked);
-    this->mainLayout->addWidget(this->listView);
+    this->listWidget = new QListWidget(this);
+    connect(this->listWidget, SIGNAL(itemSelectionChanged()),
+            this, SLOT(on_listWidget_itemSelectionChanged()));
+    this->mainLayout->addWidget(this->listWidget);
 
     // tlaciky (pridani a odebrani vrstvy)
     this->buttons = new QWidget(this);
     this->buttonsLayout = new QHBoxLayout(this->buttons);
 
+    //spacer
+    this->spacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed);
+    this->buttonsLayout->addSpacerItem(this->spacer);
+
     // add layer tlacitko
     this->button_addLayer = new QPushButton();
-    this->connect(this->button_addLayer, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
+    connect(this->button_addLayer, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
     this->button_addLayer->setToolTip(QString(tr("Add layer")));
     this->button_addLayer->setIcon(QIcon(":/src/icons/new_layer.png"));
     this->button_addLayer->setIconSize(QSize(22, 22));
@@ -84,11 +109,27 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 
     // remove  tlacitko
     this->button_removeLayer = new QPushButton();
-    this->connect(this->button_removeLayer, SIGNAL(clicked()), this, SLOT(on_button_removeLayer_clicked()));
+    connect(this->button_removeLayer, SIGNAL(clicked()), this, SLOT(on_button_removeLayer_clicked()));
     this->button_removeLayer->setToolTip(QString(tr("Remove layer")));
     this->button_removeLayer->setIcon(QIcon(":/src/icons/remove_layer.png"));
     this->button_removeLayer->setIconSize(QSize(22, 22));
     this->buttonsLayout->addWidget(this->button_removeLayer);
+
+    // up tlacitko
+    this->button_up = new QPushButton();
+    connect(this->button_up, SIGNAL(clicked()), this, SLOT(on_button_up_clicked()));
+    this->button_up->setToolTip(QString(tr("Move layer up")));
+    this->button_up->setIcon(QIcon(":/src/icons/arrow_up.png"));
+    this->button_up->setIconSize(QSize(22, 22));
+    this->buttonsLayout->addWidget(this->button_up);
+
+    // down tlacitko
+    this->button_down = new QPushButton();
+    connect(this->button_down, SIGNAL(clicked()), this, SLOT(on_button_down_clicked()));
+    this->button_down->setToolTip(QString(tr("Move layer down")));
+    this->button_down->setIcon(QIcon(":/src/icons/arrow_down.png"));
+    this->button_down->setIconSize(QSize(22, 22));
+    this->buttonsLayout->addWidget(this->button_down);
 
     this->mainLayout->addWidget(this->buttons);
 }
@@ -97,23 +138,55 @@ LayerManager::~LayerManager() {
     if(this->buttonsLayout) delete this->buttonsLayout;
     if(this->mainLayout) delete this->mainLayout;
     if(this->buttons) delete this->buttons;
-    if(this->listView) delete this->listView;
+    if(this->listWidget) delete this->listWidget;
     if(this->button_addLayer) delete this->button_addLayer;
     if(this->button_removeLayer) delete this->button_removeLayer;
-    if(this->listModel) delete this->listModel;
+    if(this->button_up) delete this->button_up;
+    if(this->button_down) delete this->button_down;
+    if(this->spacer) delete this->spacer;
 }
 
 void LayerManager::setProject(Project *project)
 {
     this->project = project;
-    if(this->listModel) {
-        this->listModel->setList(this->project->getLayers());
-    }
+    this->updateLayerList();
 }
 
 Project *LayerManager::getProject() const
 {
     return this->project;
+}
+
+void LayerManager::updateLayerList()
+{
+    if(this->listWidget == NULL) return;
+
+    // clear
+    this->listWidget->clear();
+
+    // pro kazdu vrstvu projektu vlozi do listu item a pro nej take nastavi widget
+    Layers_t *layers = this->project->getLayers();
+    if(layers == NULL) return;
+
+    for(auto it = layers->crbegin() ; it != layers->crend(); ++it) {
+        LayerWidget *w = new LayerWidget(*it, 60); // dealokace pri clear
+        QListWidgetItem *item = new QListWidgetItem(listWidget); // dealokace pri clear
+        item->setSizeHint(QSize(80, 80));
+        this->listWidget->insertItem(0, item);
+        this->listWidget->setItemWidget(item, w);
+        // oznaceni teto vrstvy ?
+        if(w->getLayer() == this->project->getSelectedLayer()) {
+            this->listWidget->setCurrentItem(item);
+        }
+    }
+}
+
+void LayerManager::changeEvent(QEvent *)
+{
+    this->button_addLayer->setFixedSize(QSize(30, 30));
+    this->button_removeLayer->setFixedSize(QSize(30, 30));
+    this->button_up->setFixedSize(QSize(30, 30));
+    this->button_down->setFixedSize(QSize(30, 30));
 }
 
 void LayerManager::on_button_addLayer_clicked()
@@ -138,11 +211,10 @@ void LayerManager::on_button_addLayer_clicked()
         // vytvoreni vrstvy a pridani do projektu
         Layer *layer = new BitmapLayer(this->project, text, this->project->getSize());
         this->project->addLayer(layer);
+        // repaint projektu
+        this->project->requestRepaint();
         // repaint listview
-        if(this->listView) {
-            this->listView->doItemsLayout();
-            this->listView->repaint();
-        }
+        this->updateLayerList();
     }
 }
 
@@ -173,15 +245,84 @@ void LayerManager::on_button_removeLayer_clicked()
                 QMessageBox::Yes|QMessageBox::No);
 
     if(reply == QMessageBox::Yes) {
-
+        this->project->removeLayer(l);
+        // update layer listu
+        this->updateLayerList();
+        // prekresleni projektu
+        this->project->requestRepaint();
     }
 }
 
-void LayerManager::on_listView_clicked(const QModelIndex &index)
+void LayerManager::on_button_up_clicked()
 {
-    if(this->project == NULL || this->listView == NULL) return;
-    int row = this->listView->currentIndex().row();
-    Layer *l = this->listModel->getLayerAt(row);
-    qDebug() << row << ": " << l;
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Move layer up"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Move layer up"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    // presun o jedno nahoru
+    this->project->moveSelectedLayerUp();
+    // update layer listu
+    this->updateLayerList();
+    // prekresleni projektu
+    this->project->requestRepaint();
+}
+
+void LayerManager::on_button_down_clicked()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Move layer down"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Move layer down"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    // presun o jedno dolu
+    this->project->moveSelectedLayerDown();
+    // update layer listu
+    this->updateLayerList();
+    // prekresleni projektu
+    this->project->requestRepaint();
+}
+
+void LayerManager::on_listWidget_itemSelectionChanged()
+{
+    if(this->project == NULL || this->listWidget == NULL) return;
+
+    // ziskani vybraneho itemu z list widgetu
+    QList<QListWidgetItem*> items = this->listWidget->selectedItems();
+    if(items.isEmpty()) return;
+    QListWidgetItem *item = items.first();
+
+    // pomoci itemu najde odpovidajici widget vrstvy
+    QWidget *widget = this->listWidget->itemWidget(item);
+    if(widget == NULL) return;
+
+    // pres widget pristoupi k jeho vrstve
+    // v projektu nastavi nove vybranou vrstvu
+    Layer *l = ((LayerWidget*)widget)->getLayer();
     this->project->setSelectedLayer(l);
 }
+

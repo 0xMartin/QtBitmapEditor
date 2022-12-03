@@ -85,10 +85,17 @@ public:
     /**
      * @brief Prida novou vrstvu do projektu. Vrstavy budou odstraneni
      * z pameti pri volani destruktoru projektu.
-     * @param layer - Pointer na vrstva
+     * @param layer - Pointer na vrstvu
      * @return True -> vrstva uspesne pridana
      */
     bool addLayer(Layer *layer);
+
+    /**
+     * @brief Odebere vrstvu z projektu. Automtaticky zavola i jeji destruktor
+     * @param layer - Pointer na vrstvu
+     * @return True -> vrstva uspesne odebrana
+     */
+    bool removeLayer(Layer *layer);
 
     /**
      * @brief Ulozi projekt na disk
@@ -109,11 +116,27 @@ public:
     void setSelectedLayer(Layer *newSelected_layer);
 
     /**
+     * @brief Vyzada prekresleni
+     */
+    void requestRepaint();
+
+    /**
+     * @brief Presun aktualne vybrane vrstvy o jedno nahoru (blize k zacantku listu: index 0)
+     * @return True -> Vrstva uspesne posunuta
+     */
+    bool moveSelectedLayerUp();
+
+    /**
+     * @brief Presun aktualne vybrane vrstvy o jedno dolu (blize ke konci listu: index end)
+     * @return True -> Vrstva uspesne posunuta
+     */
+    bool moveSelectedLayerDown();
+
+    /**
      * @brief Paint event. Vykresli  projekt do workspacu (projekt = obrazek slozeny z vice vrstev)
-     * @param painter - QPainter
      * @param offset - Offset vykreslovani
      */
-    void paintEvent(QPainter &painter, const QPoint &offset);
+    void paintEvent(QPainter &painter);
 
     /**
      * @brief Stejne jako export event jen s tim rozdilem ze se do renderu navykresluje pomocna grafika editoru
