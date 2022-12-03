@@ -1,7 +1,9 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
+#include <QObject>
 #include <QString>
+#include <QList>
 
 #include "layer.h"
 
@@ -16,22 +18,24 @@
 /**
  * @brief Datovy typ pro vektor vrstev obrazu
  */
-typedef std::vector<Layer*> Layers_t;
+typedef QList<Layer*> Layers_t;
 
 /**
  * @brief Trida udrzujici veskere informace o projektu. Pokud projekt pouziva nejake
  * externi zdroje (napr: obrazky) pak i ty se museji nachazet ve stejnem adresari jak projekt.
  */
-class Project
+class Project : public QObject
 {
+    Q_OBJECT
 public:
     /**
      * @brief Vytvori projekt
+     * @param parent - QObject
      * @param name - Nazev projektu
      * @param path - Cesta k projektu
      * @param size - Velikost obrazku
      */
-    Project(const QString &name, const QString &path, const QSize &size);
+    Project(QObject *parent, const QString &name, const QString &path, const QSize &size);
 
     ~Project();
 
@@ -76,7 +80,7 @@ public:
      * @brief Navrati referenci na vektr vrstev
      * @return Layers_t
      */
-    const Layers_t &getLayers() const;
+    Layers_t *getLayers() const;
 
     /**
      * @brief Prida novou vrstvu do projektu. Vrstavy budou odstraneni
@@ -128,7 +132,7 @@ protected:
     QSize size;
 
     // vektor vrstev
-    Layers_t layers;
+    Layers_t *layers;
 
     // aktualne vybrana vrstva (focus)
     Layer *selected_layer;

@@ -21,10 +21,6 @@ Workspace::Workspace(QWidget *parent): QWidget(parent)
     this->font.setStyle(QFont::StyleNormal);
 }
 
-Workspace::~Workspace() {
-    if(this->project) delete project;
-}
-
 void Workspace::setProject(Project *project) {
     this->project = project;
     this->repaint();

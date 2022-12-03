@@ -13,9 +13,9 @@
  */
 struct AppContext_t {
     Project *project; /** Aktualne ovevtreni projekt*/
-    Workspace *workspace; /** Nejdulezitejsi komponent. Zde se zobrazuje obrazek*/
+    Workspace *workspace; /** Nejdulezitejsi komponent. Komponenta pro editaci projektu */
     ToolController *toolController; /** Komponenta pro nastavovani parametru aktualne zvoleneho nastroje*/
-    LayerManager *layerManager; /** Koponenta pro spravu vrstev projektu*/
+    LayerManager *layerManager; /** Komponenta pro spravu vrstev projektu*/
 };
 
 

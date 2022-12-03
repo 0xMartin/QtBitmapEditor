@@ -6,18 +6,22 @@
 #include <QFile>
 
 
-Project::Project(const QString &name, const QString &path, const QSize &size)
+Project::Project(QObject *parent, const QString &name, const QString &path, const QSize &size) : QObject(parent)
 {
     this->setName(name);
     this->setPath(path);
     this->setSize(size);
     this->selected_layer = NULL;
+    this->layers = new Layers_t();
 }
 
 Project::~Project()
 {
-    for(Layer *l : this->layers) {
-        if(l) delete l;
+    if(this->layers) {
+        for(Layer *l : *this->layers) {
+            if(l) delete l;
+        }
+        delete this->layers;
     }
 }
 
@@ -52,15 +56,16 @@ QSize &Project::getSize() {
     return this->size;
 }
 
-const Layers_t &Project::getLayers() const {
+Layers_t *Project::getLayers() const {
     return this->layers;
 }
 
 bool Project::addLayer(Layer *layer)
 {
     if(layer == NULL) return false;
+    if(this->layers == NULL) return false;
 
-    this->layers.push_back(layer);
+    this->layers->push_back(layer);
 
     return true;
 }
@@ -115,9 +120,11 @@ void Project::paintEvent(QPainter &painter, const QPoint &offset) {
     }
 
     // vykresli vrstvy projektu
-    for(Layer *layer : this->layers) {
-        if(layer) {
-            layer->paintEvent(painter, offset);
+    if(this->layers) {
+        for(Layer *layer : *this->layers) {
+            if(layer) {
+                layer->paintEvent(painter, offset);
+            }
         }
     }
 
@@ -129,9 +136,11 @@ void Project::paintEvent(QPainter &painter, const QPoint &offset) {
 void Project::exportEvent(QPainter &painter) {
     // vykresli vrstvy
     QPoint offset(0, 0);
-    for(Layer *layer : this->layers) {
-        if(layer) {
-            layer->paintEvent(painter, offset);
+    if(this->layers) {
+        for(Layer *layer : *this->layers) {
+            if(layer) {
+                layer->paintEvent(painter, offset);
+            }
         }
     }
 }

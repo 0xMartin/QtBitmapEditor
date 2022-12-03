@@ -1,19 +1,22 @@
 #ifndef LAYER_H
 #define LAYER_H
 
+#include <QObject>
 #include <QPaintEvent>
 
 /**
  * @brief Abstraktni trida vrstvy. Vysledny bitmapovy obrazek se bude skladat z techto vrstev.
  */
-class Layer
+class Layer : public QObject
 {
+    Q_OBJECT
 public:
     /**
      * @brief Konstruktor abstraktni tridy pro vrstvu
+     * @param parent - QObject
      * @param name - Jmeno vrstvy
      */
-    Layer(const QString &name);
+    Layer(QObject *parent, const QString &name);
 
     virtual ~Layer();
 
@@ -42,6 +45,18 @@ public:
     QString &getName();
 
     /**
+     * @brief Navrati nepruhlednost vrsty
+     * @return Nepruhlednost (opacity)
+     */
+    float getOpacity() const;
+
+    /**
+     * @brief Nastavi nepruhlednost vrsty
+     * @param newOpacity - Nepruhlednost
+     */
+    void setOpacity(float newOpacity);
+
+    /**
      * @brief Paint event. Vykresli vrstvu do workspacu
      * @param painter - QPainter
      * @param offset - Offset vykreslovani
@@ -49,9 +64,9 @@ public:
     virtual void paintEvent(QPainter &painter, const QPoint &offset) = 0;
 
 protected:
-    bool visibility; /** Viditelnost vrstvy */
     QString name; /** Nazev vrstvy */
-
+    bool visibility; /** Viditelnost vrstvy */
+    float opacity; /** Nepruhlednost vrstvy */
 };
 
 #endif // LAYER_H

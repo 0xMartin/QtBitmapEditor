@@ -22,8 +22,6 @@ public:
      */
     explicit Workspace(QWidget *parent = nullptr);
 
-    ~Workspace();
-
     /**
      * @brief Nastavi projekt se ktery se bude pracovat
      * @param project - Pointer na projekt

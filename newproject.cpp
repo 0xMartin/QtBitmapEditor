@@ -71,7 +71,7 @@ void NewProject::on_pushButton_clicked()
     int height = this->ui->spinBox_height->value();
 
     // vytvori novy projekt a priradi ho do workspacu
-    Project *p = new Project(name, path, QSize(width, height));
+    Project *p = new Project(NULL, name, path, QSize(width, height));
     AptCntx_setProject(this->context, p);
 
     // info + zavreni okna

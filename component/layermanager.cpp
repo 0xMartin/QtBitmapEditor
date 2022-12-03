@@ -7,6 +7,53 @@
 #include "../objects/bitmaplayer.h"
 
 
+/**********************************************************************************************/
+// LayerListModel
+/**********************************************************************************************/
+
+LayerListModel::LayerListModel(QObject *parent) : QAbstractListModel(parent)
+{
+    this->list = NULL;
+}
+
+QVariant LayerListModel::data(const QModelIndex &index, int role) const
+{
+    if(this->list == NULL)
+        return QVariant();
+    if (!index.isValid())
+        return QVariant();
+    if (index.row() >= this->list->size())
+        return QVariant();
+
+    if (role == Qt::DisplayRole)
+        return QVariant(QString("row [%1]").arg((this->list->at(index.row()))->getName()));
+    else
+        return QVariant();
+}
+
+int LayerListModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    if(this->list == NULL) return 0;
+    return this->list->size();
+}
+
+void LayerListModel::setList(Layers_t *list)
+{
+    this->list = list;
+}
+
+Layer *LayerListModel::getLayerAt(size_t index)
+{
+    if(this->list == NULL) return NULL;
+    if(index >= this->list->size()) return NULL;
+    return this->list->at(index);
+}
+
+/**********************************************************************************************/
+// LayerManager
+/**********************************************************************************************/
+
 LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 {
     this->project = NULL;
@@ -16,6 +63,11 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 
     // list s vrstvama
     this->listView = new QListView(this);
+    this->listModel = new LayerListModel();
+    this->listView->setResizeMode(QListView::Adjust);
+    this->listView->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->listView->setModel(this->listModel);
+    this->connect(this->listView, QAbstractItemView::clicked, this, LayerListModel::on_button_removeLayer_clicked);
     this->mainLayout->addWidget(this->listView);
 
     // tlaciky (pridani a odebrani vrstvy)
@@ -39,23 +91,24 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->buttonsLayout->addWidget(this->button_removeLayer);
 
     this->mainLayout->addWidget(this->buttons);
-
-    // test ...
-    //this->listWidget->insertItem(0, new QListWidgetItem(tr("Layer 1"), this->listWidget));
 }
 
 LayerManager::~LayerManager() {
-    if(buttonsLayout) delete buttonsLayout;
-    if(mainLayout) delete mainLayout;
-    if(buttons) delete buttons;
-    if(listView) delete listView;
-    if(button_addLayer) delete button_addLayer;
-    if(button_removeLayer) delete button_removeLayer;
+    if(this->buttonsLayout) delete this->buttonsLayout;
+    if(this->mainLayout) delete this->mainLayout;
+    if(this->buttons) delete this->buttons;
+    if(this->listView) delete this->listView;
+    if(this->button_addLayer) delete this->button_addLayer;
+    if(this->button_removeLayer) delete this->button_removeLayer;
+    if(this->listModel) delete this->listModel;
 }
 
 void LayerManager::setProject(Project *project)
 {
     this->project = project;
+    if(this->listModel) {
+        this->listModel->setList(this->project->getLayers());
+    }
 }
 
 Project *LayerManager::getProject() const
@@ -79,12 +132,17 @@ void LayerManager::on_button_addLayer_clicked()
                 tr("Add layer"),
                 tr("Layer name:"),
                 QLineEdit::Normal,
-                "Layer " + QString::number(this->project->getLayers().size() + 1),
+                "Layer " + QString::number(this->project->getLayers()->size() + 1),
                 &ok);
     if (ok && !text.isEmpty()) {
-        qDebug() << text;
-        Layer *layer = new BitmapLayer(text, this->project->getSize());
+        // vytvoreni vrstvy a pridani do projektu
+        Layer *layer = new BitmapLayer(this->project, text, this->project->getSize());
         this->project->addLayer(layer);
+        // repaint listview
+        if(this->listView) {
+            this->listView->doItemsLayout();
+            this->listView->repaint();
+        }
     }
 }
 
@@ -117,4 +175,13 @@ void LayerManager::on_button_removeLayer_clicked()
     if(reply == QMessageBox::Yes) {
 
     }
+}
+
+void LayerManager::on_listView_clicked(const QModelIndex &index)
+{
+    if(this->project == NULL || this->listView == NULL) return;
+    int row = this->listView->currentIndex().row();
+    Layer *l = this->listModel->getLayerAt(row);
+    qDebug() << row << ": " << l;
+    this->project->setSelectedLayer(l);
 }

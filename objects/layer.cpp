@@ -1,9 +1,10 @@
 #include "layer.h"
 
-Layer::Layer(const QString &name)
+Layer::Layer(QObject *parent, const QString &name) : QObject(parent)
 {
     this->name = name;
     this->visibility = true;
+    this->opacity = 1.0;
 }
 
 Layer::~Layer() {
@@ -24,4 +25,14 @@ void Layer::setName(const QString &name) {
 
 QString & Layer::getName() {
     return this->name;
+}
+
+float Layer::getOpacity() const
+{
+    return this->opacity;
+}
+
+void Layer::setOpacity(float newOpacity)
+{
+    this->opacity = newOpacity;
 }

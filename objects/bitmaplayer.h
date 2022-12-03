@@ -10,10 +10,11 @@ class BitmapLayer : public Layer
 public:
     /**
      * @brief Vytvori bitmapovou vrstvu
+     * @param parent - QObject
      * @param name - Jmeno vrstvy
      * @param size - Rozmery bitmapy
      */
-    BitmapLayer(const QString &name, const QSize &size);
+    BitmapLayer(QObject *parent, const QString &name, const QSize &size);
 
     /**
      * @brief Navrati rozmery bitmapy
