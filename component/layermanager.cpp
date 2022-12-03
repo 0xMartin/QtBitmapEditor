@@ -82,22 +82,45 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 {
     this->project = NULL;
     this->setMaximumWidth(500);
-
     this->mainLayout = new QVBoxLayout(this);
 
+    // ovladani aktualni vrstvy (opacity)
+    //------------------------------------------------------------------------------------------
+    this->layerControl = new QWidget(this);
+    this->mainLayout->addWidget(this->layerControl);
+    this->layerControllLayout = new QHBoxLayout(this->layerControl);
+    this->layerControl->setLayout(this->layerControllLayout);
+
+    // opacity
+    this->spinbox_opacity = new QSpinBox(this);
+    //connect(this->spinbox_opacity, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
+    this->spinbox_opacity->setToolTip(QString(tr("Opacity")));
+    this->spinbox_opacity->setPrefix("Opacity: ");
+    this->spinbox_opacity->setSuffix("%");
+    this->spinbox_opacity->setMaximum(100);
+    this->spinbox_opacity->setMinimum(0);
+    this->spinbox_opacity->setValue(100);
+    this->layerControllLayout->addWidget(this->spinbox_opacity);
+
+
     // list s vrstvama
+    //------------------------------------------------------------------------------------------
     this->listWidget = new QListWidget(this);
     connect(this->listWidget, SIGNAL(itemSelectionChanged()),
             this, SLOT(on_listWidget_itemSelectionChanged()));
     this->mainLayout->addWidget(this->listWidget);
 
-    // tlaciky (pridani a odebrani vrstvy)
-    this->buttons = new QWidget(this);
-    this->buttonsLayout = new QHBoxLayout(this->buttons);
+
+    // tlaciky pro ovladani listu vrstev (add, remove, up, down)
+    //------------------------------------------------------------------------------------------
+    this->listControl = new QWidget(this);
+    this->mainLayout->addWidget(this->listControl);
+    this->listControlLayout = new QHBoxLayout(this->listControl);
+    this->listControl->setLayout(this->listControlLayout);
 
     //spacer
     this->spacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed);
-    this->buttonsLayout->addSpacerItem(this->spacer);
+    this->listControlLayout->addSpacerItem(this->spacer);
 
     // add layer tlacitko
     this->button_addLayer = new QPushButton();
@@ -105,7 +128,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_addLayer->setToolTip(QString(tr("Add layer")));
     this->button_addLayer->setIcon(QIcon(":/src/icons/new_layer.png"));
     this->button_addLayer->setIconSize(QSize(22, 22));
-    this->buttonsLayout->addWidget(this->button_addLayer);
+    this->listControlLayout->addWidget(this->button_addLayer);
 
     // remove  tlacitko
     this->button_removeLayer = new QPushButton();
@@ -113,7 +136,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_removeLayer->setToolTip(QString(tr("Remove layer")));
     this->button_removeLayer->setIcon(QIcon(":/src/icons/remove_layer.png"));
     this->button_removeLayer->setIconSize(QSize(22, 22));
-    this->buttonsLayout->addWidget(this->button_removeLayer);
+    this->listControlLayout->addWidget(this->button_removeLayer);
 
     // up tlacitko
     this->button_up = new QPushButton();
@@ -121,7 +144,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_up->setToolTip(QString(tr("Move layer up")));
     this->button_up->setIcon(QIcon(":/src/icons/arrow_up.png"));
     this->button_up->setIconSize(QSize(22, 22));
-    this->buttonsLayout->addWidget(this->button_up);
+    this->listControlLayout->addWidget(this->button_up);
 
     // down tlacitko
     this->button_down = new QPushButton();
@@ -129,21 +152,23 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_down->setToolTip(QString(tr("Move layer down")));
     this->button_down->setIcon(QIcon(":/src/icons/arrow_down.png"));
     this->button_down->setIconSize(QSize(22, 22));
-    this->buttonsLayout->addWidget(this->button_down);
-
-    this->mainLayout->addWidget(this->buttons);
+    this->listControlLayout->addWidget(this->button_down);
 }
 
 LayerManager::~LayerManager() {
-    if(this->buttonsLayout) delete this->buttonsLayout;
-    if(this->mainLayout) delete this->mainLayout;
-    if(this->buttons) delete this->buttons;
+    if(this->spinbox_opacity) delete this->spinbox_opacity;
     if(this->listWidget) delete this->listWidget;
     if(this->button_addLayer) delete this->button_addLayer;
     if(this->button_removeLayer) delete this->button_removeLayer;
     if(this->button_up) delete this->button_up;
     if(this->button_down) delete this->button_down;
+
+    if(this->mainLayout) delete this->mainLayout;
+    if(this->listControl) delete this->listControl;
+    if(this->listControlLayout) delete this->listControlLayout;
     if(this->spacer) delete this->spacer;
+    if(this->layerControl) delete this->layerControl;
+    if(this->layerControllLayout) delete this->layerControllLayout;
 }
 
 void LayerManager::setProject(Project *project)
@@ -183,6 +208,7 @@ void LayerManager::updateLayerList()
 
 void LayerManager::changeEvent(QEvent *)
 {
+    // vzdy fixni velikost
     this->button_addLayer->setFixedSize(QSize(30, 30));
     this->button_removeLayer->setFixedSize(QSize(30, 30));
     this->button_up->setFixedSize(QSize(30, 30));

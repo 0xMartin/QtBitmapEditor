@@ -1,6 +1,7 @@
 #ifndef LAYERMANAGER_H
 #define LAYERMANAGER_H
 
+
 #include <QWidget>
 #include <QListView>
 #include <QHBoxLayout>
@@ -10,6 +11,7 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QSpacerItem>
+#include <QSpinBox>
 
 
 #include "../objects/project.h"
@@ -84,18 +86,29 @@ protected:
     // aktualni projekt
     Project *project;
 
+
     // hlavni komponenty manazeru vrstev
-    QListWidget * listWidget; /** List se vsema vrstvama projektu */
-    QPushButton * button_addLayer; /** Tlacitko pro pridani nove vrstvy */
-    QPushButton * button_removeLayer; /** Tlacikto pro odebrani vybrane vrstvy */
-    QPushButton * button_up; /** Tlacitko pro presunuti vrstvy nahoru */
-    QPushButton * button_down; /** Tlacikto pro presunuti vrstvy dolu */
+    // layer controll
+    QSpinBox *spinbox_opacity;
+    //list
+    QListWidget *listWidget; /** List se vsema vrstvama projektu */
+    // list controll
+    QPushButton *button_addLayer; /** Tlacitko pro pridani nove vrstvy */
+    QPushButton *button_removeLayer; /** Tlacikto pro odebrani vybrane vrstvy */
+    QPushButton *button_up; /** Tlacitko pro presunuti vrstvy nahoru */
+    QPushButton *button_down; /** Tlacikto pro presunuti vrstvy dolu */
+
 
     // layout
-    QHBoxLayout *buttonsLayout;
     QVBoxLayout *mainLayout;
-    QWidget *buttons;
+    // list controll
+    QWidget *listControl;
+    QHBoxLayout *listControlLayout;
     QSpacerItem *spacer;
+    // layer controll
+    QWidget *layerControl;
+    QHBoxLayout *layerControllLayout;
+
 
     virtual void changeEvent(QEvent *);
 
