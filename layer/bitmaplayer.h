@@ -5,6 +5,7 @@
 #include <QPainter>
 
 #include "../base/layer.h"
+#include "../utility/mouseeventhelper.h"
 
 class BitmapLayer : public Layer
 {
@@ -49,6 +50,9 @@ protected:
     QSize size; /** Velikost bitmapy */
     QPixmap pixmap; /** Bitmapa */
     QPainter *painter; /** Painter pro kresleni do bitmapy*/
+
+    // helper pro mouse eventy
+    MouseEventHelper mouseHelper;
 };
 
 #endif // BITMAPLAYER_H

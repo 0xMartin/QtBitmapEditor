@@ -7,6 +7,7 @@ BitmapLayer::BitmapLayer(QObject *parent, const QString &name, const QSize &size
         this->pixmap = QPixmap(size);
         this->painter = new QPainter(&this->pixmap);
     }
+    this->mouseHelper = MouseEventHelper(5);
 }
 
 BitmapLayer::~BitmapLayer()
@@ -50,11 +51,12 @@ void BitmapLayer::paintEvent(QPainter &painter)
 
 void BitmapLayer::mousePressEvent(const QPoint &pos)
 {
-    this->painter->fillRect(pos.x(), pos.y(), 25, 25, QBrush(QColor(37, 37, 37), Qt::SolidPattern));
+
 }
 
 void BitmapLayer::mouseReleaseEvent(const QPoint &pos)
 {
+    this->mouseHelper.resetMove();
 }
 
 void BitmapLayer::mouseDoubleClickEvent(const QPoint &pos)
@@ -63,4 +65,8 @@ void BitmapLayer::mouseDoubleClickEvent(const QPoint &pos)
 
 void BitmapLayer::mouseMoveEvent(const QPoint &pos)
 {
+    if(this->mouseHelper.processMoveEvent(pos)) {
+        QLine line = this->mouseHelper.lineFromLastPos();
+        painter->drawLine(line);
+    }
 }

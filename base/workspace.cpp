@@ -72,17 +72,18 @@ void Workspace::mousePressEvent(QMouseEvent *event)
 void Workspace::mouseReleaseEvent(QMouseEvent *event)
 {
     // release event  -> projekt
-    if(this->project) {
-        QPoint pos = this->calculateEventOffsetPosition(event);
-        if(pos.x() < 0) return;
-        this->project->mouseReleaseEvent(pos);
-        // repaint
-        this->repaint();
+    if(event->buttons() != Qt::LeftButton) {
+        if(this->project) {
+            QPoint pos = this->calculateEventOffsetPosition(event);
+            if(pos.x() < 0) return;
+            this->project->mouseReleaseEvent(pos);
+            // repaint
+            this->repaint();
+        }
     }
 
     // release event -> zmena offsetu workspace pomoci stredoveho tlacitka
     if(event->buttons() != Qt::MiddleButton) {
-        qDebug() << "RESET";
         this->mouseHelper.resetMove();
     }
 }
