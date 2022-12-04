@@ -144,6 +144,19 @@ public:
      */
     void exportEvent(QPainter &painter);
 
+    // events
+    void mousePressEvent(const QPoint &pos);
+    void mouseReleaseEvent(const QPoint &pos);
+    void mouseDoubleClickEvent(const QPoint &pos);
+    void mouseMoveEvent(const QPoint &pos);
+
+signals:
+    /**
+     * @brief Signal je vyvolan ve chvili kdy doslo k prekresleni nejak z vrstev projektu
+     * @param layer - Vrsrva ktera byla prekreslena
+     */
+    void repaintSignal(Layer *layer);
+
 protected:
     // jmeno projektu
     QString name;

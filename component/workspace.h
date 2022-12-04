@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <vector>
+#include <QMouseEvent>
 
 #include "../objects/project.h"
 
@@ -14,7 +15,6 @@
 class Workspace : public QWidget
 {
     Q_OBJECT
-
 public:
     /**
      * @brief Vytvori workspace
@@ -58,6 +58,12 @@ public:
      */
     void setFont(const QFont &newFont);
 
+    // events
+    virtual void mousePressEvent(QMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
+
 protected:
     // aktualni projekt
     Project *project;
@@ -80,6 +86,8 @@ protected:
      */
     void updateSizeOfWorkaspace();
 
+private:
+    QPoint calculateEventOffsetPosition(QMouseEvent *event) const;
 };
 
 #endif // WORKSPACE_H

@@ -188,3 +188,32 @@ void Project::exportEvent(QPainter &painter) {
     }
 }
 
+void Project::mousePressEvent(const QPoint &pos)
+{
+    if(this->selected_layer) {
+        this->selected_layer->mousePressEvent(pos);
+    }
+}
+
+void Project::mouseReleaseEvent(const QPoint &pos)
+{
+    if(this->selected_layer) {
+        this->selected_layer->mouseReleaseEvent(pos);
+        emit repaintSignal(this->selected_layer);
+    }
+}
+
+void Project::mouseDoubleClickEvent(const QPoint &pos)
+{
+    if(this->selected_layer) {
+        this->selected_layer->mouseDoubleClickEvent(pos);
+    }
+}
+
+void Project::mouseMoveEvent(const QPoint &pos)
+{
+    if(this->selected_layer) {
+        this->selected_layer->mouseMoveEvent(pos);
+    }
+}
+

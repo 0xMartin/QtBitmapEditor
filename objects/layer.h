@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QPainter>
 #include <QPixmap>
+#include <QDebug>
 
 /**
  * @brief Abstraktni trida vrstvy. Reprezentuje jednu vrstvu bitmapoveho obrazku.
@@ -73,6 +74,12 @@ public:
      * @param painter - QPainter
      */
     virtual void paintEvent(QPainter &painter) = 0;
+
+    // events
+    virtual void mousePressEvent(const QPoint &pos) = 0;
+    virtual void mouseReleaseEvent(const QPoint &pos) = 0;
+    virtual void mouseDoubleClickEvent(const QPoint &pos) = 0;
+    virtual void mouseMoveEvent(const QPoint &pos) = 0;
 
 protected:
     QString name; /** Nazev vrstvy */

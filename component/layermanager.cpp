@@ -15,6 +15,7 @@
 
 LayerWidget::LayerWidget(Layer *layer, size_t height) : QWidget()
 {
+    this->height = height;
     this->layer = layer;
     if(this->layer == NULL) return;
     this->hBoxLayout = new QHBoxLayout(this);
@@ -32,17 +33,7 @@ LayerWidget::LayerWidget(Layer *layer, size_t height) : QWidget()
     this->image = new QLabel(this);
     this->image->setFixedSize(QSize(height, height));
     this->image->setStyleSheet("border-width: 2px;");
-    QPixmap *pixmap = new QPixmap(height, height);
-    if(pixmap) {
-        QPainter painter(pixmap);
-        float scale = (float)height / qMax(layer->getSize().width(), layer->getSize().height());
-        Layer_paintBgGrid(painter, QSize(height, height), 8);
-        painter.scale(scale, scale);
-        layer->paintEvent(painter);
-        painter.end();
-        this->image->setPixmap(*pixmap);
-        delete pixmap;
-    }
+    this->repaintLayer();
     this->hBoxLayout->addWidget(this->image);
 
     // nazev vrstvy
@@ -63,6 +54,21 @@ LayerWidget::~LayerWidget() {
 Layer *LayerWidget::getLayer() const
 {
     return this->layer;
+}
+
+void LayerWidget::repaintLayer()
+{
+    QPixmap *pixmap = new QPixmap(height, height);
+    if(pixmap) {
+        QPainter painter(pixmap);
+        float scale = (float)this->height / qMax(layer->getSize().width(), layer->getSize().height());
+        Layer_paintBgGrid(painter, QSize(this->height, this->height), 8);
+        painter.scale(scale, scale);
+        layer->paintEvent(painter);
+        painter.end();
+        this->image->setPixmap(*pixmap);
+        delete pixmap;
+    }
 }
 
 void LayerWidget::on_checkBox_visible_toggle(bool visible)
@@ -175,6 +181,7 @@ void LayerManager::setProject(Project *project)
 {
     this->project = project;
     this->updateLayerList();
+    connect(this->project, SIGNAL(repaintSignal(Layer*)), this, SLOT(on_project_repaintSignal(Layer*)));
 }
 
 Project *LayerManager::getProject() const
@@ -215,6 +222,21 @@ void LayerManager::changeEvent(QEvent *)
     this->button_down->setFixedSize(QSize(30, 30));
 }
 
+void LayerManager::on_project_repaintSignal(Layer *layer)
+{
+    QList<QListWidgetItem*> items = this->listWidget->selectedItems();
+    LayerWidget *widget;
+    for(QListWidgetItem *item : items) {
+        widget = (LayerWidget*)this->listWidget->itemWidget(item);
+        if(widget == NULL) continue;
+        if(widget->getLayer() == layer) {
+            widget->repaintLayer();
+            widget->repaint();
+            break;
+        }
+    }
+}
+
 void LayerManager::on_button_addLayer_clicked()
 {
     if(this->project == NULL) {
@@ -237,6 +259,7 @@ void LayerManager::on_button_addLayer_clicked()
         // vytvoreni vrstvy a pridani do projektu
         Layer *layer = new BitmapLayer(this->project, text, this->project->getSize());
         this->project->addLayer(layer);
+        this->project->setSelectedLayer(layer);
         // repaint projektu
         this->project->requestRepaint();
         // repaint listview

@@ -30,7 +30,9 @@ public:
     explicit LayerWidget(Layer *layer, size_t height);
     ~LayerWidget();
     Layer *getLayer() const;
+    void repaintLayer();
 protected:
+    size_t height; /** Vyska obrazku nahledu vrstvy */
     Layer * layer; /** Vrstva ktere tento widget patri*/
 
     // UI
@@ -113,6 +115,8 @@ protected:
     virtual void changeEvent(QEvent *);
 
 private slots:
+    void on_project_repaintSignal(Layer *layer);
+
     /**
      * @brief Pridani nove vrstvy
      */

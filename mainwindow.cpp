@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "objects/bitmaplayer.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -72,6 +73,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // TEST
     Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", QSize(500, 500));
+    BitmapLayer *l = new BitmapLayer(p, "Layer 1", QSize(500, 500));
+    p->addLayer(l);
+    p->setSelectedLayer(l);
     AptCntx_setProject(&this->context, p);
 }
 

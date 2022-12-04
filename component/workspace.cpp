@@ -51,6 +51,50 @@ void Workspace::setFont(const QFont &newFont)
     this->font = newFont;
 }
 
+void Workspace::mousePressEvent(QMouseEvent *event)
+{
+    if(this->project) {
+        QPoint pos = this->calculateEventOffsetPosition(event);
+        if(pos.x() < 0) return;
+        this->project->mousePressEvent(pos);
+        // repaint
+        this->repaint();
+    }
+}
+
+void Workspace::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(this->project) {
+        QPoint pos = this->calculateEventOffsetPosition(event);
+        if(pos.x() < 0) return;
+        this->project->mouseReleaseEvent(pos);
+        // repaint
+        this->repaint();
+    }
+}
+
+void Workspace::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if(this->project) {
+        QPoint pos = this->calculateEventOffsetPosition(event);
+        if(pos.x() < 0) return;
+        this->project->mouseDoubleClickEvent(pos);
+        // repaint
+        this->repaint();
+    }
+}
+
+void Workspace::mouseMoveEvent(QMouseEvent *event)
+{
+    if(this->project) {
+        QPoint pos = this->calculateEventOffsetPosition(event);
+        if(pos.x() < 0) return;
+        this->project->mouseMoveEvent(pos);
+        // repaint
+        this->repaint();
+    }
+}
+
 void Workspace::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
 
@@ -127,4 +171,25 @@ void Workspace::updateSizeOfWorkaspace() {
     if(this->size() != size) {
         this->setFixedSize(size);
     }
+}
+
+QPoint Workspace::calculateEventOffsetPosition(QMouseEvent *event) const
+{
+    // workspace center offset
+    QSize s = this->project->getSize();
+    QPoint offset;
+    offset.setX(-(this->width() - s.width()) / 2);
+    offset.setY(-(this->height() - s.height()) / 2);
+
+    // mouse event offset
+    offset.setX(offset.x() + event->pos().x());
+    offset.setY(offset.y() + event->pos().y());
+
+    // pokud je mimo kreslici plochu tak zneplatni hodnoty
+    if(offset.x() < 0 || offset.y() < 0 || offset.x() > s.width() || offset.y() > s.height()) {
+        offset.setX(-1);
+        offset.setY(-1);
+    }
+
+    return offset;
 }
