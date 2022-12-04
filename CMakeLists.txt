@@ -15,34 +15,63 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 
-set(PROJECT_SOURCES
-        main.cpp
-        app_context.h
-        dialogs.h
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        component/layermanager.h
-        component/layermanager.cpp
-        component/toolcontroller.h
-        component/toolcontroller.cpp
-        component/workspace.h
-        component/workspace.cpp
-        utility/colorpicker.h
-        utility/colorpicker.cpp
-        objects/layer.h
-        objects/layer.cpp
-        newproject.h
-        newproject.cpp
-        newproject.ui
-        objects/project.h
-        objects/project.cpp
-        objects/bitmaplayer.h
-        objects/bitmaplayer.cpp
-        icons.qrc
-        theme.qrc
-        splash.qrc
+# LAYER
+set(QBE_LAYER
+    layer/bitmaplayer.h
+    layer/bitmaplayer.cpp
 )
+
+# UTILITY
+set(QBE_UTILITY
+    utility/mouseeventhelper.h
+    utility/mouseeventhelper.cpp
+    utility/colorpicker.h
+    utility/colorpicker.cpp
+)
+
+# UI
+set(QBE_UI
+    mainwindow.h
+    mainwindow.cpp
+    mainwindow.ui
+    newproject.h
+    newproject.cpp
+    newproject.ui
+)
+
+# RESOURCES
+set(QBE_RES
+    icons.qrc
+    theme.qrc
+    splash.qrc
+)
+
+# BASE
+set(QBE_BASE
+    base/app_context.h
+    base/dialogs.h
+    base/project.h
+    base/project.cpp
+    base/layer.h
+    base/layer.cpp
+    base/layermanager.h
+    base/layermanager.cpp
+    base/toolcontroller.h
+    base/toolcontroller.cpp
+    base/workspace.h
+    base/workspace.cpp
+)
+
+# PROJECT
+set(PROJECT_SOURCES
+    main.cpp
+    ${QBE_BASE}
+    ${QBE_LAYER}
+    ${QBE_UTILITY}
+    ${QBE_UI}
+    ${QBE_RES}
+)
+
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QtBitmapEditor

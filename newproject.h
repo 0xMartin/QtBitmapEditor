@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "app_context.h"
+#include "base/app_context.h"
 
 namespace Ui {
 class NewProject;

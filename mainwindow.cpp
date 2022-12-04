@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "objects/bitmaplayer.h"
+#include "layer/bitmaplayer.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -77,6 +77,8 @@ MainWindow::MainWindow(QWidget *parent)
     p->addLayer(l);
     p->setSelectedLayer(l);
     AptCntx_setProject(&this->context, p);
+
+    this->updateStatusBar();
 }
 
 MainWindow::~MainWindow()
@@ -93,7 +95,7 @@ MainWindow::~MainWindow()
     if(this->statusLabel) delete this->statusLabel;
 }
 
-void MainWindow::mousePressEvent(QMouseEvent *event)
+void MainWindow::updateStatusBar()
 {
     if(this->context.workspace == NULL) return;
     Project *p = this->context.workspace->getProject();

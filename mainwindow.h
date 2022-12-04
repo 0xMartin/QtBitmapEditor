@@ -8,7 +8,7 @@
 #include <QSplitter>
 #include <QLabel>
 
-#include "app_context.h"
+#include "base/app_context.h"
 #include "utility/colorpicker.h"
 #include "newproject.h"
 
@@ -30,6 +30,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void updateStatusBar();
 protected:
     // kontext aplikace
     AppContext_t context;
@@ -40,8 +41,6 @@ protected:
     // windows
     NewProject * window_newProject;
 
-    // focus in event
-    void mousePressEvent(QMouseEvent *event) override;
 private slots:
     /**
      * @brief Otevre okno pro vytvoreni noveho projektu

@@ -4,7 +4,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-#include "objects/project.h"
+#include "mainwindow.h"
+#include "base/project.h"
 
 
 NewProject::NewProject(QWidget *parent) :
@@ -76,6 +77,7 @@ void NewProject::on_pushButton_clicked()
 
     // info + zavreni okna
     QMessageBox::information(this, tr("New Project"), tr("New project successfully created"));
+    ((MainWindow *)this->parent())->updateStatusBar();
     this->close();
 }
 
