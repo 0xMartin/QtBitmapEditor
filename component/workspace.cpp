@@ -53,45 +53,73 @@ void Workspace::setFont(const QFont &newFont)
 
 void Workspace::mousePressEvent(QMouseEvent *event)
 {
-    if(this->project) {
-        QPoint pos = this->calculateEventOffsetPosition(event);
-        if(pos.x() < 0) return;
-        this->project->mousePressEvent(pos);
-        // repaint
-        this->repaint();
+    switch (event->buttons()) {
+    case Qt::LeftButton:
+        // press event
+        if(this->project) {
+            QPoint pos = this->calculateEventOffsetPosition(event);
+            if(pos.x() < 0) return;
+            this->project->mousePressEvent(pos);
+            // repaint
+            this->repaint();
+        }
+        break;
+    case Qt::MiddleButton:
+        // zmena offsetu workspace pomoci stredoveho tlacitka
+        break;
     }
 }
 
 void Workspace::mouseReleaseEvent(QMouseEvent *event)
 {
-    if(this->project) {
-        QPoint pos = this->calculateEventOffsetPosition(event);
-        if(pos.x() < 0) return;
-        this->project->mouseReleaseEvent(pos);
-        // repaint
-        this->repaint();
+    switch (event->buttons()) {
+    case Qt::LeftButton:
+        // press event
+        if(this->project) {
+            QPoint pos = this->calculateEventOffsetPosition(event);
+            if(pos.x() < 0) return;
+            this->project->mouseReleaseEvent(pos);
+            // repaint
+            this->repaint();
+        }
+        break;
+    case Qt::MiddleButton:
+        // zmena offsetu workspace pomoci stredoveho tlacitka
+        break;
     }
 }
 
 void Workspace::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    if(this->project) {
-        QPoint pos = this->calculateEventOffsetPosition(event);
-        if(pos.x() < 0) return;
-        this->project->mouseDoubleClickEvent(pos);
-        // repaint
-        this->repaint();
+    switch (event->buttons()) {
+    case Qt::LeftButton:
+        if(this->project) {
+            QPoint pos = this->calculateEventOffsetPosition(event);
+            if(pos.x() < 0) return;
+            this->project->mouseDoubleClickEvent(pos);
+            // repaint
+            this->repaint();
+        }
+        break;
     }
 }
 
 void Workspace::mouseMoveEvent(QMouseEvent *event)
 {
-    if(this->project) {
-        QPoint pos = this->calculateEventOffsetPosition(event);
-        if(pos.x() < 0) return;
-        this->project->mouseMoveEvent(pos);
-        // repaint
-        this->repaint();
+    switch (event->buttons()) {
+    case Qt::LeftButton:
+        // press event
+        if(this->project) {
+            QPoint pos = this->calculateEventOffsetPosition(event);
+            if(pos.x() < 0) return;
+            this->project->mouseMoveEvent(pos);
+            // repaint
+            this->repaint();
+        }
+        break;
+    case Qt::MiddleButton:
+        // zmena offsetu workspace pomoci stredoveho tlacitka
+        break;
     }
 }
 
