@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <vector>
 #include <QMouseEvent>
+#include <QScrollArea>
+
 
 #include "project.h"
 #include "../utility/mouseeventhelper.h"
@@ -11,7 +13,7 @@
 
 /**
  * @brief Tato komponenta se stara o spravne vykreslovani projektu (obrazku) a
- * grafickou manipulaci s nim
+ * grafickou manipulaci s nim. Tento widget musi byt umisten v QScrollArea!!!
  */
 class Workspace : public QWidget
 {
@@ -42,19 +44,25 @@ public:
     void setScale(float scale);
 
     /**
+     * @brief Zmeni meritko o urcitou hodnotu
+     * @param diff - Zmena meritka
+     */
+    void addScale(float diff);
+
+    /**
      * @brief Navrati meritko
      * @return meritko
      */
     float getScale() const;
 
     /**
-     * @brief Navrati font meritek
+     * @brief Navrati font (meritak + info)
      * @return QFont
      */
     const QFont &getFont() const;
 
     /**
-     * @brief Nastavi novy font pro meritka
+     * @brief Nastavi novy font (meritak + info)
      * @param newFont - Novy font
      */
     void setFont(const QFont &newFont);
@@ -64,6 +72,7 @@ public:
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
     virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
     virtual void mouseMoveEvent(QMouseEvent *event) override;
+    virtual void wheelEvent(QWheelEvent *event) override;
 
 protected:
     // aktualni projekt
@@ -75,11 +84,17 @@ protected:
     // globalni offset
     QPoint globalOffset;
 
+    // aktualni pozice kurzoru
+    QPoint currentPos;
+
     // font meritek
     QFont font;
 
     // helper pro mouse eventy
     MouseEventHelper mouseHelper;
+
+    // pointer na parent scroll area component
+    QScrollArea *parentScrollArea;
 
     /**
      * @brief QWidget paint event
@@ -94,7 +109,19 @@ protected:
     void updateSizeOfWorkaspace();
 
 private:
-    QPoint calculateEventOffsetPosition(QMouseEvent *event) const;
+    /**
+     * @brief Vypocita pozici pro eventy projektu (pozici kurzoru prevede na pozici
+     * odpovidajici primo na souradnice v projektu)
+     * @param pos - Aktualni pozice kurzoru
+     * @return QPoint
+     */
+    QPoint calculateEventOffsetPosition(const QPoint &pos) const;
+
+    /**
+     * @brief Navrati offset view portu (offset parent scoll area)
+     * @return QPoint
+     */
+    QPoint getViewPortOffset() const;
 };
 
 #endif // WORKSPACE_H

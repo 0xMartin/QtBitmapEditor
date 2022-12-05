@@ -158,9 +158,6 @@ bool Project::moveSelectedLayerDown()
 }
 
 void Project::paintEvent(QPainter &painter) {
-    // vykresleni pozadi obrazku (sachovnice)
-    Layer_paintBgGrid(painter, this->size, 16);
-
     // vykresli vrstvy projektu
     if(this->layers) {
         for(Layer *layer : *this->layers) {

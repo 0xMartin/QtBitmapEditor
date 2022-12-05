@@ -15,22 +15,22 @@ MouseEventHelper::MouseEventHelper(int moveUpdateDist)
 
 QPoint MouseEventHelper::getCurrent() const
 {
-    return current;
+    return this->current;
 }
 
 QPoint MouseEventHelper::getPress() const
 {
-    return press;
+    return this->press;
 }
 
 QPoint MouseEventHelper::getRelease() const
 {
-    return release;
+    return this->release;
 }
 
 QPoint MouseEventHelper::getDoubleClick() const
 {
-    return doubleClick;
+    return this->doubleClick;
 }
 
 double MouseEventHelper::distFromPress()
