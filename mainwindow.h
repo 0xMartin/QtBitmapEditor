@@ -140,5 +140,7 @@ private:
     QScrollArea *scrollArea_workspace;
     QLabel *statusLabel;
 
+    void changeTool(Tool *newTool);
+
 };
 #endif // MAINWINDOW_H

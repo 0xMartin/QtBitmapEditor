@@ -67,6 +67,7 @@ void BitmapLayer::mouseMoveEvent(const QPoint &pos)
 {
     if(this->mouseHelper.processMoveEvent(pos)) {
         QLine line = this->mouseHelper.lineFromLastPos();
+        painter->setPen(QPen(Qt::red, 3));
         painter->drawLine(line);
     }
 }

@@ -56,6 +56,25 @@ void Workspace::addScale(float diff)
     float f = this->scale + diff;
     if(f <= 0.0) return;
     if(f > 100) return;
+
+    /*
+    // center view portu
+    QPointF vpCenter(this->parentWidget()->width() / 2, this->parentWidget()->height() / 2);
+    // float center pozice v projektu pro aktualnim meritko
+    QPointF pt_1(vpCenter.x(), vpCenter.y());
+    pt_1.setX(pt_1.x() / this->width());
+    pt_1.setY(pt_1.y() / this->height());
+    // nova velikost po aplikaci meritka
+    QSize ps = this->project->getSize();
+    QPointF pt(this->parentWidget()->width(), this->parentWidget()->height());
+    pt.setX(qMax(pt.x(), ps.width() * f));
+    pt.setY(qMax(pt.y(), ps.height() * f));
+    // delta P = (Pt * [Pt-1(VPc)/Pt-1] - VPc) * signum(scale_t - scale_t-1)
+    this->globalOffset += QPoint(pt.x() * pt_1.x() - vpCenter.x(),
+                                 pt.y() * pt_1.y() - vpCenter.y()
+                                 ) * ((f - this->scale) >= 0 ? 1 : -1);
+    */
+
     this->scale = f;
     this->repaint();
 }
@@ -166,8 +185,20 @@ void Workspace::wheelEvent(QWheelEvent *event)
         } else {
             this->addScale(-0.1);
         }
-        qDebug() << this->scale;
     }
+}
+
+Tool *Workspace::getTool() const
+{
+    return tool;
+}
+
+void Workspace::setTool(Tool *newTool)
+{
+    if (tool == newTool)
+        return;
+    tool = newTool;
+    emit toolChanged();
 }
 
 void Workspace::paintEvent(QPaintEvent *event) {
@@ -186,13 +217,14 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
 
     if(this->project != NULL) {
-        // vypocet offsetu na stred celkove plochy workspacu
         QSize s = this->project->getSize();
-        QPoint offset(
-                    (this->width() - s.width()) / 2  + this->globalOffset.x(),
-                    (this->height() - s.height()) / 2 + this->globalOffset.y()
-                    );
+        QSize vpSize = this->parentWidget()->size();
 
+        // vypocet offsetu na stred celkove plochy workspacu
+        QPoint offset(
+                    (this->width() - s.width() * this->scale) / 2  + this->globalOffset.x() * this->scale,
+                    (this->height() - s.height() * this->scale) / 2 + this->globalOffset.y() * this->scale
+                    );
 
         //-------PROJECT-------------------------
         painter.save();
@@ -208,6 +240,8 @@ void Workspace::paintEvent(QPaintEvent *event) {
         painter.restore();
         //-------PROJECT-------------------------
 
+        // center
+        painter.fillRect(vpSize.width()/2, vpSize.height()/2, 11, 11, QBrush(QColor(250, 50, 50), Qt::SolidPattern));
 
         // view port offset
         QPoint voff = this->getViewPortOffset();
@@ -260,19 +294,25 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
 
         // pozicni informace
-        painter.setPen(QColor(250, 0, 0));
+        painter.fillRect(26 + voff.x(), vpSize.height() + voff.y() - 26, vpSize.width(), 26, QBrush(QColor(45, 45, 45), Qt::SolidPattern));
+        painter.setPen(QColor(210, 150, 150));
         Layer *l = this->project->getSelectedLayer();
         QString buffer = "Name: ";
         if(l) buffer += l->getName();
         painter.drawText(QPointF(
-                             this->width() * INV_SCALE(this->scale) - 240 + voff.x(),
-                             this->height() * INV_SCALE(this->scale) - 10 + voff.y()),
+                             vpSize.width() - 300 + voff.x(),
+                             vpSize.height() - 9 + voff.y()),
+                         buffer);
+        buffer = QString::number(this->scale * 100) + "%";
+        painter.drawText(QPointF(
+                             vpSize.width() - 170 + voff.x(),
+                             vpSize.height() - 9 + voff.y()),
                          buffer);
         QPoint pos = this->calculateEventOffsetPosition(this->currentPos);
         buffer = "X: " + QString::number(pos.x()) + " Y: " + QString::number(pos.y());
         painter.drawText(QPointF(
-                             this->width() * INV_SCALE(this->scale) - 110 + voff.x(),
-                             this->height() * INV_SCALE(this->scale) - 10 + voff.y()),
+                             vpSize.width() - 110 + voff.x(),
+                             vpSize.height() - 9 + voff.y()),
                          buffer);
     }
 
@@ -280,12 +320,11 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
 void Workspace::updateSizeOfWorkaspace() {
     QSize size = this->parentWidget()->size();
-    qDebug() << size;
 
     // pokud je velikost obrazku projetku vetsi nez velikost rodice pak tyto parametry prenastavi
     if(this->project) {
         QSize size2 = project->getSize();
-        size *= this->scale;
+        size2 *= this->scale;
         size.setWidth(qMax(size2.width(), size.width()));
         size.setHeight(qMax(size2.height(), size.height()));
     }
@@ -300,14 +339,14 @@ QPoint Workspace::calculateEventOffsetPosition(const QPoint &pos) const
 {
     // workspace center offset : (widget.size - project.size) / 2
     QSize s = this->project->getSize();
-    QPoint offset(-(this->width() - s.width()) / 2,
-                  -(this->height() - s.height()) / 2);
+    QPoint offset(-(this->width() - s.width() * this->scale) / 2,
+                  -(this->height() - s.height() * this->scale) / 2);
 
     // mouse event offset
     offset += pos;
 
     // global offset
-    offset -= this->globalOffset;
+    offset -= this->globalOffset * this->scale;
 
     // vynasobit inverznim scale
     // nyni uz finalni pozice prepoctana na soradnice v projektu

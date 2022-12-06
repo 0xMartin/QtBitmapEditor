@@ -60,6 +60,8 @@ set(QBE_BASE
     base/toolcontroller.cpp
     base/workspace.h
     base/workspace.cpp
+    base/tool.h
+    base/tool.cpp
 )
 
 # PROJECT

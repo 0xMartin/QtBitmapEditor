@@ -214,4 +214,10 @@ void MainWindow::on_actionRemove_layer_triggered()
 
 }
 
+void MainWindow::changeTool(Tool *newTool)
+{
+    if(this->context.tool) delete this->context.tool;
+    this->context.tool = newTool;
+}
+
 

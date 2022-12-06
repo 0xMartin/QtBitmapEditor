@@ -14,6 +14,7 @@
  */
 struct AppContext_t {
     Project *project; /** Aktualne ovevtreni projekt*/
+    Tool *tool; /** Aktualne pouzivany graficky nastroj */
     Workspace *workspace; /** Nejdulezitejsi komponent. Komponenta pro editaci projektu */
     ToolController *toolController; /** Komponenta pro nastavovani parametru aktualne zvoleneho nastroje*/
     LayerManager *layerManager; /** Komponenta pro spravu vrstev projektu*/
@@ -23,6 +24,7 @@ struct AppContext_t {
 static void AptCntx_destructAppContext(AppContext_t *context) {
     if(context == NULL) return;
     if(context->project) delete context->project;
+    if(context->tool) delete context->tool;
     if(context->workspace) delete context->workspace;
     if(context->toolController) delete context->toolController;
     if(context->layerManager) delete context->layerManager;

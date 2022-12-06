@@ -8,6 +8,7 @@
 
 
 #include "project.h"
+#include "tool.h"
 #include "../utility/mouseeventhelper.h"
 
 
@@ -74,6 +75,12 @@ public:
     virtual void mouseMoveEvent(QMouseEvent *event) override;
     virtual void wheelEvent(QWheelEvent *event) override;
 
+    Tool *getTool() const;
+    void setTool(Tool *newTool);
+
+signals:
+    void toolChanged();
+
 protected:
     // aktualni projekt
     Project *project;
@@ -95,6 +102,9 @@ protected:
 
     // pointer na parent scroll area component
     QScrollArea *parentScrollArea;
+
+    // aktualne zvoleny graficky nastroj
+    Tool *tool;
 
     /**
      * @brief QWidget paint event
@@ -122,6 +132,7 @@ private:
      * @return QPoint
      */
     QPoint getViewPortOffset() const;
+    Q_PROPERTY(Tool *tool READ getTool WRITE setTool NOTIFY toolChanged)
 };
 
 #endif // WORKSPACE_H
