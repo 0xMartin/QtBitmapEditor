@@ -50,6 +50,12 @@ public:
     QPoint getCurrent() const;
 
     /**
+     * @brief Posledni zaznamenana pozice v move eventu
+     * @return QPoint
+     */
+    const QPoint *getLast() const;
+
+    /**
      * @brief Vzdalenost od pozice kde naposledy byl zaznamenan press event
      * @return Vzdalenost
      */
@@ -143,6 +149,14 @@ protected:
     QPoint doubleClick; /** Pozice mouse double click eventu */
     QPoint current; /** Aktulani pozice kurzoru */
     QPoint last; /** Predchozi pozice kurzoru */
+
+private:
+    enum LastLoadMode {
+        NEW, LOAD
+    };
+
+    LastLoadMode lastLDM; /** Zpusop nacteni last pozice */
+    QPoint last_tmp; /** Docasna promenna pro last */
 };
 
 #endif // MOUSEEVENTHELPER_H

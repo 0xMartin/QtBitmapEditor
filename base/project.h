@@ -149,6 +149,7 @@ public:
     void mouseReleaseEvent(const QPoint &pos);
     void mouseDoubleClickEvent(const QPoint &pos);
     void mouseMoveEvent(const QPoint &pos);
+    void outOfAreaEvent(const QPoint &pos);
 
 signals:
     /**

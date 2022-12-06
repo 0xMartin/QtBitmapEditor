@@ -14,8 +14,9 @@
 #define INV_SCALE(scale) (1.0 / scale)
 
 
-Workspace::Workspace(QWidget *parent): QWidget(parent)
+Workspace::Workspace(const Config_Workspace_t &config, QWidget *parent): QWidget(parent)
 {
+    this->config = config;
     this->project = NULL;
     this->scale = 1.0f;
     this->mouseHelper = MouseEventHelper(5);
@@ -25,10 +26,6 @@ Workspace::Workspace(QWidget *parent): QWidget(parent)
     this->setMinimumSize(QSize(400, 400));
     this->setBackgroundRole(QPalette::Base);
     this->setAutoFillBackground(true);
-
-    this->font.setFamily("Monospace");
-    this->font.setPixelSize(11);
-    this->font.setStyle(QFont::StyleNormal);
 }
 
 void Workspace::setProject(Project *project) {
@@ -76,24 +73,17 @@ float Workspace::getScale() const
     return this->scale;
 }
 
-const QFont &Workspace::getFont() const
-{
-    return this->font;
-}
-
-void Workspace::setFont(const QFont &newFont)
-{
-    this->font = newFont;
-}
-
 void Workspace::mousePressEvent(QMouseEvent *event)
 {
     switch (event->buttons()) {
     case Qt::LeftButton:
         // press event -> projekt
         if(this->project) {
-            QPoint pos = this->calculateEventOffsetPosition(event->pos());
-            if(pos.x() >= 0) {
+            bool outOfArea = false;
+            QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            if(outOfArea) {
+                this->project->outOfAreaEvent(pos);
+            } else {
                 this->project->mousePressEvent(pos);
                 this->repaint();
             }
@@ -110,8 +100,11 @@ void Workspace::mouseReleaseEvent(QMouseEvent *event)
     // release event  -> projekt
     if(event->buttons() != Qt::LeftButton) {
         if(this->project) {
-            QPoint pos = this->calculateEventOffsetPosition(event->pos());
-            if(pos.x() >= 0) {
+            bool outOfArea = false;
+            QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            if(outOfArea) {
+                this->project->outOfAreaEvent(pos);
+            } else {
                 this->project->mouseReleaseEvent(pos);
                 this->repaint();
             }
@@ -133,8 +126,11 @@ void Workspace::mouseDoubleClickEvent(QMouseEvent *event)
     switch (event->buttons()) {
     case Qt::LeftButton:
         if(this->project) {
-            QPoint pos = this->calculateEventOffsetPosition(event->pos());
-            if(pos.x() >= 0) {
+            bool outOfArea = false;
+            QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            if(outOfArea) {
+                this->project->outOfAreaEvent(pos);
+            } else {
                 this->project->mouseDoubleClickEvent(pos);
                 this->repaint();
             }
@@ -151,8 +147,11 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
     case Qt::LeftButton:
         // press event -> projekt
         if(this->project) {
-            QPoint pos = this->calculateEventOffsetPosition(event->pos());
-            if(pos.x() >= 0) {
+            bool outOfArea = false;
+            QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            if(outOfArea) {
+                this->project->outOfAreaEvent(pos);
+            } else {
                 this->project->mouseMoveEvent(pos);
                 this->repaint();
             }
@@ -162,7 +161,7 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
         // move event -> zmena offsetu workspace pomoci stredoveho tlacitka
         if(this->mouseHelper.processMoveEvent(event->pos())) {
             QPoint diff = this->mouseHelper.diffFromLastPos();
-            this->globalOffset += diff * INV_SCALE(this->scale);
+            this->globalOffset += diff * INV_SCALE(this->scale) * this->config.mouseSensitivity;
             this->repaint();
         }
         break;
@@ -171,14 +170,15 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
 
 void Workspace::wheelEvent(QWheelEvent *event)
 {
+    // zoom in & zoom out
     if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
         if(event->angleDelta().y() > 0) {
             if(this->scale < 3) {
-                this->addScale(0.05);
+                this->addScale(0.05); // 5 %
             } else if(this->scale < 6) {
-                this->addScale(0.2);
+                this->addScale(0.2); // 20 %
             } else {
-                this->addScale(0.4);
+                this->addScale(0.4); // 40 %
             }
         } else {
             if(this->scale < 3) {
@@ -205,6 +205,17 @@ void Workspace::setTool(Tool *newTool)
     emit toolChanged();
 }
 
+const Config_Workspace_t &Workspace::getConfig() const
+{
+    return this->config;
+}
+
+void Workspace::setConfig(const Config_Workspace_t &newConfig)
+{
+    this->config = newConfig;
+    emit configChanged();
+}
+
 void Workspace::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
 
@@ -229,7 +240,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         // aplikace offsetu
         painter.translate(offset);
         // vykresleni pozadi obrazku (sachovnice)
-        Layer_paintBgGrid(painter, s * this->scale, 16);
+        Layer_paintBgGrid(painter, s * this->scale, 15);
         // aplikace scale
         painter.scale(this->scale, this->scale);
         // vykresleni projektu
@@ -242,7 +253,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         // vykresleni ramecku meritek
         painter.fillRect(26, 0, this->width(), 26, QBrush(QColor(50, 50, 50), Qt::SolidPattern));
         painter.fillRect(0, 26, 26, this->height(), QBrush(QColor(50, 50, 50), Qt::SolidPattern));
-        painter.setFont(this->font);
+        painter.setFont(this->config.font);
         painter.setPen(QColor(150, 150, 150));
 
 
@@ -286,8 +297,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         }
         px_step = s.height() / ((float)scaled_size / step);
         from_start_to_0 = qCeil((float)offset.y() / step);
-        QFontMetrics fm(this->font);
-
+        QFontMetrics fm(this->config.font);
         px = -px_step * from_start_to_0;
         for(int y = offset.y() - step * from_start_to_0;
             y < this->height();
@@ -303,7 +313,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         }
 
         // stredovy ramecek meritek
-        painter.fillRect(0, 0, 26, 26, QBrush(QColor(45, 45, 45), Qt::SolidPattern));
+        painter.fillRect(0, 0, 26, 26, QBrush(QColor(46, 46, 46), Qt::SolidPattern));
 
 
         // pozicni informace
@@ -321,7 +331,8 @@ void Workspace::paintEvent(QPaintEvent *event) {
                              this->width() - 170,
                              this->height() - 9),
                          buffer);
-        QPoint pos = this->calculateEventOffsetPosition(this->currentPos);
+        bool b;
+        QPoint pos = this->calculateEventOffsetPosition(this->currentPos, b);
         buffer = "X: " + QString::number(pos.x()) + " Y: " + QString::number(pos.y());
         painter.drawText(QPointF(
                              this->width() - 110,
@@ -331,7 +342,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
 }
 
-QPoint Workspace::calculateEventOffsetPosition(const QPoint &pos) const
+QPoint Workspace::calculateEventOffsetPosition(const QPoint &pos, bool &outOfRange) const
 {
     // workspace center offset : (widget.size - project.size) / 2
     QSize s = this->project->getSize();
@@ -350,9 +361,23 @@ QPoint Workspace::calculateEventOffsetPosition(const QPoint &pos) const
 
     // pokud je mimo kreslici plochu tak zneplatni hodnoty
     if(offset.x() < 0 || offset.y() < 0 || offset.x() > s.width() || offset.y() > s.height()) {
-        offset.setX(-1);
-        offset.setY(-1);
+        outOfRange = true;
+    } else {
+        outOfRange = false;
     }
 
     return offset;
+}
+
+Config_Workspace_t Workspace_defaultConfig()
+{
+    Config_Workspace_t cnfg;
+
+    cnfg.font.setFamily("Monospace");
+    cnfg.font.setPixelSize(11);
+    cnfg.font.setStyle(QFont::StyleNormal);
+
+    cnfg.mouseSensitivity = 1.3;
+
+    return cnfg;
 }

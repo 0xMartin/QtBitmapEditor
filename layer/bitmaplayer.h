@@ -2,7 +2,6 @@
 #define BITMAPLAYER_H
 
 #include <QPixmap>
-#include <QPainter>
 
 #include "../base/layer.h"
 #include "../utility/mouseeventhelper.h"
@@ -17,8 +16,6 @@ public:
      * @param size - Rozmery bitmapy
      */
     BitmapLayer(QObject *parent, const QString &name, const QSize &size);
-
-    ~BitmapLayer();
 
     /**
      * @brief Navrati rozmery bitmapy
@@ -45,11 +42,11 @@ public:
     virtual void mouseReleaseEvent(const QPoint &pos) override;
     virtual void mouseDoubleClickEvent(const QPoint &pos) override;
     virtual void mouseMoveEvent(const QPoint &pos) override;
+    virtual void outOfAreaEvent(const QPoint &pos) override;
 
 protected:
     QSize size; /** Velikost bitmapy */
     QPixmap pixmap; /** Bitmapa */
-    QPainter *painter; /** Painter pro kresleni do bitmapy*/
 
     // helper pro mouse eventy
     MouseEventHelper mouseHelper;

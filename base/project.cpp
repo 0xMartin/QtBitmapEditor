@@ -214,3 +214,10 @@ void Project::mouseMoveEvent(const QPoint &pos)
     }
 }
 
+void Project::outOfAreaEvent(const QPoint &pos)
+{
+    if(this->selected_layer) {
+        this->selected_layer->outOfAreaEvent(pos);
+    }
+}
+

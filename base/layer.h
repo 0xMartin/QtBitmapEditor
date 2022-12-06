@@ -3,8 +3,10 @@
 
 #include <QObject>
 #include <QPainter>
-#include <QPixmap>
 #include <QDebug>
+
+#define MAX(a, b)  (((a) > (b)) ? (a) : (b))
+#define MIN(a, b)  (((a) < (b)) ? (a) : (b))
 
 /**
  * @brief Abstraktni trida vrstvy. Reprezentuje jednu vrstvu bitmapoveho obrazku.
@@ -70,6 +72,18 @@ public:
     QSize getSize() const;
 
     /**
+     * @brief Povoli nebo zakaze Antialiasing
+     * @param enabled - Povolen/Nepovolen
+     */
+    void enableAntialiasing(bool enabled);
+
+    /**
+     * @brief Je antialiasing povolen ?
+     * @return Povolen/Nepovolen
+     */
+    bool isAntialiasingEnabled() const;
+
+    /**
      * @brief Paint event. Vykresli vrstvu do workspacu
      * @param painter - QPainter
      */
@@ -80,11 +94,15 @@ public:
     virtual void mouseReleaseEvent(const QPoint &pos) = 0;
     virtual void mouseDoubleClickEvent(const QPoint &pos) = 0;
     virtual void mouseMoveEvent(const QPoint &pos) = 0;
+    virtual void outOfAreaEvent(const QPoint &pos) = 0;
 
 protected:
     QString name; /** Nazev vrstvy */
     bool visibility; /** Viditelnost vrstvy */
     float opacity; /** Nepruhlednost vrstvy */
+    bool antialiasing; /** Antialiasing povolen/zakazan */
+
+    QPainter *painter; /** Painter pro kresleni do vrstvy*/
 };
 
 /**

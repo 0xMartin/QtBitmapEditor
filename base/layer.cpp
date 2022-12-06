@@ -7,10 +7,14 @@ Layer::Layer(QObject *parent, const QString &name) : QObject(parent)
     this->name = name;
     this->visibility = true;
     this->opacity = 1.0;
+    this->antialiasing = true;
 }
 
 Layer::~Layer() {
-
+    if(this->painter) {
+        this->painter->end();
+        delete this->painter;
+    }
 }
 
 void Layer::setVisible(bool visibility) {
@@ -54,6 +58,19 @@ QSize Layer::getSize() const
         return ((Project*)parent)->getSize();
     }
     return QSize(0, 0);
+}
+
+void Layer::enableAntialiasing(bool enabled)
+{
+    this->antialiasing = enabled;
+    if(this->painter != NULL) {
+        this->painter->setRenderHint(QPainter::Antialiasing, enabled);
+    }
+}
+
+bool Layer::isAntialiasingEnabled() const
+{
+    return this->antialiasing;
 }
 
 void Layer_paintBgGrid(QPainter &painter, const QSize &size, const size_t step)

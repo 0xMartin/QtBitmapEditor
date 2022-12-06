@@ -11,6 +11,10 @@
 #include "tool.h"
 #include "../utility/mouseeventhelper.h"
 
+struct Config_Workspace_t {
+    QFont font; /** Font pro texty ve workspace (meritka + pozicni informace)*/
+    float mouseSensitivity; /** Citlivost mysi */
+};
 
 /**
  * @brief Tato komponenta se stara o spravne vykreslovani projektu (obrazku) a
@@ -21,10 +25,11 @@ class Workspace : public QWidget
     Q_OBJECT
 public:
     /**
-     * @brief Vytvori workspace
-     * @param parent - Parrent objekt
+     * @brief Vytvori instanci workspac widgetu
+     * @param config - Konfiguracni soubor
+     * @param parent - Parent widget
      */
-    explicit Workspace(QWidget *parent = nullptr);
+    explicit Workspace(const Config_Workspace_t &config, QWidget *parent = nullptr);
 
     /**
      * @brief Nastavi projekt se ktery se bude pracovat
@@ -56,18 +61,6 @@ public:
      */
     float getScale() const;
 
-    /**
-     * @brief Navrati font (meritak + info)
-     * @return QFont
-     */
-    const QFont &getFont() const;
-
-    /**
-     * @brief Nastavi novy font (meritak + info)
-     * @param newFont - Novy font
-     */
-    void setFont(const QFont &newFont);
-
     // events
     virtual void mousePressEvent(QMouseEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
@@ -78,10 +71,17 @@ public:
     Tool *getTool() const;
     void setTool(Tool *newTool);
 
+    const Config_Workspace_t &getConfig() const;
+    void setConfig(const Config_Workspace_t &newConfig);
+
 signals:
     void toolChanged();
 
+    void configChanged();
+
 protected:
+    Config_Workspace_t config;
+
     // aktualni projekt
     Project *project;
 
@@ -93,9 +93,6 @@ protected:
 
     // aktualni pozice kurzoru
     QPoint currentPos;
-
-    // font meritek
-    QFont font;
 
     // helper pro mouse eventy
     MouseEventHelper mouseHelper;
@@ -114,11 +111,19 @@ private:
      * @brief Vypocita pozici pro eventy projektu (pozici kurzoru prevede na pozici
      * odpovidajici primo na souradnice v projektu)
      * @param pos - Aktualni pozice kurzoru
+     * @param outOfRange - Vystupni parametr (bude nastaven na true pokud kurzor bude mymo kreslici oblast)
      * @return QPoint
      */
-    QPoint calculateEventOffsetPosition(const QPoint &pos) const;
+    QPoint calculateEventOffsetPosition(const QPoint &pos, bool &outOfRange) const;
 
     Q_PROPERTY(Tool *tool READ getTool WRITE setTool NOTIFY toolChanged)
+    Q_PROPERTY(Config_Workspace_t config READ getConfig WRITE setConfig NOTIFY configChanged)
 };
+
+/**
+ * @brief Vygeneruje defaultni konfiguraci pro workspace
+ * @return Config_Workspace_t
+ */
+Q_DECL_EXPORT Config_Workspace_t Workspace_defaultConfig();
 
 #endif // WORKSPACE_H

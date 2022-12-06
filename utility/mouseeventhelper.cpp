@@ -11,11 +11,21 @@ MouseEventHelper::MouseEventHelper(int moveUpdateDist)
     this->doubleClick = QPoint(0, 0);
     this->current = QPoint(0, 0);
     this->last = QPoint(0, 0);
+    this->lastLDM = NEW;
 }
 
 QPoint MouseEventHelper::getCurrent() const
 {
     return this->current;
+}
+
+const QPoint *MouseEventHelper::getLast() const
+{
+    if(!this->lastPosSet && this->lastLDM == NEW) {
+        return NULL;
+    } else {
+        return &this->last;
+    }
 }
 
 QPoint MouseEventHelper::getPress() const
@@ -91,6 +101,7 @@ QPoint MouseEventHelper::diffFromLastPos()
 void MouseEventHelper::resetMove()
 {
     this->lastPosSet = false;
+    this->lastLDM = NEW;
 }
 
 MouseEventHelper MouseEventHelper::lastAction()
@@ -123,14 +134,27 @@ bool MouseEventHelper::processMoveEvent(const QPoint &pos)
 
     // vypocet zmeny
     if(!this->lastPosSet) {
-        // nastaveni last pozice
-        this->last = this->current;
+        switch (this->lastLDM) {
+        case NEW:
+            // nastaveni last pozice (nova)
+            this->last = this->current;
+            break;
+        case LOAD:
+            // nastaveni last pozice (nacte z ulozene hodnoty)
+            this->last = this->last_tmp;
+            break;
+        }
         this->lastPosSet = true;
     } else {
         // pokud vzdalenost mezi last a current prekroci definovanou vzdalenost -> vrati TRUE
         // a nasledne v druhem volani teto tridy se last pozice znovu refreshne
         // moveUpdateDist -> je to druha mocnina
-        if((qPow(this->current.x() - this->last.x(), 2) + qPow(this->current.y() - this->last.y(), 2)) >= this->moveUpdateDist) {
+        if((qPow(this->current.x() - this->last.x(), 2) +
+            qPow(this->current.y() - this->last.y(), 2)) >=
+                this->moveUpdateDist) {
+            // nyni uz hned nastavi "pocatecni pozici" (zamezeni trhane trajektorie pohybu)
+            this->last_tmp = this->current;
+            this->lastLDM = LOAD;
             this->lastPosSet = false;
             return true;
         }
@@ -138,3 +162,4 @@ bool MouseEventHelper::processMoveEvent(const QPoint &pos)
 
     return false;
 }
+

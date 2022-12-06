@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     /*****************************************************************************/
     // inicializace kontextu
-    this->context.workspace = new Workspace(this);
+    this->context.workspace = new Workspace(Workspace_defaultConfig(), this);
     this->context.toolController = new ToolController(this);
     this->context.layerManager = new LayerManager(this);
     /*****************************************************************************/
