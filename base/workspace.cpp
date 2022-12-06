@@ -8,7 +8,7 @@
 
 
 // velikost useku meritka v pixelech
-#define RULE_STEP_PX 100
+#define RULE_STEP_PX_MIN 80
 
 // inverzni scale
 #define INV_SCALE(scale) (1.0 / scale)
@@ -34,6 +34,13 @@ Workspace::Workspace(QWidget *parent): QWidget(parent)
 void Workspace::setProject(Project *project) {
     this->project = project;
     this->project->setParent(this);
+
+    // vypocet vhodneho meritka pri prvnim nacteni projektu
+    if(this->project->getSize().width() > this->project->getSize().height()) {
+        this->setScale(this->width() * 0.6 / this->project->getSize().width());
+    } else {
+        this->setScale(this->scale = this->height() * 0.6 / this->project->getSize().height());
+    }
     this->repaint();
 }
 
@@ -44,8 +51,11 @@ Project *Workspace::getProject() const {
 void Workspace::setScale(float scale)
 {
     if(scale <= 0.0) return;
-    if(scale > 100) return;
+    if(scale > 15.0) {
+        scale = 15.0;
+    }
     this->scale = scale;
+    this->scale -= (float)(qRound(this->scale * 100) % 5) / 100;
     this->repaint();
 }
 
@@ -53,8 +63,11 @@ void Workspace::addScale(float diff)
 {
     float f = this->scale + diff;
     if(f <= 0.0) return;
-    if(f > 100) return;
+    if(f > 15.0) {
+        f = 15.0;
+    }
     this->scale = f;
+    this->scale -= (float)(qRound(this->scale * 100) % 5) / 100;
     this->repaint();
 }
 
@@ -160,9 +173,21 @@ void Workspace::wheelEvent(QWheelEvent *event)
 {
     if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
         if(event->angleDelta().y() > 0) {
-            this->addScale(0.1);
+            if(this->scale < 3) {
+                this->addScale(0.05);
+            } else if(this->scale < 6) {
+                this->addScale(0.2);
+            } else {
+                this->addScale(0.4);
+            }
         } else {
-            this->addScale(-0.1);
+            if(this->scale < 3) {
+                this->addScale(-0.05);
+            } else if(this->scale < 6) {
+                this->addScale(-0.2);
+            } else {
+                this->addScale(-0.4);
+            }
         }
     }
 }
@@ -213,9 +238,6 @@ void Workspace::paintEvent(QPaintEvent *event) {
         painter.restore();
         //-------PROJECT-------------------------
 
-        // center
-        painter.fillRect(this->width()/2, this->height()/2, 11, 11, QBrush(QColor(250, 50, 50), Qt::SolidPattern));
-
 
         // vykresleni ramecku meritek
         painter.fillRect(26, 0, this->width(), 26, QBrush(QColor(50, 50, 50), Qt::SolidPattern));
@@ -223,41 +245,61 @@ void Workspace::paintEvent(QPaintEvent *event) {
         painter.setFont(this->font);
         painter.setPen(QColor(150, 150, 150));
 
-        // x osa meritko
-        int parts = qRound((float)s.width() / RULE_STEP_PX);
-        int px_step = s.width() / parts;
-        int step = px_step * this->scale;
-        int from_start_to_0 = qCeil(offset.x() * INV_SCALE(this->scale) / RULE_STEP_PX);
 
-        for(int x = offset.x() - step * from_start_to_0,
-            px = -px_step * from_start_to_0;
+        // x osa meritko
+        int scaled_size = s.width() * this->scale;
+        int step = RULE_STEP_PX_MIN;
+        float sf;
+        for(int d = 4; d < 20; ++d)
+        {
+            sf = (float) scaled_size / d;
+            if(sf < RULE_STEP_PX_MIN) {
+                break;
+            }
+            if(scaled_size % d == 0) {
+                step = sf;
+            }
+        }
+        float px_step = s.width() / ((float)scaled_size / step);
+        float from_start_to_0 = qCeil(offset.x() / step);
+        float px = -px_step * from_start_to_0;
+        for(int x = offset.x() - step * from_start_to_0;
             x < this->width();
             x+= step, px += px_step) {
-
-            painter.drawText(QPointF(x, 18), QString::number(px));
-            painter.drawLine(x - 5, 4, x - 5, 22);
+            painter.drawText(QPointF(x + 5, 18), QString::number(px, 'f', 0));
+            painter.drawLine(x, 4, x, 22);
         }
 
 
         // y osa meritko
-        parts = qRound((float)s.height() / RULE_STEP_PX);
-        px_step = s.height() / parts;
-        step = px_step * this->scale;
-        from_start_to_0 = qCeil((float)offset.y() * INV_SCALE(this->scale) / RULE_STEP_PX);
+        scaled_size = s.height() * this->scale;
+        step = RULE_STEP_PX_MIN;
+        for(int d = 2; d < 20; ++d)
+        {
+            sf = (float) scaled_size / d;
+            if(sf < RULE_STEP_PX_MIN) {
+                break;
+            }
+            if(scaled_size % d == 0) {
+                step = sf;
+            }
+        }
+        px_step = s.height() / ((float)scaled_size / step);
+        from_start_to_0 = qCeil((float)offset.y() / step);
         QFontMetrics fm(this->font);
 
-        for(int y = offset.y() - step * from_start_to_0,
-            px = -px_step * from_start_to_0;
+        px = -px_step * from_start_to_0;
+        for(int y = offset.y() - step * from_start_to_0;
             y < this->height();
             y+= step, px += px_step) {
 
-            QString num = QString::number(px);
+            QString num = QString::number(px, 'f', 0);
             int i = 0;
             for(QChar &c : num) {
-                painter.drawText(QPointF(8, y + (i + 0.9) * (fm.height() - 4)), c);
+                painter.drawText(QPointF(8, y + (i + 0.9) * (fm.height() - 4) + 5), c);
                 ++i;
             }
-            painter.drawLine(4, y - 5, 22, y - 5);
+            painter.drawLine(4, y, 22, y);
         }
 
         // stredovy ramecek meritek
@@ -274,7 +316,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
                              this->width() - 300,
                              this->height() - 9),
                          buffer);
-        buffer = QString::number(this->scale * 100) + "%";
+        buffer = QString::number(this->scale * 100, 'f', 0) + "%";
         painter.drawText(QPointF(
                              this->width() - 170,
                              this->height() - 9),
