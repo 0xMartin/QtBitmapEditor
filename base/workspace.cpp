@@ -29,8 +29,6 @@ Workspace::Workspace(QWidget *parent): QWidget(parent)
     this->font.setFamily("Monospace");
     this->font.setPixelSize(11);
     this->font.setStyle(QFont::StyleNormal);
-
-    this->parentScrollArea = (QScrollArea*) parent;
 }
 
 void Workspace::setProject(Project *project) {
@@ -56,25 +54,6 @@ void Workspace::addScale(float diff)
     float f = this->scale + diff;
     if(f <= 0.0) return;
     if(f > 100) return;
-
-    /*
-    // center view portu
-    QPointF vpCenter(this->parentWidget()->width() / 2, this->parentWidget()->height() / 2);
-    // float center pozice v projektu pro aktualnim meritko
-    QPointF pt_1(vpCenter.x(), vpCenter.y());
-    pt_1.setX(pt_1.x() / this->width());
-    pt_1.setY(pt_1.y() / this->height());
-    // nova velikost po aplikaci meritka
-    QSize ps = this->project->getSize();
-    QPointF pt(this->parentWidget()->width(), this->parentWidget()->height());
-    pt.setX(qMax(pt.x(), ps.width() * f));
-    pt.setY(qMax(pt.y(), ps.height() * f));
-    // delta P = (Pt * [Pt-1(VPc)/Pt-1] - VPc) * signum(scale_t - scale_t-1)
-    this->globalOffset += QPoint(pt.x() * pt_1.x() - vpCenter.x(),
-                                 pt.y() * pt_1.y() - vpCenter.y()
-                                 ) * ((f - this->scale) >= 0 ? 1 : -1);
-    */
-
     this->scale = f;
     this->repaint();
 }
@@ -170,7 +149,7 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
         // move event -> zmena offsetu workspace pomoci stredoveho tlacitka
         if(this->mouseHelper.processMoveEvent(event->pos())) {
             QPoint diff = this->mouseHelper.diffFromLastPos();
-            this->globalOffset += diff;
+            this->globalOffset += diff * INV_SCALE(this->scale);
             this->repaint();
         }
         break;
@@ -204,11 +183,6 @@ void Workspace::setTool(Tool *newTool)
 void Workspace::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
 
-
-    // update velikosti
-    updateSizeOfWorkaspace();
-
-
     // nastaveni kvality vykreslovani
     painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -218,7 +192,6 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
     if(this->project != NULL) {
         QSize s = this->project->getSize();
-        QSize vpSize = this->parentWidget()->size();
 
         // vypocet offsetu na stred celkove plochy workspacu
         QPoint offset(
@@ -241,14 +214,12 @@ void Workspace::paintEvent(QPaintEvent *event) {
         //-------PROJECT-------------------------
 
         // center
-        painter.fillRect(vpSize.width()/2, vpSize.height()/2, 11, 11, QBrush(QColor(250, 50, 50), Qt::SolidPattern));
+        painter.fillRect(this->width()/2, this->height()/2, 11, 11, QBrush(QColor(250, 50, 50), Qt::SolidPattern));
 
-        // view port offset
-        QPoint voff = this->getViewPortOffset();
 
         // vykresleni ramecku meritek
-        painter.fillRect(26, voff.y(), this->width(), 26, QBrush(QColor(50, 50, 50), Qt::SolidPattern));
-        painter.fillRect(voff.x(), 26, 26, this->height(), QBrush(QColor(50, 50, 50), Qt::SolidPattern));
+        painter.fillRect(26, 0, this->width(), 26, QBrush(QColor(50, 50, 50), Qt::SolidPattern));
+        painter.fillRect(0, 26, 26, this->height(), QBrush(QColor(50, 50, 50), Qt::SolidPattern));
         painter.setFont(this->font);
         painter.setPen(QColor(150, 150, 150));
 
@@ -256,15 +227,15 @@ void Workspace::paintEvent(QPaintEvent *event) {
         int parts = qRound((float)s.width() / RULE_STEP_PX);
         int px_step = s.width() / parts;
         int step = px_step * this->scale;
-        int from_start_to_0 = qCeil(offset.x() / RULE_STEP_PX);
+        int from_start_to_0 = qCeil(offset.x() * INV_SCALE(this->scale) / RULE_STEP_PX);
 
         for(int x = offset.x() - step * from_start_to_0,
             px = -px_step * from_start_to_0;
             x < this->width();
-
             x+= step, px += px_step) {
-            painter.drawText(QPointF(x, 18 + voff.y()), QString::number(px));
-            painter.drawLine(x - 5, 4 + voff.y(), x - 5, 22 + voff.y());
+
+            painter.drawText(QPointF(x, 18), QString::number(px));
+            painter.drawLine(x - 5, 4, x - 5, 22);
         }
 
 
@@ -272,7 +243,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         parts = qRound((float)s.height() / RULE_STEP_PX);
         px_step = s.height() / parts;
         step = px_step * this->scale;
-        from_start_to_0 = qCeil((float)offset.y() / RULE_STEP_PX);
+        from_start_to_0 = qCeil((float)offset.y() * INV_SCALE(this->scale) / RULE_STEP_PX);
         QFontMetrics fm(this->font);
 
         for(int y = offset.y() - step * from_start_to_0,
@@ -283,56 +254,39 @@ void Workspace::paintEvent(QPaintEvent *event) {
             QString num = QString::number(px);
             int i = 0;
             for(QChar &c : num) {
-                painter.drawText(QPointF(8 + voff.x(), y + (i + 0.9) * (fm.height() - 4)), c);
+                painter.drawText(QPointF(8, y + (i + 0.9) * (fm.height() - 4)), c);
                 ++i;
             }
-            painter.drawLine(4 + voff.x(), y - 5, 22 + voff.x(), y - 5);
+            painter.drawLine(4, y - 5, 22, y - 5);
         }
 
         // stredovy ramecek meritek
-        painter.fillRect(voff.x(), voff.y(), 26, 26, QBrush(QColor(45, 45, 45), Qt::SolidPattern));
+        painter.fillRect(0, 0, 26, 26, QBrush(QColor(45, 45, 45), Qt::SolidPattern));
 
 
         // pozicni informace
-        painter.fillRect(26 + voff.x(), vpSize.height() + voff.y() - 26, vpSize.width(), 26, QBrush(QColor(45, 45, 45), Qt::SolidPattern));
+        painter.fillRect(26, this->height() - 26, this->width(), 26, QBrush(QColor(45, 45, 45), Qt::SolidPattern));
         painter.setPen(QColor(210, 150, 150));
         Layer *l = this->project->getSelectedLayer();
         QString buffer = "Name: ";
         if(l) buffer += l->getName();
         painter.drawText(QPointF(
-                             vpSize.width() - 300 + voff.x(),
-                             vpSize.height() - 9 + voff.y()),
+                             this->width() - 300,
+                             this->height() - 9),
                          buffer);
         buffer = QString::number(this->scale * 100) + "%";
         painter.drawText(QPointF(
-                             vpSize.width() - 170 + voff.x(),
-                             vpSize.height() - 9 + voff.y()),
+                             this->width() - 170,
+                             this->height() - 9),
                          buffer);
         QPoint pos = this->calculateEventOffsetPosition(this->currentPos);
         buffer = "X: " + QString::number(pos.x()) + " Y: " + QString::number(pos.y());
         painter.drawText(QPointF(
-                             vpSize.width() - 110 + voff.x(),
-                             vpSize.height() - 9 + voff.y()),
+                             this->width() - 110,
+                             this->height() - 9),
                          buffer);
     }
 
-}
-
-void Workspace::updateSizeOfWorkaspace() {
-    QSize size = this->parentWidget()->size();
-
-    // pokud je velikost obrazku projetku vetsi nez velikost rodice pak tyto parametry prenastavi
-    if(this->project) {
-        QSize size2 = project->getSize();
-        size2 *= this->scale;
-        size.setWidth(qMax(size2.width(), size.width()));
-        size.setHeight(qMax(size2.height(), size.height()));
-    }
-
-    // pokud dojde ke zmene velikost tak je prenastavi samotnemu workspacu
-    if(this->size() != size) {
-        this->setFixedSize(size);
-    }
 }
 
 QPoint Workspace::calculateEventOffsetPosition(const QPoint &pos) const
@@ -359,11 +313,4 @@ QPoint Workspace::calculateEventOffsetPosition(const QPoint &pos) const
     }
 
     return offset;
-}
-
-QPoint Workspace::getViewPortOffset() const
-{
-    return QPoint(this->parentScrollArea->horizontalScrollBar()->value(),
-                  this->parentScrollArea->verticalScrollBar()->value()
-                  );
 }

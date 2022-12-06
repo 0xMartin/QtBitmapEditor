@@ -27,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->toolBar->addAction(this->ui->actionRectangle);
     this->ui->toolBar->addAction(this->ui->actionPolygon);
     this->ui->toolBar->addSeparator();
-    // scroll area pro workspace
-    this->scrollArea_workspace = new QScrollArea(this);
     // label pro status bar
     this->statusLabel = new QLabel(this->ui->statusbar);
     this->statusLabel->setAlignment(Qt::AlignLeft);
@@ -39,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     /*****************************************************************************/
     // inicializace kontextu
-    this->context.workspace = new Workspace(this->scrollArea_workspace);
+    this->context.workspace = new Workspace(this);
     this->context.toolController = new ToolController(this);
     this->context.layerManager = new LayerManager(this);
     /*****************************************************************************/
@@ -50,8 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->splitter_horizontal = new QSplitter(Qt::Horizontal);
 
     // leva strana (pracovani plocha pro upravu bitmapove grafiky)
-    this->scrollArea_workspace->setWidget(this->context.workspace);
-    this->splitter_horizontal->addWidget(this->scrollArea_workspace);
+    this->splitter_horizontal->addWidget(this->context.workspace);
 
     // prava strany (manazer vrstev + ovladani aktualne vybraneho nastroje)
     this->splitter_vertical = new QSplitter(Qt::Vertical);
@@ -92,7 +89,6 @@ MainWindow::~MainWindow()
 
     if(this->splitter_horizontal) delete this->splitter_horizontal;
     if(this->splitter_vertical) delete this->splitter_vertical;
-    if(this->scrollArea_workspace) delete this->scrollArea_workspace;
     if(this->statusLabel) delete this->statusLabel;
 }
 

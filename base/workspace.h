@@ -14,7 +14,7 @@
 
 /**
  * @brief Tato komponenta se stara o spravne vykreslovani projektu (obrazku) a
- * grafickou manipulaci s nim. Tento widget musi byt umisten v QScrollArea!!!
+ * grafickou manipulaci s nim.
  */
 class Workspace : public QWidget
 {
@@ -100,9 +100,6 @@ protected:
     // helper pro mouse eventy
     MouseEventHelper mouseHelper;
 
-    // pointer na parent scroll area component
-    QScrollArea *parentScrollArea;
-
     // aktualne zvoleny graficky nastroj
     Tool *tool;
 
@@ -111,12 +108,6 @@ protected:
      * @param event - QPaintEvent
      */
     void paintEvent(QPaintEvent *event) override;
-
-    /**
-     * @brief Obnoveni velikosti workspacu (minimalni velikost == velikost parent objektu,
-     * aktualni velikost vzdy odpovida tak aby se na workspace vesel cely obrazek i po aplikace scale)
-     */
-    void updateSizeOfWorkaspace();
 
 private:
     /**
@@ -127,11 +118,6 @@ private:
      */
     QPoint calculateEventOffsetPosition(const QPoint &pos) const;
 
-    /**
-     * @brief Navrati offset view portu (offset parent scoll area)
-     * @return QPoint
-     */
-    QPoint getViewPortOffset() const;
     Q_PROPERTY(Tool *tool READ getTool WRITE setTool NOTIFY toolChanged)
 };
 

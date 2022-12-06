@@ -137,7 +137,6 @@ private:
     Ui::MainWindow *ui;
     QSplitter* splitter_horizontal;
     QSplitter* splitter_vertical;
-    QScrollArea *scrollArea_workspace;
     QLabel *statusLabel;
 
     void changeTool(Tool *newTool);
