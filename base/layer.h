@@ -5,8 +5,6 @@
 #include <QPainter>
 #include <QDebug>
 
-#define MAX(a, b)  (((a) > (b)) ? (a) : (b))
-#define MIN(a, b)  (((a) < (b)) ? (a) : (b))
 
 /**
  * @brief Abstraktni trida vrstvy. Reprezentuje jednu vrstvu bitmapoveho obrazku.
@@ -102,7 +100,7 @@ protected:
     float opacity; /** Nepruhlednost vrstvy */
     bool antialiasing; /** Antialiasing povolen/zakazan */
 
-    QPainter *painter; /** Painter pro kresleni do vrstvy*/
+    QPainter painter; /** Painter pro kresleni do vrstvy*/
 };
 
 /**
@@ -112,5 +110,6 @@ protected:
  * @param step - Velikost jednoho ctverecku pozadi
  */
 Q_DECL_EXPORT void Layer_paintBgGrid(QPainter &painter, const QSize &size, const size_t step);
+
 
 #endif // LAYER_H

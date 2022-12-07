@@ -89,6 +89,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->project = NULL;
     this->setMaximumWidth(500);
     this->mainLayout = new QVBoxLayout(this);
+    this->setLayout(this->mainLayout);
 
     // ovladani aktualni vrstvy (opacity)
     //------------------------------------------------------------------------------------------
@@ -171,10 +172,7 @@ LayerManager::~LayerManager() {
 
     if(this->mainLayout) delete this->mainLayout;
     if(this->listControl) delete this->listControl;
-    if(this->listControlLayout) delete this->listControlLayout;
-    if(this->spacer) delete this->spacer;
     if(this->layerControl) delete this->layerControl;
-    if(this->layerControllLayout) delete this->layerControllLayout;
 }
 
 void LayerManager::setProject(Project *project)

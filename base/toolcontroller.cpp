@@ -4,13 +4,6 @@ ToolController::ToolController(QWidget *parent) : QWidget(parent)
 {
     this->tool = NULL;
     this->project = NULL;
-    this->mainLayout = new QHBoxLayout(this);
-    this->setLayout(this->mainLayout);
-}
-
-ToolController::~ToolController()
-{
-    if(this->mainLayout) delete this->mainLayout;
 }
 
 void ToolController::setProject(Project *project)
@@ -25,13 +18,17 @@ Project *ToolController::getProject() const
 
 Tool *ToolController::getTool() const
 {
-    return tool;
+    return this->tool;
 }
 
 void ToolController::setTool(Tool *newTool)
 {
-    if (tool == newTool)
+    if (this->tool == newTool)
         return;
-    tool = newTool;
+    this->tool = newTool;
     emit toolChanged();
+
+    if(this->tool != NULL) {
+        this->setLayout(this->tool->getUI());
+    }
 }

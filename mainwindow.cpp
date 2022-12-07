@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "layer/bitmaplayer.h"
+#include "tool/pen.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -37,9 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     /*****************************************************************************/
     // inicializace kontextu
-    this->context.workspace = new Workspace(Workspace_defaultConfig(), this);
-    this->context.toolController = new ToolController(this);
-    this->context.layerManager = new LayerManager(this);
+    this->context.setWorkspace(new Workspace(Workspace_defaultConfig(), this));
+    this->context.setToolController(new ToolController(this));
+    this->context.setLayerManager(new LayerManager(this));
     /*****************************************************************************/
 
 
@@ -48,14 +49,14 @@ MainWindow::MainWindow(QWidget *parent)
     this->splitter_horizontal = new QSplitter(Qt::Horizontal);
 
     // leva strana (pracovani plocha pro upravu bitmapove grafiky)
-    this->splitter_horizontal->addWidget(this->context.workspace);
+    this->splitter_horizontal->addWidget(this->context.getWorkspace());
 
     // prava strany (manazer vrstev + ovladani aktualne vybraneho nastroje)
     this->splitter_vertical = new QSplitter(Qt::Vertical);
     // horni strana (ovladani nastroje)
-    this->splitter_vertical->addWidget(this->context.toolController);
+    this->splitter_vertical->addWidget(this->context.getToolController());
     // dolni strana (manazer vrstev)
-    this->splitter_vertical->addWidget(this->context.layerManager);
+    this->splitter_vertical->addWidget(this->context.getLayerManager());
 
     this->splitter_horizontal->addWidget(this->splitter_vertical);
     this->setCentralWidget(this->splitter_horizontal);
@@ -70,11 +71,13 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // TEST
-    Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", QSize(500, 500));
-    BitmapLayer *l = new BitmapLayer(p, "Layer 1", QSize(500, 500));
+    Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", QSize(900, 900));
+    BitmapLayer *l = new BitmapLayer(p, "Layer 1", QSize(900, 900));
     p->addLayer(l);
     p->setSelectedLayer(l);
-    AptCntx_setProject(&this->context, p);
+    this->context.setProject(p);
+
+    this->context.setTool(new Pen(this));
 
     this->updateStatusBar();
 }
@@ -83,19 +86,15 @@ MainWindow::~MainWindow()
 {
     delete ui;
 
-    AptCntx_destructAppContext(&this->context);
-
     if(this->colorPicker) delete this->colorPicker;
-
     if(this->splitter_horizontal) delete this->splitter_horizontal;
-    if(this->splitter_vertical) delete this->splitter_vertical;
     if(this->statusLabel) delete this->statusLabel;
 }
 
 void MainWindow::updateStatusBar()
 {
-    if(this->context.workspace == NULL) return;
-    Project *p = this->context.workspace->getProject();
+    if(this->context.getWorkspace() == NULL) return;
+    Project *p = this->context.getWorkspace()->getProject();
     if(p == NULL) {
         this->statusLabel->setText(tr("Project: None"));
     } else {
@@ -209,11 +208,3 @@ void MainWindow::on_actionRemove_layer_triggered()
 {
 
 }
-
-void MainWindow::changeTool(Tool *newTool)
-{
-    if(this->context.tool) delete this->context.tool;
-    this->context.tool = newTool;
-}
-
-

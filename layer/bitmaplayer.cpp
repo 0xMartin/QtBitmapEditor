@@ -5,8 +5,6 @@ BitmapLayer::BitmapLayer(QObject *parent, const QString &name, const QSize &size
     this->size = size;
     if(size.width() >= 1 && size.height() >= 1) {
         this->pixmap = QPixmap(size);
-        this->painter = new QPainter(&this->pixmap);
-        this->enableAntialiasing(this->isAntialiasingEnabled());
     }
     this->mouseHelper = MouseEventHelper(3);
 }
@@ -21,12 +19,7 @@ void BitmapLayer::setSize(const QSize &newSize)
     if(newSize.width() >= 1 && newSize.height() >= 1) {
         this->size = newSize;
         this->pixmap = this->pixmap.scaled(this->size.width(), this->size.height(), Qt::KeepAspectRatio);
-        if(this->painter) {
-            this->painter->end();
-            delete this->painter;
-        }
-        this->painter = new QPainter(&this->pixmap);
-        this->enableAntialiasing(this->isAntialiasingEnabled());
+        this->painter.end();
     }
 }
 
@@ -64,8 +57,11 @@ void BitmapLayer::mouseMoveEvent(const QPoint &pos)
         QLine line = this->mouseHelper.lineFromLastPos();
 
         // TOOL
-        painter->setPen(QPen(Qt::red, 3));
-        painter->drawLine(line);
+        this->painter.begin(&this->pixmap);
+        painter.setRenderHint(QPainter::Antialiasing);
+        this->painter.setPen(QPen(Qt::red, 3));
+        this->painter.drawLine(line);
+        this->painter.end();
         // TOOL
     }
 }
@@ -78,8 +74,11 @@ void BitmapLayer::outOfAreaEvent(const QPoint &pos)
         QLine line(*last, pos);
 
         // TOOL
-        painter->setPen(QPen(Qt::red, 3));
-        painter->drawLine(line);
+        this->painter.begin(&this->pixmap);
+        painter.setRenderHint(QPainter::Antialiasing);
+        this->painter.setPen(QPen(Qt::red, 3));
+        this->painter.drawLine(line);
+        this->painter.end();
         // TOOL
 
         // reset

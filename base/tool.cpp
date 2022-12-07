@@ -1,19 +1,21 @@
 #include "tool.h"
 
-Tool::Tool()
+Tool::Tool(QObject *parent) : QObject(parent)
 {
-
+    this->ui = NULL;
+    this->layer = NULL;
 }
 
-const QList<QWidget*> &Tool::getControlls() const
+Tool::~Tool()
 {
-    return this->controlls;
 }
 
-bool Tool::addControll(QWidget *controll)
+void Tool::bindLayer(Layer *layer)
 {
-    if(controll == NULL) return false;
-    this->controlls.push_back(controll);
+    this->layer = layer;
+}
 
-    return true;
+QLayout *Tool::getUI()
+{
+    return this->ui;
 }

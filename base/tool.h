@@ -1,27 +1,44 @@
 #ifndef TOOL_H
 #define TOOL_H
 
+#include <QObject>
 #include <QWidget>
+#include <QList>
 
-class Tool
+#include "layer.h"
+
+class Tool : public QObject
 {
+    Q_OBJECT
 public:
-    Tool();
+    Tool(QObject *parent);
+
+    virtual ~Tool();
 
     /**
-     * @brief Navrati list controll elementu
-     * @return QList<QWidget*>
+     * @brief Priradi nastroji vrstvu se kterou bude manipulovat
      */
-    const QList<QWidget*> &getControlls() const;
+    void bindLayer(Layer *layer);
+
     /**
-     * @brief addControll
-     * @param controll - Novy controll widged (control == QWidged, ktery manimuluje s parametry zvoleneho nastroje)
-     * @return True -> uspech
+     * @brief Navrati UI tohoto nastroje
+     * @return QLayout
      */
-    bool addControll(QWidget *controll);
+    QLayout *getUI();
+
+    // events
+    virtual void mousePressEvent(const QPoint &pos) = 0;
+    virtual void mouseReleaseEvent(const QPoint &pos) = 0;
+    virtual void mouseDoubleClickEvent(const QPoint &pos) = 0;
+    virtual void mouseMoveEvent(const QPoint &pos) = 0;
+    virtual void outOfAreaEvent(const QPoint &pos) = 0;
 
 protected:
-    QList<QWidget*> controlls;
+    // manipulovana vrstva
+    Layer *layer;
+
+    //ovladaci UI nastroje
+    QLayout *ui;
 };
 
 #endif // TOOL_H

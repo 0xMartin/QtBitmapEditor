@@ -15,6 +15,12 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 
+# TOOL
+set(QBE_TOOL
+    tool/pen.h
+    tool/pen.cpp
+)
+
 # LAYER
 set(QBE_LAYER
     layer/bitmaplayer.h
@@ -49,6 +55,7 @@ set(QBE_RES
 # BASE
 set(QBE_BASE
     base/app_context.h
+    base/app_context.cpp
     base/dialogs.h
     base/project.h
     base/project.cpp
@@ -69,6 +76,7 @@ set(PROJECT_SOURCES
     main.cpp
     ${QBE_BASE}
     ${QBE_LAYER}
+    ${QBE_TOOL}
     ${QBE_UTILITY}
     ${QBE_UI}
     ${QBE_RES}

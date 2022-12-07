@@ -17,7 +17,6 @@ class ToolController : public QWidget
 
 public:
     explicit ToolController(QWidget *parent = nullptr);
-    ~ToolController();
 
     /**
      * @brief Nastavi projekt se ktery se bude pracovat
@@ -52,9 +51,6 @@ protected:
 
     // aktualni projekt
     Project *project;
-
-    // ui
-    QHBoxLayout *mainLayout;
 
 private:
     Q_PROPERTY(Tool *tool READ getTool WRITE setTool NOTIFY toolChanged)

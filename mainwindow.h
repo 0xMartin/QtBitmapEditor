@@ -33,7 +33,7 @@ public:
     void updateStatusBar();
 protected:
     // kontext aplikace
-    AppContext_t context;
+    AppContext context;
 
     // utility
     ColorPicker *colorPicker;
@@ -138,8 +138,6 @@ private:
     QSplitter* splitter_horizontal;
     QSplitter* splitter_vertical;
     QLabel *statusLabel;
-
-    void changeTool(Tool *newTool);
 
 };
 #endif // MAINWINDOW_H

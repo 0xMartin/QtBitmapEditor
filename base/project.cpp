@@ -173,18 +173,6 @@ void Project::paintEvent(QPainter &painter) {
     painter.drawRect(0, 0, this->size.width(), this->size.height());
 }
 
-void Project::exportEvent(QPainter &painter) {
-    // vykresli vrstvy
-    QPoint offset(0, 0);
-    if(this->layers) {
-        for(Layer *layer : *this->layers) {
-            if(layer) {
-                layer->paintEvent(painter);
-            }
-        }
-    }
-}
-
 void Project::mousePressEvent(const QPoint &pos)
 {
     if(this->selected_layer) {

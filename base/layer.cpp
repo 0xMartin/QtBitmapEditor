@@ -11,10 +11,6 @@ Layer::Layer(QObject *parent, const QString &name) : QObject(parent)
 }
 
 Layer::~Layer() {
-    if(this->painter) {
-        this->painter->end();
-        delete this->painter;
-    }
 }
 
 void Layer::setVisible(bool visibility) {
@@ -63,9 +59,6 @@ QSize Layer::getSize() const
 void Layer::enableAntialiasing(bool enabled)
 {
     this->antialiasing = enabled;
-    if(this->painter != NULL) {
-        this->painter->setRenderHint(QPainter::Antialiasing, enabled);
-    }
 }
 
 bool Layer::isAntialiasingEnabled() const

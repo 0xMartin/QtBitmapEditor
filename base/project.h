@@ -138,12 +138,6 @@ public:
      */
     void paintEvent(QPainter &painter);
 
-    /**
-     * @brief Stejne jako export event jen s tim rozdilem ze se do renderu navykresluje pomocna grafika editoru
-     * @param painter - QPainter
-     */
-    void exportEvent(QPainter &painter);
-
     // events
     void mousePressEvent(const QPoint &pos);
     void mouseReleaseEvent(const QPoint &pos);
@@ -173,6 +167,7 @@ protected:
 
     // aktualne vybrana vrstva (focus)
     Layer *selected_layer;
+
 };
 
 #endif // PROJECT_H

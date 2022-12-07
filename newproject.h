@@ -17,7 +17,7 @@ public:
     explicit NewProject(QWidget *parent = nullptr);
     ~NewProject();
 
-    void setComponents(AppContext_t * context);
+    void setComponents(AppContext *context);
 
 private slots:
     void on_pushButton_clicked();
@@ -27,7 +27,7 @@ private slots:
 private:
     Ui::NewProject *ui;
 
-    AppContext_t * context;
+    AppContext *context;
 };
 
 #endif // NEWPROJECT_H

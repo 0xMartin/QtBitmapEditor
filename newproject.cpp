@@ -21,7 +21,7 @@ NewProject::~NewProject()
     delete ui;
 }
 
-void NewProject::setComponents(AppContext_t *context)
+void NewProject::setComponents(AppContext *context)
 {
     this->context = context;
 }
@@ -73,7 +73,7 @@ void NewProject::on_pushButton_clicked()
 
     // vytvori novy projekt a priradi ho do workspacu
     Project *p = new Project(NULL, name, path, QSize(width, height));
-    AptCntx_setProject(this->context, p);
+    this->context->setProject(p);
 
     // info + zavreni okna
     QMessageBox::information(this, tr("New Project"), tr("New project successfully created"));

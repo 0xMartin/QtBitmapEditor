@@ -261,7 +261,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         int scaled_size = s.width() * this->scale;
         int step = RULE_STEP_PX_MIN;
         float sf;
-        for(int d = 4; d < 20; ++d)
+        for(int d = 4; d <= 20; ++d)
         {
             sf = (float) scaled_size / d;
             if(sf < RULE_STEP_PX_MIN) {
@@ -285,7 +285,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         // y osa meritko
         scaled_size = s.height() * this->scale;
         step = RULE_STEP_PX_MIN;
-        for(int d = 2; d < 20; ++d)
+        for(int d = 2; d <= 20; ++d)
         {
             sf = (float) scaled_size / d;
             if(sf < RULE_STEP_PX_MIN) {
@@ -323,19 +323,19 @@ void Workspace::paintEvent(QPaintEvent *event) {
         QString buffer = "Name: ";
         if(l) buffer += l->getName();
         painter.drawText(QPointF(
-                             this->width() - 300,
+                             this->width() - 390,
                              this->height() - 9),
                          buffer);
         buffer = QString::number(this->scale * 100, 'f', 0) + "%";
         painter.drawText(QPointF(
-                             this->width() - 170,
+                             this->width() - 230,
                              this->height() - 9),
                          buffer);
         bool b;
         QPoint pos = this->calculateEventOffsetPosition(this->currentPos, b);
         buffer = "X: " + QString::number(pos.x()) + " Y: " + QString::number(pos.y());
         painter.drawText(QPointF(
-                             this->width() - 110,
+                             this->width() - 140,
                              this->height() - 9),
                          buffer);
     }
