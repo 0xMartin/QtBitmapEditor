@@ -12,7 +12,6 @@ AppContext::AppContext()
 
 AppContext::~AppContext()
 {
-    qDebug() << this->project;
     if(this->project) delete this->project;
     if(this->tool) delete this->tool;
     if(this->workspace) delete this->workspace;
@@ -23,6 +22,7 @@ AppContext::~AppContext()
 void AppContext::setProject(Project *project)
 {
     this->project = project;
+    if(this->tool) this->tool->setProject(project);
     if(this->workspace) this->workspace->setProject(project);
     if(this->toolController) this->toolController->setProject(project);
     if(this->layerManager) this->layerManager->setProject(project);
@@ -32,6 +32,7 @@ void AppContext::setTool(Tool *tool)
 {
     if(this->tool) delete this->tool;
     this->tool = tool;
+    this->tool->setProject(this->project);
     if(this->workspace) this->workspace->setTool(tool);
     if(this->toolController) this->toolController->setTool(tool);
 }

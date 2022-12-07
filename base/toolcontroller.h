@@ -17,6 +17,7 @@ class ToolController : public QWidget
 
 public:
     explicit ToolController(QWidget *parent = nullptr);
+    ~ToolController();
 
     /**
      * @brief Nastavi projekt se ktery se bude pracovat

@@ -6,6 +6,7 @@
 
 #include "../utility/colorpicker.h"
 #include "../base/tool.h"
+#include "../utility/mouseeventhelper.h"
 
 
 class Pen : public Tool
@@ -22,6 +23,13 @@ public:
     virtual void outOfAreaEvent(const QPoint &pos);
 
 protected:
+    // helper pro mouse eventy
+    MouseEventHelper mouseHelper;
+
+    // Painter pro kresleni do vrstvy
+    QPainter painter;
+
+    // UI controllers
     ColorPicker *colorPicker;
     QSpinBox *spinbox_size;
     QSpacerItem * spacerItem;

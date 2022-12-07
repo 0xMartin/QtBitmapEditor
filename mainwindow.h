@@ -33,7 +33,7 @@ public:
     void updateStatusBar();
 protected:
     // kontext aplikace
-    AppContext context;
+    AppContext *context;
 
     // utility
     ColorPicker *colorPicker;

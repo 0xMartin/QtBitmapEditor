@@ -138,13 +138,6 @@ public:
      */
     void paintEvent(QPainter &painter);
 
-    // events
-    void mousePressEvent(const QPoint &pos);
-    void mouseReleaseEvent(const QPoint &pos);
-    void mouseDoubleClickEvent(const QPoint &pos);
-    void mouseMoveEvent(const QPoint &pos);
-    void outOfAreaEvent(const QPoint &pos);
-
 signals:
     /**
      * @brief Signal je vyvolan ve chvili kdy doslo k prekresleni nejak z vrstev projektu

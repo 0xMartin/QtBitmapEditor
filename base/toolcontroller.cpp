@@ -6,6 +6,10 @@ ToolController::ToolController(QWidget *parent) : QWidget(parent)
     this->project = NULL;
 }
 
+ToolController::~ToolController()
+{
+}
+
 void ToolController::setProject(Project *project)
 {
     this->project = project;

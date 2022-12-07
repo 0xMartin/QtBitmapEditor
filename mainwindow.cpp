@@ -38,9 +38,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     /*****************************************************************************/
     // inicializace kontextu
-    this->context.setWorkspace(new Workspace(Workspace_defaultConfig(), this));
-    this->context.setToolController(new ToolController(this));
-    this->context.setLayerManager(new LayerManager(this));
+    this->context = new AppContext();
+    this->context->setWorkspace(new Workspace(Workspace_defaultConfig(), this));
+    this->context->setToolController(new ToolController(this));
+    this->context->setLayerManager(new LayerManager(this));
     /*****************************************************************************/
 
 
@@ -49,14 +50,14 @@ MainWindow::MainWindow(QWidget *parent)
     this->splitter_horizontal = new QSplitter(Qt::Horizontal);
 
     // leva strana (pracovani plocha pro upravu bitmapove grafiky)
-    this->splitter_horizontal->addWidget(this->context.getWorkspace());
+    this->splitter_horizontal->addWidget(this->context->getWorkspace());
 
     // prava strany (manazer vrstev + ovladani aktualne vybraneho nastroje)
     this->splitter_vertical = new QSplitter(Qt::Vertical);
     // horni strana (ovladani nastroje)
-    this->splitter_vertical->addWidget(this->context.getToolController());
+    this->splitter_vertical->addWidget(this->context->getToolController());
     // dolni strana (manazer vrstev)
-    this->splitter_vertical->addWidget(this->context.getLayerManager());
+    this->splitter_vertical->addWidget(this->context->getLayerManager());
 
     this->splitter_horizontal->addWidget(this->splitter_vertical);
     this->setCentralWidget(this->splitter_horizontal);
@@ -66,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
     /*****************************************************************************/
     // inicializace oken
     this->window_newProject = new NewProject();
-    this->window_newProject->setComponents(&this->context);
+    this->window_newProject->setContext(this->context);
     /*****************************************************************************/
 
 
@@ -75,10 +76,8 @@ MainWindow::MainWindow(QWidget *parent)
     BitmapLayer *l = new BitmapLayer(p, "Layer 1", QSize(900, 900));
     p->addLayer(l);
     p->setSelectedLayer(l);
-    qDebug() << p;
-    this->context.setProject(p);
-
-    this->context.setTool(new Pen(this, this->colorPicker));
+    this->context->setProject(p);
+    this->context->setTool(new Pen(this, this->colorPicker));
 
     this->updateStatusBar();
 }
@@ -87,6 +86,8 @@ MainWindow::~MainWindow()
 {
     delete ui;
 
+    delete this->context;
+
     if(this->colorPicker) delete this->colorPicker;
     if(this->splitter_horizontal) delete this->splitter_horizontal;
     if(this->statusLabel) delete this->statusLabel;
@@ -94,8 +95,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateStatusBar()
 {
-    if(this->context.getWorkspace() == NULL) return;
-    Project *p = this->context.getWorkspace()->getProject();
+    if(this->context->getWorkspace() == NULL) return;
+    Project *p = this->context->getWorkspace()->getProject();
     if(p == NULL) {
         this->statusLabel->setText(tr("Project: None"));
     } else {

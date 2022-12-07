@@ -21,7 +21,7 @@ NewProject::~NewProject()
     delete ui;
 }
 
-void NewProject::setComponents(AppContext *context)
+void NewProject::setContext(AppContext *context)
 {
     this->context = context;
 }

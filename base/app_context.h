@@ -2,6 +2,7 @@
 #define APPCONTEXT_H
 
 #include <QObject>
+#include <QDebug>
 
 #include "project.h"
 #include "workspace.h"

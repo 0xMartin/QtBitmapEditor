@@ -4,11 +4,16 @@
 #include <QPixmap>
 
 #include "../base/layer.h"
-#include "../utility/mouseeventhelper.h"
+
+
+#define BITMAP_LAYER_TYPE 1000
+
 
 class BitmapLayer : public Layer
 {
 public:
+    QPixmap pixmap; /** Bitmapa */
+
     /**
      * @brief Vytvori bitmapovou vrstvu
      * @param parent - QObject
@@ -29,27 +34,12 @@ public:
      */
     void setSize(const QSize &newSize);
 
-    /**
-     * @brief Navrati ukazatel na pixel mapu
-     * @return QPixelmap
-     */
-    const QPixmap &getPixmap() const;
-
     virtual void paintEvent(QPainter &painter) override;
 
-    // events
-    virtual void mousePressEvent(const QPoint &pos) override;
-    virtual void mouseReleaseEvent(const QPoint &pos) override;
-    virtual void mouseDoubleClickEvent(const QPoint &pos) override;
-    virtual void mouseMoveEvent(const QPoint &pos) override;
-    virtual void outOfAreaEvent(const QPoint &pos) override;
+    virtual int getType() override;
 
 protected:
     QSize size; /** Velikost bitmapy */
-    QPixmap pixmap; /** Bitmapa */
-
-    // helper pro mouse eventy
-    MouseEventHelper mouseHelper;
 };
 
 #endif // BITMAPLAYER_H

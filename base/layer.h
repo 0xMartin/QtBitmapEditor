@@ -87,12 +87,11 @@ public:
      */
     virtual void paintEvent(QPainter &painter) = 0;
 
-    // events
-    virtual void mousePressEvent(const QPoint &pos) = 0;
-    virtual void mouseReleaseEvent(const QPoint &pos) = 0;
-    virtual void mouseDoubleClickEvent(const QPoint &pos) = 0;
-    virtual void mouseMoveEvent(const QPoint &pos) = 0;
-    virtual void outOfAreaEvent(const QPoint &pos) = 0;
+    /**
+     * @brief Navrati unikatni ID ktere jednoznacne urcuje typ vrstvy
+     * @return ID
+     */
+    virtual int getType() = 0;
 
 protected:
     QString name; /** Nazev vrstvy */
@@ -100,7 +99,6 @@ protected:
     float opacity; /** Nepruhlednost vrstvy */
     bool antialiasing; /** Antialiasing povolen/zakazan */
 
-    QPainter painter; /** Painter pro kresleni do vrstvy*/
 };
 
 /**

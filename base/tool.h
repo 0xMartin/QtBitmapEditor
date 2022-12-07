@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QList>
 
+#include "project.h"
 #include "layer.h"
 
 class Tool : public QObject
@@ -14,11 +15,6 @@ public:
     Tool(QObject *parent);
 
     virtual ~Tool();
-
-    /**
-     * @brief Priradi nastroji vrstvu se kterou bude manipulovat
-     */
-    void bindLayer(Layer *layer);
 
     /**
      * @brief Navrati UI tohoto nastroje
@@ -33,12 +29,37 @@ public:
     virtual void mouseMoveEvent(const QPoint &pos) = 0;
     virtual void outOfAreaEvent(const QPoint &pos) = 0;
 
+    /**
+     * @brief Navrati aktualne vybrany projekt
+     * @return Project
+     */
+    Project *getProject() const;
+
+    /**
+     * @brief Nastavi projekt se kterym bude nastroj manipulovat
+     * @param newProject - Projekt
+     */
+    void setProject(Project *newProject);
+
+signals:
+    void projectChanged();
+
 protected:
     // manipulovana vrstva
-    Layer *layer;
+    Project *project;
 
     //ovladaci UI nastroje
     QLayout *ui;
+
+    /**
+     * @brief Pomocna funkce pro navrace aktualne vybrane vrstvy s konrolou typu vrstvy
+     * @param type - ID typu vrstvy. Pokud aktualne vybrana vrstvy neodpovida typu pak
+     *  funkce navrati NULL.
+     * @return Layer
+     */
+    Layer *layerCheck(int type);
+private:
+    Q_PROPERTY(Project *project READ getProject WRITE setProject NOTIFY projectChanged)
 };
 
 #endif // TOOL_H

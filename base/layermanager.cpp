@@ -222,6 +222,7 @@ void LayerManager::changeEvent(QEvent *)
 
 void LayerManager::on_project_repaintSignal(Layer *layer)
 {
+    if(layer == NULL) return;
     QList<QListWidgetItem*> items = this->listWidget->selectedItems();
     LayerWidget *widget;
     for(QListWidgetItem *item : items) {

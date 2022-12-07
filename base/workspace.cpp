@@ -78,13 +78,13 @@ void Workspace::mousePressEvent(QMouseEvent *event)
     switch (event->buttons()) {
     case Qt::LeftButton:
         // press event -> projekt
-        if(this->project) {
+        if(this->tool) {
             bool outOfArea = false;
             QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
-                this->project->outOfAreaEvent(pos);
+                this->tool->outOfAreaEvent(pos);
             } else {
-                this->project->mousePressEvent(pos);
+                this->tool->mousePressEvent(pos);
                 this->repaint();
             }
         }
@@ -99,13 +99,13 @@ void Workspace::mouseReleaseEvent(QMouseEvent *event)
 {
     // release event  -> projekt
     if(event->buttons() != Qt::LeftButton) {
-        if(this->project) {
+        if(this->tool) {
             bool outOfArea = false;
             QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
-                this->project->outOfAreaEvent(pos);
+                this->tool->outOfAreaEvent(pos);
             } else {
-                this->project->mouseReleaseEvent(pos);
+                this->tool->mouseReleaseEvent(pos);
                 this->repaint();
             }
         }
@@ -125,13 +125,13 @@ void Workspace::mouseDoubleClickEvent(QMouseEvent *event)
     // double click -> projekt
     switch (event->buttons()) {
     case Qt::LeftButton:
-        if(this->project) {
+        if(this->tool) {
             bool outOfArea = false;
             QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
-                this->project->outOfAreaEvent(pos);
+                this->tool->outOfAreaEvent(pos);
             } else {
-                this->project->mouseDoubleClickEvent(pos);
+                this->tool->mouseDoubleClickEvent(pos);
                 this->repaint();
             }
         }
@@ -146,13 +146,13 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
     switch (event->buttons()) {
     case Qt::LeftButton:
         // press event -> projekt
-        if(this->project) {
+        if(this->tool) {
             bool outOfArea = false;
             QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
-                this->project->outOfAreaEvent(pos);
+                this->tool->outOfAreaEvent(pos);
             } else {
-                this->project->mouseMoveEvent(pos);
+                this->tool->mouseMoveEvent(pos);
                 this->repaint();
             }
         }
