@@ -11,74 +11,74 @@
 
 
 /**
- * @brief The AppContext class
+ * @brief Trida uchovavajici hlavni komponenty aplikace a umoznuje jejich spravu
  */
 class AppContext : public QObject {
     Q_OBJECT
 public:
     /**
-     * @brief AppContext
+     * @brief Vytvori kontext aplikace
      */
     AppContext();
     ~AppContext();
 
     /**
-     * @brief setProject
-     * @param project
+     * @brief Nastavi novy projekt (otevre)
+     * @param project - Novy projekt
      */
     void setProject(Project * project);
 
     /**
-     * @brief setTool
-     * @param tool
+     * @brief Nastavi novy vybrany graficky nastroj
+     * @param tool - Novy graficky nastroj
      */
     void setTool(Tool *tool);
 
     /**
-     * @brief getProject
-     * @return
+     * @brief Navrati aktualne otevreny projekt
+     * @return Project
      */
     Project *getProject() const;
 
     /**
-     * @brief getTool
-     * @return
+     * @brief Navrati aktualne vybrany nastroj
+     * @return Tool
      */
     Tool *getTool() const;
 
     /**
-     * @brief getWorkspace
-     * @return
+     * @brief Navrati pointer na workspace komponent
+     * @return Workspace
      */
     Workspace *getWorkspace() const;
 
     /**
-     * @brief setWorkspace
-     * @param newWorkspace
+     * @brief Aplikaci nastavi novy Workspace
+     * @param newWorkspace - Novy Workspace
      */
     void setWorkspace(Workspace *newWorkspace);
 
     /**
-     * @brief getToolController
-     * @return
+     * @brief Navrati pointer na toolcontroller komponentu
+     * @return ToolController
      */
     ToolController *getToolController() const;
 
     /**
-     * @brief setToolController
-     * @param newToolController
+     * @brief Aplikaci nastavi novy ToolController
+     * @param newToolController - Novy ToolController
      */
     void setToolController(ToolController *newToolController);
 
     /**
-     * @brief getLayerManager
-     * @return
+     * @brief Navrati pointer na LayerManager komponentu
+     * @return LayerManager
      */
     LayerManager *getLayerManager() const;
 
     /**
-     * @brief setLayerManager
-     * @param newLayerManager
+     * @brief Aplikaci nastavi novy LayerManager
+     * @param newLayerManager - Novy LayerManager
      */
     void setLayerManager(LayerManager *newLayerManager);
 

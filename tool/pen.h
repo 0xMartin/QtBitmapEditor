@@ -1,13 +1,17 @@
 #ifndef PEN_H
 #define PEN_H
 
+#include <QSpinBox>
+#include <QSpacerItem>
+
+#include "../utility/colorpicker.h"
 #include "../base/tool.h"
 
 
 class Pen : public Tool
 {
 public:
-    Pen(QObject *parent);
+    Pen(QObject *parent, ColorPicker *colorPicker);
 
     ~Pen();
 
@@ -18,6 +22,9 @@ public:
     virtual void outOfAreaEvent(const QPoint &pos);
 
 protected:
+    ColorPicker *colorPicker;
+    QSpinBox *spinbox_size;
+    QSpacerItem * spacerItem;
 };
 
 #endif // PEN_H

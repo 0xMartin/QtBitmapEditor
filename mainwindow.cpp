@@ -75,9 +75,10 @@ MainWindow::MainWindow(QWidget *parent)
     BitmapLayer *l = new BitmapLayer(p, "Layer 1", QSize(900, 900));
     p->addLayer(l);
     p->setSelectedLayer(l);
+    qDebug() << p;
     this->context.setProject(p);
 
-    this->context.setTool(new Pen(this));
+    this->context.setTool(new Pen(this, this->colorPicker));
 
     this->updateStatusBar();
 }
