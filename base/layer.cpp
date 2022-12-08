@@ -66,27 +66,37 @@ bool Layer::isAntialiasingEnabled() const
     return this->antialiasing;
 }
 
-void Layer_paintBgGrid(QPainter &painter, const QSize &size, const size_t step)
+void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,
+                       const QSize &size, const size_t step)
 {
     // vykresleni pozadi obrazku (sachovnice)
     painter.fillRect(
-                0,
-                0,
+                offset.x(),
+                offset.y(),
                 size.width(),
                 size.height(),
                 QBrush(Qt::white, Qt::SolidPattern));
 
     QBrush brush(QColor(200, 200, 200), Qt::SolidPattern);
     int step2 = 2 * step;
-    int y_end = size.height();
-    int x_end = size.width();
+
+    int x_start = offset.x();
+    if(x_start < 0) {
+        x_start = -((-x_start) % step2);
+    }
+    int y_start = offset.y();
+    if(y_start < 0) {
+        y_start = -((-y_start) % step2);
+    }
+    int x_end = qMin(offset.x() + size.width(), viewPort.width());
+    int y_end = qMin(offset.y() + size.height(), viewPort.height());
 
     int x, x_offset, step_x, step_y;
-    for(int y = 0, i = 0; y < y_end; y += step) {
+    for(int y = y_start, i = 0; y < y_end; y += step) {
         x_offset = i++ % 2 == 0 ? 0.0f : step;
-        step_y = y + step < y_end ? step : (y_end - y);
-        for(x = x_offset; x < x_end; x += step2) {
-            step_x = x + step < x_end ? step : (x_end - x);
+        step_y = y + (int)step < y_end ? step : (y_end - y);
+        for(x = x_offset + x_start; x < x_end; x += step2) {
+            step_x = x + (int)step < x_end ? step : (x_end - x);
             painter.fillRect(x, y, step_x, step_y, brush);
         }
     }

@@ -3,6 +3,7 @@
 
 #include "layer/bitmaplayer.h"
 #include "tool/pen.h"
+#include "tool/eraser.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -154,7 +155,8 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionPen_triggered()
 {
-
+    qDebug() << "Pen";
+    this->context->setTool(new Pen(this, this->colorPicker));
 }
 
 
@@ -196,7 +198,8 @@ void MainWindow::on_actionPolygon_triggered()
 
 void MainWindow::on_actionEraser_triggered()
 {
-
+    qDebug() << "Eraser";
+    this->context->setTool(new Eraser(this));
 }
 
 

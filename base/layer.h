@@ -104,10 +104,13 @@ protected:
 /**
  * @brief Vykresleni "sachovnice" do pozadi
  * @param painter - QPainter
- * @param size - Velikost pozadi vrstvy
- * @param step - Velikost jednoho ctverecku pozadi
+ * @param offset - Offset vykreslovane sachovnice (realna pozice ve viewportu)
+ * @param viewPort - Velikost view portu
+ * @param size - Velikost vykreslovane sachovnice (realna ve view portu)
+ * @param step - Velikost jednoho ctverecku pozadi (relana ve view portu)
  */
-Q_DECL_EXPORT void Layer_paintBgGrid(QPainter &painter, const QSize &size, const size_t step);
+Q_DECL_EXPORT void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,
+                                     const QSize &size, const size_t step);
 
 
 #endif // LAYER_H

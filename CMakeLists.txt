@@ -19,6 +19,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(QBE_TOOL
     tool/pen.h
     tool/pen.cpp
+    tool/eraser.h
+    tool/eraser.cpp
 )
 
 # LAYER

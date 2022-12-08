@@ -22,10 +22,12 @@ Workspace::Workspace(const Config_Workspace_t &config, QWidget *parent): QWidget
     this->mouseHelper = MouseEventHelper(5);
     this->globalOffset = QPoint(0, 0);
     this->currentPos = QPoint(0, 0);
+    this->begin = std::chrono::steady_clock::now();
 
     this->setMinimumSize(QSize(400, 400));
     this->setBackgroundRole(QPalette::Base);
     this->setAutoFillBackground(true);
+    this->setMouseTracking(true);
 }
 
 void Workspace::setProject(Project *project) {
@@ -139,9 +141,13 @@ void Workspace::mouseDoubleClickEvent(QMouseEvent *event)
     }
 }
 
+#include <chrono>
+
 void Workspace::mouseMoveEvent(QMouseEvent *event)
 {
     this->currentPos = event->pos();
+
+    bool paint = false;
 
     switch (event->buttons()) {
     case Qt::LeftButton:
@@ -153,7 +159,7 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
                 this->tool->outOfAreaEvent(pos);
             } else {
                 this->tool->mouseMoveEvent(pos);
-                this->repaint();
+                paint = true;
             }
         }
         break;
@@ -162,9 +168,25 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
         if(this->mouseHelper.processMoveEvent(event->pos())) {
             QPoint diff = this->mouseHelper.diffFromLastPos();
             this->globalOffset += diff * INV_SCALE(this->scale) * this->config.mouseSensitivity;
-            this->repaint();
+            paint = true;
         }
         break;
+    }
+
+    if(this->tool != NULL) {
+        if(this->tool->overLayerPainting()) {
+            paint = true;
+        }
+    }
+
+    // jednotne vykreslovani (limitovano na max 50 fps)
+    if(paint) {
+        // fps limitation
+        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+        if(std::chrono::duration_cast<std::chrono::milliseconds>(now - begin).count() > 1000.0 / this->config.fps) {
+            begin = now;
+            this->repaint();
+        }
     }
 }
 
@@ -235,12 +257,15 @@ void Workspace::paintEvent(QPaintEvent *event) {
                     (this->height() - s.height() * this->scale) / 2 + this->globalOffset.y() * this->scale
                     );
 
+
+        // vykresleni pozadi obrazku (sachovnice)
+        Layer_paintBgGrid(painter, offset, this->size(), s * this->scale, 15);
+
+
         //-------PROJECT-------------------------
         painter.save();
         // aplikace offsetu
         painter.translate(offset);
-        // vykresleni pozadi obrazku (sachovnice)
-        Layer_paintBgGrid(painter, s * this->scale, 15);
         // aplikace scale
         painter.scale(this->scale, this->scale);
         // vykresleni projektu
@@ -248,6 +273,12 @@ void Workspace::paintEvent(QPaintEvent *event) {
         // vraceni zpet do puvodniho stavu
         painter.restore();
         //-------PROJECT-------------------------
+
+
+        // overlayer
+        if(this->tool != NULL) {
+            this->tool->paintEvent(this->currentPos, this->scale, painter);
+        }
 
 
         // vykresleni ramecku meritek
@@ -376,6 +407,7 @@ Config_Workspace_t Workspace_defaultConfig()
     cnfg.font.setFamily("Monospace");
     cnfg.font.setPixelSize(11);
     cnfg.font.setStyle(QFont::StyleNormal);
+    cnfg.fps = 50;
 
     cnfg.mouseSensitivity = 1.3;
 

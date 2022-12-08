@@ -1,23 +1,20 @@
-#ifndef PEN_H
-#define PEN_H
+#ifndef ERASER_H
+#define ERASER_H
 
 #include <QSpinBox>
 #include <QSpacerItem>
 
-#include "../utility/colorpicker.h"
 #include "../base/tool.h"
 #include "../utility/mouseeventhelper.h"
 
-
 /**
- * @brief Nastroj tuzka
+ * @brief Nastroj guma
  */
-class Pen : public Tool
+class Eraser : public Tool
 {
 public:
-    Pen(QObject *parent, ColorPicker *colorPicker);
-
-    ~Pen();
+    Eraser(QObject *parent);
+    ~Eraser();
 
     virtual void paintEvent(const QPoint &pos, float scale, QPainter &painter) override;
     virtual bool overLayerPainting() const override;
@@ -35,13 +32,12 @@ protected:
     // Painter pro kresleni do vrstvy
     QPainter painter;
 
-    // tuzka
+    // guma
     QPen pen;
 
     // UI controllers
-    ColorPicker *colorPicker;
     QSpinBox *spinbox_size;
     QSpacerItem * spacerItem;
 };
 
-#endif // PEN_H
+#endif // ERASER_H

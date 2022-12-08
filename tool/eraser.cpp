@@ -1,4 +1,4 @@
-#include "pen.h"
+#include "eraser.h".h"
 
 #include <QVBoxLayout>
 #include <QPainterPath>
@@ -6,13 +6,12 @@
 #include "../layer/bitmaplayer.h"
 
 
-Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
+Eraser::Eraser(QObject *parent) : Tool(parent)
 {
-    this->colorPicker = colorPicker;
     this->ui = new QVBoxLayout();
-    this->spinbox_size = new QSpinBox();
     this->mouseHelper = MouseEventHelper(5);
     // velikost pera
+    this->spinbox_size = new QSpinBox();
     this->spinbox_size->setPrefix("Pen Size:");
     this->spinbox_size->setSuffix("px");
     this->spinbox_size->setMinimum(1);
@@ -24,18 +23,18 @@ Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     ((QVBoxLayout*)this->ui)->addSpacerItem(this->spacerItem);
 
     // refresh
-    this->pen = QPen(this->colorPicker->getColor(),
+    this->pen = QPen(Qt::transparent,
                      this->spinbox_size->value(),
                      Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
 }
 
-Pen::~Pen()
+Eraser::~Eraser()
 {
     if(this->ui) delete this->ui;
     if(this->spinbox_size) delete this->spinbox_size;
 }
 
-void Pen::paintEvent(const QPoint &pos, float scale, QPainter &painter)
+void Eraser::paintEvent(const QPoint &pos, float scale, QPainter &painter)
 {
     int size = this->spinbox_size->value();
     painter.setPen(Qt::black);
@@ -43,31 +42,31 @@ void Pen::paintEvent(const QPoint &pos, float scale, QPainter &painter)
     painter.drawEllipse(pos.x() - s/2, pos.y() - s/2, s, s);
 }
 
-bool Pen::overLayerPainting() const
+bool Eraser::overLayerPainting() const
 {
     return true;
 }
 
-void Pen::mousePressEvent(const QPoint &pos)
+void Eraser::mousePressEvent(const QPoint &pos)
 {
     // refresh kresliciho nastroje
-    this->pen = QPen(this->colorPicker->getColor(),
+    this->pen = QPen(Qt::transparent,
                      this->spinbox_size->value(),
                      Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
 }
 
-void Pen::mouseReleaseEvent(const QPoint &pos)
+void Eraser::mouseReleaseEvent(const QPoint &pos)
 {
     this->mouseHelper.resetMove();
     emit this->project->repaintSignal(this->project->getSelectedLayer());
 }
 
-void Pen::mouseDoubleClickEvent(const QPoint &pos)
+void Eraser::mouseDoubleClickEvent(const QPoint &pos)
 {
 
 }
 
-void Pen::mouseMoveEvent(const QPoint &pos)
+void Eraser::mouseMoveEvent(const QPoint &pos)
 {
     if(this->mouseHelper.processMoveEvent(pos)) {
         // po definovanych vzdalenost dela tah
@@ -77,12 +76,13 @@ void Pen::mouseMoveEvent(const QPoint &pos)
         this->painter.begin(&layer->pixmap);
         painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
         this->painter.setPen(this->pen);
+        this->painter.setCompositionMode(QPainter::CompositionMode_Clear);
         this->painter.drawLine(line);
         this->painter.end();
     }
 }
 
-void Pen::outOfAreaEvent(const QPoint &pos)
+void Eraser::outOfAreaEvent(const QPoint &pos)
 {
     // dokonci tah
     const QPoint *last = this->mouseHelper.getLast();
@@ -93,6 +93,7 @@ void Pen::outOfAreaEvent(const QPoint &pos)
         this->painter.begin(&layer->pixmap);
         painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
         this->painter.setPen(this->pen);
+        this->painter.setCompositionMode(QPainter::CompositionMode_Clear);
         this->painter.drawLine(line);
         this->painter.end();
 

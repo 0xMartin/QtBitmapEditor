@@ -14,6 +14,7 @@
 struct Config_Workspace_t {
     QFont font; /** Font pro texty ve workspace (meritka + pozicni informace)*/
     float mouseSensitivity; /** Citlivost mysi */
+    int fps; /** Maximalni rychlost vykreslovani*/
 };
 
 /**
@@ -107,6 +108,9 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
+    // promena pro casovani
+    std::chrono::steady_clock::time_point begin;
+
     /**
      * @brief Vypocita pozici pro eventy projektu (pozici kurzoru prevede na pozici
      * odpovidajici primo na souradnice v projektu)

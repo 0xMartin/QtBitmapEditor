@@ -22,13 +22,6 @@ public:
      */
     QLayout *getUI();
 
-    // events
-    virtual void mousePressEvent(const QPoint &pos) = 0;
-    virtual void mouseReleaseEvent(const QPoint &pos) = 0;
-    virtual void mouseDoubleClickEvent(const QPoint &pos) = 0;
-    virtual void mouseMoveEvent(const QPoint &pos) = 0;
-    virtual void outOfAreaEvent(const QPoint &pos) = 0;
-
     /**
      * @brief Navrati aktualne vybrany projekt
      * @return Project
@@ -40,6 +33,27 @@ public:
      * @param newProject - Projekt
      */
     void setProject(Project *newProject);
+
+    /**
+     * @brief Vykresli nastroj
+     * @param pos - Aktualni pozice kurzoru na workspacu
+     * @param scale - Meritko
+     * @param painter - QPainter
+     */
+    virtual void paintEvent(const QPoint &pos, float scale, QPainter &painter) = 0;
+
+    /**
+     * @brief Urcuje zda nastroj bude vykreslovan do horni vrstvy (nahled nastroje -> napr velikost stetce)
+     * @return True -> bude se zobrazovat
+     */
+    virtual bool overLayerPainting() const;
+
+    // events
+    virtual void mousePressEvent(const QPoint &pos) = 0;
+    virtual void mouseReleaseEvent(const QPoint &pos) = 0;
+    virtual void mouseDoubleClickEvent(const QPoint &pos) = 0;
+    virtual void mouseMoveEvent(const QPoint &pos) = 0;
+    virtual void outOfAreaEvent(const QPoint &pos) = 0;
 
 signals:
     void projectChanged();

@@ -62,7 +62,7 @@ void LayerWidget::repaintLayer()
     if(pixmap) {
         QPainter painter(pixmap);
         float scale = (float)this->height / qMax(layer->getSize().width(), layer->getSize().height());
-        Layer_paintBgGrid(painter, QSize(this->height, this->height), 8);
+        Layer_paintBgGrid(painter, QPoint(0, 0), pixmap->size(),  pixmap->size(), 8);
         painter.scale(scale, scale);
         layer->paintEvent(painter);
         painter.end();
