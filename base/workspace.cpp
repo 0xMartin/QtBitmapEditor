@@ -71,6 +71,28 @@ void Workspace::addScale(float diff)
     this->repaint();
 }
 
+void Workspace::zoomIN()
+{
+    if(this->scale < 3) {
+        this->addScale(0.05); // 5 %
+    } else if(this->scale < 6) {
+        this->addScale(0.2); // 20 %
+    } else {
+        this->addScale(0.4); // 40 %
+    }
+}
+
+void Workspace::zoomOUT()
+{
+    if(this->scale < 3) {
+        this->addScale(-0.05);
+    } else if(this->scale < 6) {
+        this->addScale(-0.2);
+    } else {
+        this->addScale(-0.4);
+    }
+}
+
 float Workspace::getScale() const
 {
     return this->scale;
@@ -196,21 +218,9 @@ void Workspace::wheelEvent(QWheelEvent *event)
     // zoom in & zoom out
     if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
         if(event->angleDelta().y() > 0) {
-            if(this->scale < 3) {
-                this->addScale(0.05); // 5 %
-            } else if(this->scale < 6) {
-                this->addScale(0.2); // 20 %
-            } else {
-                this->addScale(0.4); // 40 %
-            }
+            this->zoomIN();
         } else {
-            if(this->scale < 3) {
-                this->addScale(-0.05);
-            } else if(this->scale < 6) {
-                this->addScale(-0.2);
-            } else {
-                this->addScale(-0.4);
-            }
+            this->zoomOUT();
         }
     }
 }

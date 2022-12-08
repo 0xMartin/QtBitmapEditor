@@ -57,6 +57,16 @@ public:
     void addScale(float diff);
 
     /**
+     * @brief Priblizi editovany projekt o definovany krok
+     */
+    void zoomIN();
+
+    /**
+     * @brief Oddali editovany projekt o definovany krok
+     */
+    void zoomOUT();
+
+    /**
      * @brief Navrati meritko
      * @return meritko
      */

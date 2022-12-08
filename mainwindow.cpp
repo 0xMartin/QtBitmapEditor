@@ -82,7 +82,9 @@ MainWindow::MainWindow(QWidget *parent)
     p->setSelectedLayer(l);
     this->context->setProject(p);
 
+    // finish
     this->updateStatusBar();
+    this->highlightToolbar(this->ui->actionPen);
 }
 
 MainWindow::~MainWindow()
@@ -157,8 +159,9 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionPen_triggered()
 {
-    qDebug() << "Pen";
+    if(this->context == NULL) return;
     this->context->selectToolFromList(TOOL_PEN);
+    this->highlightToolbar(this->ui->actionPen);
 }
 
 
@@ -200,8 +203,9 @@ void MainWindow::on_actionPolygon_triggered()
 
 void MainWindow::on_actionEraser_triggered()
 {
-    qDebug() << "Eraser";
+    if(this->context == NULL) return;
     this->context->selectToolFromList(TOOL_ERASER);
+    this->highlightToolbar(this->ui->actionEraser);
 }
 
 
@@ -215,3 +219,36 @@ void MainWindow::on_actionRemove_layer_triggered()
 {
 
 }
+
+void MainWindow::highlightToolbar(QAction *action)
+{
+    QWidget *w;
+    for(QAction *a :this->ui->toolBar->actions()) {
+        if(a != NULL) {
+            w = this->ui->toolBar->widgetForAction(a);
+            if(w != NULL && w != this->colorPicker) {
+                w->setStyleSheet("");
+            }
+        }
+    }
+    w = this->ui->toolBar->widgetForAction(action);
+    if(w != NULL) {
+        w->setStyleSheet("background: rgba(183, 134, 32, 20%); border: 1px solid #b78620;");
+    }
+}
+
+void MainWindow::on_actionZoom_in_triggered()
+{
+    if(this->context == NULL) return;
+    if(this->context->getWorkspace() == NULL) return;
+    this->context->getWorkspace()->zoomIN();
+}
+
+
+void MainWindow::on_actionZoom_out_triggered()
+{
+    if(this->context == NULL) return;
+    if(this->context->getWorkspace() == NULL) return;
+    this->context->getWorkspace()->zoomOUT();
+}
+

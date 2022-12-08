@@ -132,12 +132,18 @@ private slots:
      */
     void on_actionRemove_layer_triggered();
 
+    void on_actionZoom_in_triggered();
+
+    void on_actionZoom_out_triggered();
+
 private:
     // UI
     Ui::MainWindow *ui;
     QSplitter* splitter_horizontal;
     QSplitter* splitter_vertical;
     QLabel *statusLabel;
+
+    void highlightToolbar(QAction *action);
 
 };
 #endif // MAINWINDOW_H

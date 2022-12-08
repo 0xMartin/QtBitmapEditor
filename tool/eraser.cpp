@@ -1,4 +1,4 @@
-#include "eraser.h".h"
+#include "eraser.h"
 
 #include <QVBoxLayout>
 #include <QPainterPath>
@@ -16,7 +16,7 @@ Eraser::Eraser(QObject *parent) : Tool(parent)
     this->spinbox_size->setSuffix("px");
     this->spinbox_size->setMinimum(1);
     this->spinbox_size->setValue(10);
-    this->spinbox_size->setMaximum(500);
+    this->spinbox_size->setMaximum(1000);
     this->ui->addWidget(this->spinbox_size);
     //spacer
     this->spacerItem = new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding);
