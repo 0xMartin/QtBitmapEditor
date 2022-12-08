@@ -90,6 +90,7 @@ protected:
 
 
     // hlavni komponenty manazeru vrstev
+    QLabel *header;
     // layer controll
     QSpinBox *spinbox_opacity;
     //list
@@ -106,7 +107,6 @@ protected:
     // list controll
     QWidget *listControl;
     QHBoxLayout *listControlLayout;
-    QSpacerItem *spacer;
     // layer controll
     QWidget *layerControl;
     QHBoxLayout *layerControllLayout;

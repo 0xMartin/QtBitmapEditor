@@ -4,13 +4,16 @@ Tool::Tool(QObject *parent) : QObject(parent)
 {
     this->ui = NULL;
     this->project = NULL;
+    this->ui = new QWidget();
+    this->name = "";
 }
 
 Tool::~Tool()
 {
+    if(this->ui) delete this->ui;
 }
 
-QLayout *Tool::getUI()
+QWidget *Tool::getUI()
 {
     return this->ui;
 }
@@ -31,6 +34,11 @@ void Tool::setProject(Project *newProject)
 bool Tool::overLayerPainting() const
 {
     return false;
+}
+
+const QString &Tool::getName() const
+{
+    return this->name;
 }
 
 Layer *Tool::layerCheck(int type)

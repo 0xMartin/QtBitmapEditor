@@ -3,6 +3,7 @@
 
 #include <QSpinBox>
 #include <QSpacerItem>
+#include <QVBoxLayout>
 
 #include "../utility/colorpicker.h"
 #include "../base/tool.h"
@@ -42,9 +43,9 @@ protected:
     QPen pen;
 
     // UI controllers
+    QVBoxLayout *layout;
     ColorPicker *colorPicker;
     QSpinBox *spinbox_size;
-    QSpacerItem * spacerItem;
 };
 
 #endif // PEN_H

@@ -18,9 +18,9 @@ public:
 
     /**
      * @brief Navrati UI tohoto nastroje
-     * @return QLayout
+     * @return QWidget
      */
-    QLayout *getUI();
+    QWidget *getUI();
 
     /**
      * @brief Navrati aktualne vybrany projekt
@@ -54,6 +54,12 @@ public:
      */
     virtual int getType() const = 0;
 
+    /**
+     * @brief Navrati jmeno nastroje
+     * @return Jmeno nastroje
+     */
+    const QString &getName() const;
+
     // events
     virtual void mousePressEvent(const QPoint &pos) = 0;
     virtual void mouseReleaseEvent(const QPoint &pos) = 0;
@@ -69,7 +75,10 @@ protected:
     Project *project;
 
     //ovladaci UI nastroje
-    QLayout *ui;
+    QWidget *ui;
+
+    // jmeno nastoroje
+    QString name;
 
     /**
      * @brief Pomocna funkce pro navrace aktualne vybrane vrstvy s konrolou typu vrstvy

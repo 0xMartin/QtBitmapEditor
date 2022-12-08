@@ -8,19 +8,18 @@
 
 Eraser::Eraser(QObject *parent) : Tool(parent)
 {
-    this->ui = new QVBoxLayout();
+    this->name = tr("ERASER");
     this->mouseHelper = MouseEventHelper(5);
+    this->layout = new QVBoxLayout(this->ui);
+    this->ui->setLayout(this->layout);
     // velikost pera
     this->spinbox_size = new QSpinBox();
-    this->spinbox_size->setPrefix("Pen Size:");
+    this->spinbox_size->setPrefix("Eraser Size:");
     this->spinbox_size->setSuffix("px");
     this->spinbox_size->setMinimum(1);
     this->spinbox_size->setValue(10);
     this->spinbox_size->setMaximum(1000);
-    this->ui->addWidget(this->spinbox_size);
-    //spacer
-    this->spacerItem = new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding);
-    ((QVBoxLayout*)this->ui)->addSpacerItem(this->spacerItem);
+    this->layout->addWidget(this->spinbox_size);
 
     // refresh
     this->pen = QPen(Qt::transparent,
@@ -30,7 +29,7 @@ Eraser::Eraser(QObject *parent) : Tool(parent)
 
 Eraser::~Eraser()
 {
-    if(this->ui) delete this->ui;
+    if(this->layout) delete this->layout;
     if(this->spinbox_size) delete this->spinbox_size;
 }
 

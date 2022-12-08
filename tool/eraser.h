@@ -3,6 +3,7 @@
 
 #include <QSpinBox>
 #include <QSpacerItem>
+#include <QVBoxLayout>
 
 #include "../base/tool.h"
 #include "../utility/mouseeventhelper.h"
@@ -39,8 +40,8 @@ protected:
     QPen pen;
 
     // UI controllers
+    QVBoxLayout *layout;
     QSpinBox *spinbox_size;
-    QSpacerItem * spacerItem;
 };
 
 #endif // ERASER_H

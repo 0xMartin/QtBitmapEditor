@@ -87,9 +87,22 @@ void LayerWidget::on_checkBox_visible_toggle(bool visible)
 LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 {
     this->project = NULL;
+    this->button_addLayer = NULL;
+    this->button_removeLayer = NULL;
+    this->button_up = NULL;
+    this->button_down = NULL;
     this->setMaximumWidth(500);
     this->mainLayout = new QVBoxLayout(this);
     this->setLayout(this->mainLayout);
+
+
+    // header
+    //------------------------------------------------------------------------------------------
+    this->header = new QLabel(this);
+    this->header->setText(tr("Layers"));
+    this->header->setStyleSheet("background: rgb(43, 43, 43); color: rgb(224, 224, 224); padding: 8px; border-bottom: 1px solid black");
+    this->mainLayout->addWidget(this->header);
+
 
     // ovladani aktualni vrstvy (opacity)
     //------------------------------------------------------------------------------------------
@@ -126,8 +139,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->listControl->setLayout(this->listControlLayout);
 
     //spacer
-    this->spacer = new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed);
-    this->listControlLayout->addSpacerItem(this->spacer);
+    this->listControlLayout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
     // add layer tlacitko
     this->button_addLayer = new QPushButton();
@@ -163,13 +175,13 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 }
 
 LayerManager::~LayerManager() {
+    if(this->header) delete this->header;
     if(this->spinbox_opacity) delete this->spinbox_opacity;
     if(this->listWidget) delete this->listWidget;
     if(this->button_addLayer) delete this->button_addLayer;
     if(this->button_removeLayer) delete this->button_removeLayer;
     if(this->button_up) delete this->button_up;
     if(this->button_down) delete this->button_down;
-
     if(this->mainLayout) delete this->mainLayout;
     if(this->listControl) delete this->listControl;
     if(this->layerControl) delete this->layerControl;
@@ -214,10 +226,10 @@ void LayerManager::updateLayerList()
 void LayerManager::changeEvent(QEvent *)
 {
     // vzdy fixni velikost
-    this->button_addLayer->setFixedSize(QSize(30, 30));
-    this->button_removeLayer->setFixedSize(QSize(30, 30));
-    this->button_up->setFixedSize(QSize(30, 30));
-    this->button_down->setFixedSize(QSize(30, 30));
+    if(this->button_addLayer) this->button_addLayer->setFixedSize(QSize(30, 30));
+    if(this->button_removeLayer) this->button_removeLayer->setFixedSize(QSize(30, 30));
+    if(this->button_up) this->button_up->setFixedSize(QSize(30, 30));
+    if(this->button_down) this->button_down->setFixedSize(QSize(30, 30));
 }
 
 void LayerManager::on_project_repaintSignal(Layer *layer)

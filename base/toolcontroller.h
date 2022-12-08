@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QList>
+#include <QLabel>
 
 #include "tool.h"
 #include "project.h"
@@ -52,6 +53,9 @@ protected:
 
     // aktualni projekt
     Project *project;
+
+    QLabel *header;
+    QVBoxLayout *layout;
 
 private:
     Q_PROPERTY(Tool *tool READ getTool WRITE setTool NOTIFY toolChanged)

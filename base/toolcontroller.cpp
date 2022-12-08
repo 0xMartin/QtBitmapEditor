@@ -1,13 +1,25 @@
 #include "toolcontroller.h"
 
+#include <QLayoutItem>
+
+
 ToolController::ToolController(QWidget *parent) : QWidget(parent)
 {
     this->tool = NULL;
     this->project = NULL;
+    this->layout = new QVBoxLayout();
+    this->layout->setSpacing(0);
+    this->setLayout(layout);
+    this->setStyleSheet("border: 1px solid #252525");
+
+    this->header = new QLabel(this);
+    this->header->setText("Tool: PEN");
+    this->header->setStyleSheet("background: rgb(41, 41, 41); color: rgb(224, 224, 224); padding: 8px; border-bottom: 1px solid black");
 }
 
 ToolController::~ToolController()
 {
+    if(this->layout) delete layout;
 }
 
 void ToolController::setProject(Project *project)
@@ -33,6 +45,18 @@ void ToolController::setTool(Tool *newTool)
     emit toolChanged();
 
     if(this->tool != NULL) {
-        this->setLayout(this->tool->getUI());
+        // clear
+        QLayoutItem *item;
+        while ((item = this->layout->takeAt(0)) != 0) {
+            if(item->widget())
+                item->widget()->setParent(NULL);
+        }
+
+        // znovu sestaveni
+        this->header->setText(newTool->getName());
+        this->layout->addWidget(this->header);
+        this->layout->addWidget(this->tool->getUI());
+
+        this->repaint();
     }
 }

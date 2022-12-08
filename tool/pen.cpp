@@ -8,20 +8,20 @@
 
 Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 {
-    this->colorPicker = colorPicker;
-    this->ui = new QVBoxLayout();
-    this->spinbox_size = new QSpinBox();
+    this->name = tr("PEN");
     this->mouseHelper = MouseEventHelper(5);
+    this->layout = new QVBoxLayout(this->ui);
+    this->ui->setLayout(this->layout);
+    this->colorPicker = colorPicker; 
     // velikost pera
+    this->spinbox_size = new QSpinBox();
     this->spinbox_size->setPrefix("Pen Size:");
     this->spinbox_size->setSuffix("px");
     this->spinbox_size->setMinimum(1);
     this->spinbox_size->setValue(10);
     this->spinbox_size->setMaximum(1000);
-    this->ui->addWidget(this->spinbox_size);
-    //spacer
-    this->spacerItem = new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding);
-    ((QVBoxLayout*)this->ui)->addSpacerItem(this->spacerItem);
+    this->layout->addWidget(this->spinbox_size);
+    this->layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     // refresh
     this->pen = QPen(this->colorPicker->getColor(),
@@ -31,7 +31,7 @@ Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 
 Pen::~Pen()
 {
-    if(this->ui) delete this->ui;
+    if(this->layout) delete this->layout;
     if(this->spinbox_size) delete this->spinbox_size;
 }
 
