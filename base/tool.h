@@ -48,6 +48,12 @@ public:
      */
     virtual bool overLayerPainting() const;
 
+    /**
+     * @brief Navrati ID nastroje
+     * @return ID
+     */
+    virtual int getType() const = 0;
+
     // events
     virtual void mousePressEvent(const QPoint &pos) = 0;
     virtual void mouseReleaseEvent(const QPoint &pos) = 0;

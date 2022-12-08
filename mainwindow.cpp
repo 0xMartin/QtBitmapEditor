@@ -43,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->context->setWorkspace(new Workspace(Workspace_defaultConfig(), this));
     this->context->setToolController(new ToolController(this));
     this->context->setLayerManager(new LayerManager(this));
+    this->context->addTool(new Pen(this, this->colorPicker));
+    this->context->addTool(new Eraser(this));
+    this->context->selectToolFromList(TOOL_PEN);
     /*****************************************************************************/
 
 
@@ -78,7 +81,6 @@ MainWindow::MainWindow(QWidget *parent)
     p->addLayer(l);
     p->setSelectedLayer(l);
     this->context->setProject(p);
-    this->context->setTool(new Pen(this, this->colorPicker));
 
     this->updateStatusBar();
 }
@@ -156,7 +158,7 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionPen_triggered()
 {
     qDebug() << "Pen";
-    this->context->setTool(new Pen(this, this->colorPicker));
+    this->context->selectToolFromList(TOOL_PEN);
 }
 
 
@@ -199,7 +201,7 @@ void MainWindow::on_actionPolygon_triggered()
 void MainWindow::on_actionEraser_triggered()
 {
     qDebug() << "Eraser";
-    this->context->setTool(new Eraser(this));
+    this->context->selectToolFromList(TOOL_ERASER);
 }
 
 

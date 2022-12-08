@@ -48,6 +48,11 @@ bool Pen::overLayerPainting() const
     return true;
 }
 
+int Pen::getType() const
+{
+    return TOOL_PEN;
+}
+
 void Pen::mousePressEvent(const QPoint &pos)
 {
     // refresh kresliciho nastroje

@@ -47,6 +47,11 @@ bool Eraser::overLayerPainting() const
     return true;
 }
 
+int Eraser::getType() const
+{
+    return TOOL_ERASER;
+}
+
 void Eraser::mousePressEvent(const QPoint &pos)
 {
     // refresh kresliciho nastroje

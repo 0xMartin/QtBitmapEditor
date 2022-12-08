@@ -18,6 +18,7 @@ Workspace::Workspace(const Config_Workspace_t &config, QWidget *parent): QWidget
 {
     this->config = config;
     this->project = NULL;
+    this->tool = NULL;
     this->scale = 1.0f;
     this->mouseHelper = MouseEventHelper(5);
     this->globalOffset = QPoint(0, 0);

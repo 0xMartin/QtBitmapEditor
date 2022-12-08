@@ -2,6 +2,7 @@
 #define APPCONTEXT_H
 
 #include <QObject>
+#include <QList>
 #include <QDebug>
 
 #include "project.h"
@@ -80,8 +81,23 @@ public:
     /**
      * @brief Aplikaci nastavi novy LayerManager
      * @param newLayerManager - Novy LayerManager
+     * @return
      */
     void setLayerManager(LayerManager *newLayerManager);
+
+    /**
+     * @brief Prida do listu novy nastraj
+     * @param tool - Novy nastroj
+     * @return True -> nastroj uspesne pridan
+     */
+    bool addTool(Tool *tool);
+
+    /**
+     * @brief Vybere nastroj ktery se nachazi v listu nastroju v kontextu aplikace
+     * @param toolType - ID typu nastroje
+     * @return True -> nastroj uspesne nastaven jako aktivni
+     */
+    bool selectToolFromList(int toolType);
 
 signals:
     void workspaceChanged();
@@ -92,6 +108,7 @@ signals:
 
 protected:
     Project *project; /** Aktualne ovevtreni projekt*/
+    QList<Tool*> tools; /** List nastroju */
     Tool *tool; /** Aktualne pouzivany graficky nastroj */
     Workspace *workspace; /** Nejdulezitejsi komponent. Komponenta pro editaci projektu */
     ToolController *toolController; /** Komponenta pro nastavovani parametru aktualne zvoleneho nastroje*/

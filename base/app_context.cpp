@@ -30,7 +30,6 @@ void AppContext::setProject(Project *project)
 
 void AppContext::setTool(Tool *tool)
 {
-    if(this->tool) delete this->tool;
     this->tool = tool;
     this->tool->setProject(this->project);
     if(this->workspace) this->workspace->setTool(tool);
@@ -84,4 +83,32 @@ void AppContext::setLayerManager(LayerManager *newLayerManager)
         return;
     this->layerManager = newLayerManager;
     emit layerManagerChanged();
+}
+
+bool AppContext::addTool(Tool *tool)
+{
+    if(tool!= NULL) {
+        for(Tool *t: this->tools) {
+            if(t != NULL) {
+                if(t->getType() == tool->getType()) {
+                    return false;
+                }
+            }
+        }
+        this->tools.push_back(tool);
+    }
+    return true;
+}
+
+bool AppContext::selectToolFromList(int toolType)
+{
+    for(Tool *tool: this->tools) {
+        if(tool != NULL) {
+            if(tool->getType() == toolType) {
+                this->setTool(tool);
+                return true;
+            }
+        }
+    }
+    return false;
 }

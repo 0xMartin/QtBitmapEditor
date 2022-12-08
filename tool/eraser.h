@@ -7,6 +7,8 @@
 #include "../base/tool.h"
 #include "../utility/mouseeventhelper.h"
 
+#define TOOL_ERASER 1001
+
 /**
  * @brief Nastroj guma
  */
@@ -18,6 +20,7 @@ public:
 
     virtual void paintEvent(const QPoint &pos, float scale, QPainter &painter) override;
     virtual bool overLayerPainting() const override;
+    virtual int getType() const override;
 
     virtual void mousePressEvent(const QPoint &pos) override;
     virtual void mouseReleaseEvent(const QPoint &pos) override;

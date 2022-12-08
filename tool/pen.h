@@ -9,6 +9,8 @@
 #include "../utility/mouseeventhelper.h"
 
 
+#define TOOL_PEN 1000
+
 /**
  * @brief Nastroj tuzka
  */
@@ -21,6 +23,7 @@ public:
 
     virtual void paintEvent(const QPoint &pos, float scale, QPainter &painter) override;
     virtual bool overLayerPainting() const override;
+    virtual int getType() const override;
 
     virtual void mousePressEvent(const QPoint &pos) override;
     virtual void mouseReleaseEvent(const QPoint &pos) override;
