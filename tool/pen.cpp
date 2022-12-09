@@ -15,12 +15,17 @@ Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     this->colorPicker = colorPicker; 
     // velikost pera
     this->spinbox_size = new QSpinBox();
-    this->spinbox_size->setPrefix("Pen Size:");
+    this->spinbox_size->setPrefix(tr("Pen Size:"));
     this->spinbox_size->setSuffix("px");
     this->spinbox_size->setMinimum(1);
     this->spinbox_size->setValue(10);
     this->spinbox_size->setMaximum(1000);
     this->layout->addWidget(this->spinbox_size);
+    // antialiasing
+    this->checkBox_Antialiasing = new QCheckBox();
+    this->checkBox_Antialiasing->setChecked(true);
+    this->checkBox_Antialiasing->setText(tr("Smooth Painting Mode"));
+    this->layout->addWidget(this->checkBox_Antialiasing);
     // spacer
     this->layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
@@ -34,10 +39,12 @@ Pen::~Pen()
 {
     if(this->layout) delete this->layout;
     if(this->spinbox_size) delete this->spinbox_size;
+    if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
 void Pen::paintEvent(const QPoint &pos, float scale, QPainter &painter)
 {
+    // vykresleni tvaru a veliskota nastroje do horni nahledove vrstvy
     int size = this->spinbox_size->value();
     painter.setPen(Qt::black);
     float s = size * scale;
@@ -54,6 +61,10 @@ int Pen::getType() const
     return TOOL_PEN;
 }
 
+/*****************************************************************************************/
+// EVENTY PRO EDITACI BITMAPY
+
+
 void Pen::mousePressEvent(const QPoint &pos)
 {
     int size = this->spinbox_size->value();
@@ -66,7 +77,7 @@ void Pen::mousePressEvent(const QPoint &pos)
     // vykreleni po dotiku
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
     this->painter.begin(&layer->pixmap);
-    painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
+    painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
     this->painter.setPen(Qt::transparent);
     this->painter.setBrush(this->colorPicker->getColor());
     this->painter.drawEllipse(pos.x() - size/2, pos.y() - size/2, size, size);
@@ -92,7 +103,7 @@ void Pen::mouseMoveEvent(const QPoint &pos)
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         this->painter.begin(&layer->pixmap);
-        painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
+        painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);
         this->painter.drawLine(line);
         this->painter.end();
@@ -108,7 +119,7 @@ void Pen::outOfAreaEvent(const QPoint &pos)
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         this->painter.begin(&layer->pixmap);
-        painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
+        painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);
         this->painter.drawLine(line);
         this->painter.end();

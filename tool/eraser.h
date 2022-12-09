@@ -4,6 +4,7 @@
 #include <QSpinBox>
 #include <QSpacerItem>
 #include <QVBoxLayout>
+#include <QCheckBox>
 
 #include "../base/tool.h"
 #include "../utility/mouseeventhelper.h"
@@ -42,6 +43,7 @@ protected:
     // UI controllers
     QVBoxLayout *layout;
     QSpinBox *spinbox_size;
+    QCheckBox *checkBox_Antialiasing;
 };
 
 #endif // ERASER_H

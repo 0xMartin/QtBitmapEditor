@@ -4,6 +4,7 @@
 #include <QSpinBox>
 #include <QSpacerItem>
 #include <QVBoxLayout>
+#include <QCheckBox>
 
 #include "../utility/colorpicker.h"
 #include "../base/tool.h"
@@ -46,6 +47,7 @@ protected:
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
     QSpinBox *spinbox_size;
+    QCheckBox *checkBox_Antialiasing;
 };
 
 #endif // PEN_H
