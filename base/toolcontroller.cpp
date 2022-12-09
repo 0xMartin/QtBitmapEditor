@@ -10,11 +10,10 @@ ToolController::ToolController(QWidget *parent) : QWidget(parent)
     this->layout = new QVBoxLayout();
     this->layout->setSpacing(0);
     this->setLayout(layout);
-    this->setStyleSheet("border: 1px solid #252525");
 
     this->header = new QLabel(this);
-    this->header->setText("Tool: PEN");
-    this->header->setStyleSheet("background: rgb(41, 41, 41); color: rgb(224, 224, 224); padding: 8px; border-bottom: 1px solid black");
+    this->header->setText("Tool: ");
+    this->header->setStyleSheet("background: rgb(41, 41, 41); color: rgb(224, 224, 224); padding: 8px; border-bottom: 1px solid black; border-radius: 4px;");
 }
 
 ToolController::~ToolController()
@@ -53,10 +52,9 @@ void ToolController::setTool(Tool *newTool)
         }
 
         // znovu sestaveni
-        this->header->setText(newTool->getName());
+        this->header->setText("<b>TOOL</b> " + newTool->getName());
         this->layout->addWidget(this->header);
         this->layout->addWidget(this->tool->getUI());
-
         this->repaint();
     }
 }

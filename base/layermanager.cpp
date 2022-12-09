@@ -93,14 +93,15 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_down = NULL;
     this->setMaximumWidth(500);
     this->mainLayout = new QVBoxLayout(this);
+    this->mainLayout->setSpacing(0);
     this->setLayout(this->mainLayout);
 
 
     // header
     //------------------------------------------------------------------------------------------
     this->header = new QLabel(this);
-    this->header->setText(tr("Layers"));
-    this->header->setStyleSheet("background: rgb(43, 43, 43); color: rgb(224, 224, 224); padding: 8px; border-bottom: 1px solid black");
+    this->header->setText(tr("<b>LAYERS</b>"));
+    this->header->setStyleSheet("background: rgb(43, 43, 43); color: rgb(224, 224, 224); padding: 8px; border-bottom: 1px solid black; border-radius: 4px;");
     this->mainLayout->addWidget(this->header);
 
 
@@ -142,7 +143,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->listControlLayout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
     // add layer tlacitko
-    this->button_addLayer = new QPushButton();
+    this->button_addLayer = new QPushButton(this->listControl);
     connect(this->button_addLayer, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
     this->button_addLayer->setToolTip(QString(tr("Add layer")));
     this->button_addLayer->setIcon(QIcon(":/src/icons/new_layer.png"));
@@ -150,7 +151,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->listControlLayout->addWidget(this->button_addLayer);
 
     // remove  tlacitko
-    this->button_removeLayer = new QPushButton();
+    this->button_removeLayer = new QPushButton(this->listControl);
     connect(this->button_removeLayer, SIGNAL(clicked()), this, SLOT(on_button_removeLayer_clicked()));
     this->button_removeLayer->setToolTip(QString(tr("Remove layer")));
     this->button_removeLayer->setIcon(QIcon(":/src/icons/remove_layer.png"));
@@ -158,7 +159,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->listControlLayout->addWidget(this->button_removeLayer);
 
     // up tlacitko
-    this->button_up = new QPushButton();
+    this->button_up = new QPushButton(this->listControl);
     connect(this->button_up, SIGNAL(clicked()), this, SLOT(on_button_up_clicked()));
     this->button_up->setToolTip(QString(tr("Move layer up")));
     this->button_up->setIcon(QIcon(":/src/icons/arrow_up.png"));
@@ -166,7 +167,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->listControlLayout->addWidget(this->button_up);
 
     // down tlacitko
-    this->button_down = new QPushButton();
+    this->button_down = new QPushButton(this->listControl);
     connect(this->button_down, SIGNAL(clicked()), this, SLOT(on_button_down_clicked()));
     this->button_down->setToolTip(QString(tr("Move layer down")));
     this->button_down->setIcon(QIcon(":/src/icons/arrow_down.png"));
@@ -223,7 +224,7 @@ void LayerManager::updateLayerList()
     }
 }
 
-void LayerManager::changeEvent(QEvent *)
+void LayerManager::changeEvent(QEvent * event)
 {
     // vzdy fixni velikost
     if(this->button_addLayer) this->button_addLayer->setFixedSize(QSize(30, 30));

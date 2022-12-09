@@ -21,6 +21,7 @@ Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     this->spinbox_size->setValue(10);
     this->spinbox_size->setMaximum(1000);
     this->layout->addWidget(this->spinbox_size);
+    // spacer
     this->layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     // refresh
@@ -55,10 +56,21 @@ int Pen::getType() const
 
 void Pen::mousePressEvent(const QPoint &pos)
 {
+    int size = this->spinbox_size->value();
+
     // refresh kresliciho nastroje
     this->pen = QPen(this->colorPicker->getColor(),
-                     this->spinbox_size->value(),
+                     size,
                      Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
+
+    // vykreleni po dotiku
+    BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+    this->painter.begin(&layer->pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
+    this->painter.setPen(Qt::transparent);
+    this->painter.setBrush(this->colorPicker->getColor());
+    this->painter.drawEllipse(pos.x() - size/2, pos.y() - size/2, size, size);
+    this->painter.end();
 }
 
 void Pen::mouseReleaseEvent(const QPoint &pos)

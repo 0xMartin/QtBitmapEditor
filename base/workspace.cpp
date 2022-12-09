@@ -23,6 +23,7 @@ Workspace::Workspace(const Config_Workspace_t &config, QWidget *parent): QWidget
     this->mouseHelper = MouseEventHelper(5);
     this->globalOffset = QPoint(0, 0);
     this->currentPos = QPoint(0, 0);
+    this->pressPos = QPoint(0, 0);
     this->begin = std::chrono::steady_clock::now();
 
     this->setMinimumSize(QSize(400, 400));
@@ -106,6 +107,7 @@ void Workspace::mousePressEvent(QMouseEvent *event)
         if(this->tool) {
             bool outOfArea = false;
             QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            this->pressPos = pos;
             if(outOfArea) {
                 this->tool->outOfAreaEvent(pos);
             } else {
@@ -360,24 +362,26 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
         // pozicni informace
         painter.fillRect(26, this->height() - 26, this->width(), 26, QBrush(QColor(45, 45, 45), Qt::SolidPattern));
-        painter.setPen(QColor(210, 150, 150));
+        painter.setPen(QColor(210, 150, 150));        
+        QString buffer = "Name: ";  
+        // jmeno vrstvy
         Layer *l = this->project->getSelectedLayer();
-        QString buffer = "Name: ";
         if(l) buffer += l->getName();
-        painter.drawText(QPointF(
-                             this->width() - 390,
-                             this->height() - 9),
-                         buffer);
-        buffer = QString::number(this->scale * 100, 'f', 0) + "%";
-        painter.drawText(QPointF(
-                             this->width() - 230,
-                             this->height() - 9),
-                         buffer);
+        buffer = buffer.leftJustified(27, ' ');
+        // zoom
+        buffer += QString::number(this->scale * 100, 'f', 0) + "%";
+        buffer = buffer.leftJustified(37, ' ');
+        // pozice
         bool b;
         QPoint pos = this->calculateEventOffsetPosition(this->currentPos, b);
-        buffer = "X: " + QString::number(pos.x()) + " Y: " + QString::number(pos.y());
+        buffer += "X: " + QString::number(pos.x()) + " Y: " + QString::number(pos.y());
+        buffer = buffer.leftJustified(57, ' ');
+        // dx & dy
+        pos = pos - this->pressPos;
+        buffer += "DX: " + QString::number(pos.x()) + " DY: " + QString::number(pos.y());
+        // paint info
         painter.drawText(QPointF(
-                             this->width() - 140,
+                             40,
                              this->height() - 9),
                          buffer);
     }

@@ -103,6 +103,7 @@ protected:
     QPoint globalOffset;
 
     // aktualni pozice kurzoru
+    QPoint pressPos;
     QPoint currentPos;
 
     // helper pro mouse eventy

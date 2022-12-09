@@ -20,6 +20,8 @@ Eraser::Eraser(QObject *parent) : Tool(parent)
     this->spinbox_size->setValue(10);
     this->spinbox_size->setMaximum(1000);
     this->layout->addWidget(this->spinbox_size);
+    // spacer
+    this->layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     // refresh
     this->pen = QPen(Qt::transparent,
@@ -53,10 +55,21 @@ int Eraser::getType() const
 
 void Eraser::mousePressEvent(const QPoint &pos)
 {
+    int size = this->spinbox_size->value();
+
     // refresh kresliciho nastroje
     this->pen = QPen(Qt::transparent,
-                     this->spinbox_size->value(),
+                     size,
                      Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
+
+    // vykreleni po dotiku
+    BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+    this->painter.begin(&layer->pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
+    this->painter.setBrush(Qt::transparent);
+    this->painter.setCompositionMode(QPainter::CompositionMode_Clear);
+    this->painter.drawEllipse(pos.x() - size/2, pos.y() - size/2, size, size);
+    this->painter.end();
 }
 
 void Eraser::mouseReleaseEvent(const QPoint &pos)

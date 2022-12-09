@@ -52,12 +52,13 @@ MainWindow::MainWindow(QWidget *parent)
     /*****************************************************************************/
     // sestaveni celkove pracovni plochy s vyuzitim splitteru
     this->splitter_horizontal = new QSplitter(Qt::Horizontal);
-
+    this->splitter_horizontal->setObjectName("bg-widget");
     // leva strana (pracovani plocha pro upravu bitmapove grafiky)
     this->splitter_horizontal->addWidget(this->context->getWorkspace());
 
     // prava strany (manazer vrstev + ovladani aktualne vybraneho nastroje)
     this->splitter_vertical = new QSplitter(Qt::Vertical);
+    this->splitter_vertical->setObjectName("bg-widget");
     // horni strana (ovladani nastroje)
     this->splitter_vertical->addWidget(this->context->getToolController());
     // dolni strana (manazer vrstev)
@@ -72,6 +73,12 @@ MainWindow::MainWindow(QWidget *parent)
     // inicializace oken
     this->window_newProject = new NewProject();
     this->window_newProject->setContext(this->context);
+    /*****************************************************************************/
+
+
+    /*****************************************************************************/
+    // vlastni styly
+    this->splitter_horizontal->setStyleSheet("QWidget#bg-widget {background: rgb(49, 49, 49);}");
     /*****************************************************************************/
 
 

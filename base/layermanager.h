@@ -112,7 +112,7 @@ protected:
     QHBoxLayout *layerControllLayout;
 
 
-    virtual void changeEvent(QEvent *);
+    virtual void changeEvent(QEvent * event) override;
 
 private slots:
     void on_project_repaintSignal(Layer *layer);
