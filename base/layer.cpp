@@ -36,7 +36,7 @@ float Layer::getOpacity() const
 
 void Layer::setOpacity(float newOpacity)
 {
-    this->opacity = newOpacity;
+    this->opacity = qMax(0.0, qMin(1.0, (float) newOpacity));
 }
 
 void Layer::requestRepaint()

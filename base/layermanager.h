@@ -93,8 +93,9 @@ protected:
     // hlavni komponenty manazeru vrstev
     QLabel *header;
     // layer controll
-    QSpinBox *spinbox_opacity;
-    QComboBox *comboBox_blend;
+    QCheckBox *checkBox_antialiasing; /** Ovladani antialiasingu vybrane vrstvy */
+    QSpinBox *spinbox_opacity; /** Ovladani opacity vybrane vrstvy */
+    QComboBox *comboBox_blend; /** Ovladani blend modu vybrane vrstvy */
     //list
     QListWidget *listWidget; /** List se vsema vrstvama projektu */
     // list controll
@@ -109,7 +110,6 @@ protected:
     // list controll
     QWidget *listControl;
     QHBoxLayout *listControlLayout;
-    QCheckBox *checkBox_antialiasing;
     // layer controll
     QWidget *layerControl;
     QHBoxLayout *layerControllLayout;
@@ -117,8 +117,21 @@ protected:
 
     virtual void changeEvent(QEvent * event) override;
 
+    /**
+     * @brief Update nabindovani prvku pro ovladani aktualne vybrane vrstvy v projektu
+     */
+    void updateLayerControllBinding();
+
 private slots:
+    /**
+     * @brief Prekresleni vrstvy
+     * @param layer - Vrstva jejiz nahled se ma prekreslit
+     */
     void on_project_repaintSignal(Layer *layer);
+
+    /*****************************************************************************************/
+    // LIST CONTROLL
+    /*****************************************************************************************/
 
     /**
      * @brief Pridani nove vrstvy
@@ -144,6 +157,28 @@ private slots:
      * @brief V projektu nastavi aktualne vybranou vrstvu z listu
      */
     void on_listWidget_itemSelectionChanged();
+
+    /*****************************************************************************************/
+    // LAYER CONTROLL
+    /*****************************************************************************************/
+
+    /**
+     * @brief Zmena antialiasingu u vybrane vrstvy
+     * @param value - Povolen / Nepovolen
+     */
+    void on_layer_antialiasing_toggled(bool value);
+
+    /**
+     * @brief Zmena blend modu u vybrane vrstvy
+     * @param index - Index v listu
+     */
+    void on_layer_blend_changed(int index);
+
+    /**
+     * @brief Zmena opacity u vybrane vrstvy
+     * @param value - Hodnota opacity
+     */
+    void on_layer_opacity_changed(int value);
 
 };
 

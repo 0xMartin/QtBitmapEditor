@@ -114,12 +114,16 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 
     // smooth
     this->checkBox_antialiasing = new QCheckBox(this);
+    connect(this->checkBox_antialiasing, SIGNAL(toggled(bool)),
+            this, SLOT(on_layer_antialiasing_toggled(bool)));
     this->checkBox_antialiasing->setText(tr("Smooth"));
     this->checkBox_antialiasing->setToolTip(tr("Smooth Painting Mode"));
     this->layerControllLayout->addWidget(this->checkBox_antialiasing);
 
     // blend mode
     this->comboBox_blend = new QComboBox(this);
+    connect(this->comboBox_blend, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(on_layer_blend_changed(int)));
     this->comboBox_blend->setToolTip(tr("BLEND MODE"));
     this->comboBox_blend->addItem(tr("NORMAL"));
     this->comboBox_blend->addItem(tr("ADDITION"));
@@ -133,7 +137,8 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 
     // opacity
     this->spinbox_opacity = new QSpinBox(this);
-    //connect(this->spinbox_opacity, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
+    connect(this->spinbox_opacity, SIGNAL(valueChanged(int)),
+            this, SLOT(on_layer_opacity_changed(int)));
     this->spinbox_opacity->setToolTip(QString(tr("Opacity")));
     this->spinbox_opacity->setPrefix("Opacity: ");
     this->spinbox_opacity->setSuffix("%");
@@ -142,6 +147,8 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->spinbox_opacity->setValue(100);
     this->layerControllLayout->addWidget(this->spinbox_opacity);
 
+
+    this->updateLayerControllBinding();
 
     // list s vrstvama
     //------------------------------------------------------------------------------------------
@@ -213,6 +220,7 @@ void LayerManager::setProject(Project *project)
     this->project = project;
     this->updateLayerList();
     connect(this->project, SIGNAL(repaintSignal(Layer*)), this, SLOT(on_project_repaintSignal(Layer*)));
+    this->updateLayerControllBinding();
 }
 
 Project *LayerManager::getProject() const
@@ -251,6 +259,22 @@ void LayerManager::changeEvent(QEvent * event)
     if(this->button_removeLayer) this->button_removeLayer->setFixedSize(QSize(30, 30));
     if(this->button_up) this->button_up->setFixedSize(QSize(30, 30));
     if(this->button_down) this->button_down->setFixedSize(QSize(30, 30));
+}
+
+void LayerManager::updateLayerControllBinding()
+{
+    if(this->project == NULL) {
+        this->layerControl->setEnabled(false);
+        return;
+    }
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        this->layerControl->setEnabled(false);
+    } else {
+        this->layerControl->setEnabled(true);
+        this->spinbox_opacity->setValue(l->getOpacity() * 100.0);
+        this->checkBox_antialiasing->setChecked(l->isAntialiasingEnabled());
+    }
 }
 
 void LayerManager::on_project_repaintSignal(Layer *layer)
@@ -405,5 +429,35 @@ void LayerManager::on_listWidget_itemSelectionChanged()
     // v projektu nastavi nove vybranou vrstvu
     Layer *l = ((LayerWidget*)widget)->getLayer();
     this->project->setSelectedLayer(l);
+
+    // update bindingu pro ovladaci prvky vrstvy
+    this->updateLayerControllBinding();
+}
+
+void LayerManager::on_layer_antialiasing_toggled(bool value)
+{
+    if(this->project == NULL) return;
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) return;
+    l->enableAntialiasing(value);
+    l->requestRepaint();
+}
+
+void LayerManager::on_layer_blend_changed(int index)
+{
+    if(this->project == NULL) return;
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) return;
+    //l->enableAntialiasing(value);
+    //l->requestRepaint();
+}
+
+void LayerManager::on_layer_opacity_changed(int value)
+{
+    if(this->project == NULL) return;
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) return;
+    l->setOpacity(value / 100.0);
+    l->requestRepaint();
 }
 
