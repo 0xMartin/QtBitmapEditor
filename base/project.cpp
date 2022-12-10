@@ -163,6 +163,7 @@ void Project::paintEvent(QPainter &painter) {
         for(Layer *layer : *this->layers) {
             if(layer) {
                 if(!layer->isVisible()) continue;
+                painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
                 layer->paintEvent(painter);
             }
         }

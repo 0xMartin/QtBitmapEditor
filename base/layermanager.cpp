@@ -112,6 +112,25 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->layerControllLayout = new QHBoxLayout(this->layerControl);
     this->layerControl->setLayout(this->layerControllLayout);
 
+    // smooth
+    this->checkBox_antialiasing = new QCheckBox(this);
+    this->checkBox_antialiasing->setText(tr("Smooth"));
+    this->checkBox_antialiasing->setToolTip(tr("Smooth Painting Mode"));
+    this->layerControllLayout->addWidget(this->checkBox_antialiasing);
+
+    // blend mode
+    this->comboBox_blend = new QComboBox(this);
+    this->comboBox_blend->setToolTip(tr("BLEND MODE"));
+    this->comboBox_blend->addItem(tr("NORMAL"));
+    this->comboBox_blend->addItem(tr("ADDITION"));
+    this->comboBox_blend->addItem(tr("MULTIPLY"));
+    this->comboBox_blend->addItem(tr("DIVIDE"));
+    this->comboBox_blend->addItem(tr("DIFFERENCE"));
+    this->comboBox_blend->addItem(tr("DARKEN"));
+    this->comboBox_blend->addItem(tr("LIGHTEN"));
+    this->comboBox_blend->addItem(tr("SCREEN"));
+    this->layerControllLayout->addWidget(this->comboBox_blend);
+
     // opacity
     this->spinbox_opacity = new QSpinBox(this);
     //connect(this->spinbox_opacity, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
@@ -145,7 +164,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     // add layer tlacitko
     this->button_addLayer = new QPushButton(this->listControl);
     connect(this->button_addLayer, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
-    this->button_addLayer->setToolTip(QString(tr("Add layer")));
+    this->button_addLayer->setToolTip(QString(tr("Add Layer")));
     this->button_addLayer->setIcon(QIcon(":/src/icons/new_layer.png"));
     this->button_addLayer->setIconSize(QSize(22, 22));
     this->listControlLayout->addWidget(this->button_addLayer);
@@ -153,7 +172,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     // remove  tlacitko
     this->button_removeLayer = new QPushButton(this->listControl);
     connect(this->button_removeLayer, SIGNAL(clicked()), this, SLOT(on_button_removeLayer_clicked()));
-    this->button_removeLayer->setToolTip(QString(tr("Remove layer")));
+    this->button_removeLayer->setToolTip(QString(tr("Remove Layer")));
     this->button_removeLayer->setIcon(QIcon(":/src/icons/remove_layer.png"));
     this->button_removeLayer->setIconSize(QSize(22, 22));
     this->listControlLayout->addWidget(this->button_removeLayer);
@@ -161,7 +180,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     // up tlacitko
     this->button_up = new QPushButton(this->listControl);
     connect(this->button_up, SIGNAL(clicked()), this, SLOT(on_button_up_clicked()));
-    this->button_up->setToolTip(QString(tr("Move layer up")));
+    this->button_up->setToolTip(QString(tr("Move Layer Up")));
     this->button_up->setIcon(QIcon(":/src/icons/arrow_up.png"));
     this->button_up->setIconSize(QSize(22, 22));
     this->listControlLayout->addWidget(this->button_up);
@@ -169,7 +188,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     // down tlacitko
     this->button_down = new QPushButton(this->listControl);
     connect(this->button_down, SIGNAL(clicked()), this, SLOT(on_button_down_clicked()));
-    this->button_down->setToolTip(QString(tr("Move layer down")));
+    this->button_down->setToolTip(QString(tr("Move Layer Down")));
     this->button_down->setIcon(QIcon(":/src/icons/arrow_down.png"));
     this->button_down->setIconSize(QSize(22, 22));
     this->listControlLayout->addWidget(this->button_down);
@@ -178,6 +197,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 LayerManager::~LayerManager() {
     if(this->header) delete this->header;
     if(this->spinbox_opacity) delete this->spinbox_opacity;
+    if(this->comboBox_blend) delete this->comboBox_blend;
     if(this->listWidget) delete this->listWidget;
     if(this->button_addLayer) delete this->button_addLayer;
     if(this->button_removeLayer) delete this->button_removeLayer;

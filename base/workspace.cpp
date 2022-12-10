@@ -1,6 +1,7 @@
 #include "workspace.h"
 
 
+#include <chrono>
 #include <QApplication>
 #include <QPainter>
 #include <QtMath>
@@ -166,8 +167,6 @@ void Workspace::mouseDoubleClickEvent(QMouseEvent *event)
     }
 }
 
-#include <chrono>
-
 void Workspace::mouseMoveEvent(QMouseEvent *event)
 {
     this->currentPos = event->pos();
@@ -253,8 +252,6 @@ void Workspace::setConfig(const Config_Workspace_t &newConfig)
 
 void Workspace::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
-
-    // nastaveni kvality vykreslovani
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     // vykresleni pozadi
@@ -287,6 +284,8 @@ void Workspace::paintEvent(QPaintEvent *event) {
         painter.restore();
         //-------PROJECT-------------------------
 
+
+        painter.setRenderHint(QPainter::Antialiasing, true);
 
         // overlayer
         if(this->tool != NULL) {

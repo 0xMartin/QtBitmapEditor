@@ -12,6 +12,7 @@
 #include <QCheckBox>
 #include <QSpacerItem>
 #include <QSpinBox>
+#include <QComboBox>>
 
 
 #include "project.h"
@@ -93,6 +94,7 @@ protected:
     QLabel *header;
     // layer controll
     QSpinBox *spinbox_opacity;
+    QComboBox *comboBox_blend;
     //list
     QListWidget *listWidget; /** List se vsema vrstvama projektu */
     // list controll
@@ -107,6 +109,7 @@ protected:
     // list controll
     QWidget *listControl;
     QHBoxLayout *listControlLayout;
+    QCheckBox *checkBox_antialiasing;
     // layer controll
     QWidget *layerControl;
     QHBoxLayout *layerControllLayout;
