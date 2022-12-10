@@ -163,12 +163,60 @@ void Project::paintEvent(QPainter &painter) {
         for(Layer *layer : *this->layers) {
             if(layer) {
                 if(!layer->isVisible()) continue;
+                // antialiasing
                 painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
+                // opacity
                 painter.setOpacity(layer->getOpacity());
+                // blend mode
+                switch (layer->getBlendMode()) {
+                case NORMAL:
+                    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+                    break;
+                case ADDITION:
+                    painter.setCompositionMode(QPainter::CompositionMode_Plus);
+                    break;
+                case MULTIPLY:
+                    painter.setCompositionMode(QPainter::CompositionMode_Multiply);
+                    break;
+                case SCREEN:
+                    painter.setCompositionMode(QPainter::CompositionMode_Screen);
+                    break;
+                case OVERLAY:
+                    painter.setCompositionMode(QPainter::CompositionMode_Overlay);
+                    break;
+                case DARKEN:
+                    painter.setCompositionMode(QPainter::CompositionMode_Darken);
+                    break;
+                case LIGHTEN:
+                    painter.setCompositionMode(QPainter::CompositionMode_Lighten);
+                    break;
+                case COLOR_DODGE:
+                    painter.setCompositionMode(QPainter::CompositionMode_ColorDodge);
+                    break;
+                case COLOR_BURN:
+                    painter.setCompositionMode(QPainter::CompositionMode_ColorBurn);
+                    break;
+                case HARD_LIGHT:
+                    painter.setCompositionMode(QPainter::CompositionMode_HardLight);
+                    break;
+                case SOFT_LIGHT:
+                    painter.setCompositionMode(QPainter::CompositionMode_SoftLight);
+                    break;
+                case DIFFERENCE:
+                    painter.setCompositionMode(QPainter::CompositionMode_Difference);
+                    break;
+                case EXCLUSION:
+                    painter.setCompositionMode(QPainter::CompositionMode_Exclusion);
+                    break;
+                }
+                // paint layer
                 layer->paintEvent(painter);
             }
         }
     }
+
+    // reset blend mode
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
     // outline
     painter.setPen(Qt::black);

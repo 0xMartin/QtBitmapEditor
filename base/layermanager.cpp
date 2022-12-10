@@ -128,11 +128,16 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->comboBox_blend->addItem(tr("NORMAL"));
     this->comboBox_blend->addItem(tr("ADDITION"));
     this->comboBox_blend->addItem(tr("MULTIPLY"));
-    this->comboBox_blend->addItem(tr("DIVIDE"));
-    this->comboBox_blend->addItem(tr("DIFFERENCE"));
+    this->comboBox_blend->addItem(tr("SCREEN"));
+    this->comboBox_blend->addItem(tr("OVERLAY"));
     this->comboBox_blend->addItem(tr("DARKEN"));
     this->comboBox_blend->addItem(tr("LIGHTEN"));
-    this->comboBox_blend->addItem(tr("SCREEN"));
+    this->comboBox_blend->addItem(tr("COLOR DODGE"));
+    this->comboBox_blend->addItem(tr("COLOR BURN"));
+    this->comboBox_blend->addItem(tr("HARD LIGHT"));
+    this->comboBox_blend->addItem(tr("SOFT LIGHT"));
+    this->comboBox_blend->addItem(tr("DIFFERENCE"));
+    this->comboBox_blend->addItem(tr("EXCLUSION"));
     this->layerControllLayout->addWidget(this->comboBox_blend);
 
     // opacity
@@ -274,6 +279,8 @@ void LayerManager::updateLayerControllBinding()
         this->layerControl->setEnabled(true);
         this->spinbox_opacity->setValue(l->getOpacity() * 100.0);
         this->checkBox_antialiasing->setChecked(l->isAntialiasingEnabled());
+        // ciselna hodnota LayerBlendMode presne odpovida poradi v comboboxu
+        this->comboBox_blend->setCurrentIndex(l->getBlendMode());
     }
 }
 
@@ -448,8 +455,9 @@ void LayerManager::on_layer_blend_changed(int index)
     if(this->project == NULL) return;
     Layer *l = this->project->getSelectedLayer();
     if(l == NULL) return;
-    //l->enableAntialiasing(value);
-    //l->requestRepaint();
+    // ciselna hodnota LayerBlendMode presne odpovida poradi v comboboxu
+    l->setBlendMode((LayerBlendMode)index);
+    l->requestRepaint();
 }
 
 void LayerManager::on_layer_opacity_changed(int value)

@@ -10,14 +10,19 @@
  * @brief Rezim prolinani vrstev
  */
 enum LayerBlendMode {
-    NORMAL, /***/
-    ADDITION, /***/
-    MULTIPLY, /***/
-    DIVIDE, /***/
-    DIFFERENCE, /***/
-    DARKEN, /***/
-    LIGHTEN, /***/
-    SCREEN /***/
+    NORMAL = 0,
+    ADDITION = 1,
+    MULTIPLY = 2,
+    SCREEN = 3,
+    OVERLAY = 4,
+    DARKEN = 5,
+    LIGHTEN = 6,
+    COLOR_DODGE = 7,
+    COLOR_BURN = 8,
+    HARD_LIGHT = 9,
+    SOFT_LIGHT = 10,
+    DIFFERENCE = 11,
+    EXCLUSION = 12
 };
 
 
@@ -139,6 +144,5 @@ protected:
  */
 Q_DECL_EXPORT void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,
                                      const QSize &size, const size_t step);
-
 
 #endif // LAYER_H
