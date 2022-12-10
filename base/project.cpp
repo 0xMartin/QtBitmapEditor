@@ -164,6 +164,7 @@ void Project::paintEvent(QPainter &painter) {
             if(layer) {
                 if(!layer->isVisible()) continue;
                 painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
+                painter.setOpacity(layer->getOpacity());
                 layer->paintEvent(painter);
             }
         }

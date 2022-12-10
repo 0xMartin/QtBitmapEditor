@@ -8,6 +8,7 @@ Layer::Layer(QObject *parent, const QString &name) : QObject(parent)
     this->visibility = true;
     this->opacity = 1.0;
     this->antialiasing = true;
+    this->blendMode = NORMAL;
 }
 
 Layer::~Layer() {
@@ -66,6 +67,16 @@ bool Layer::isAntialiasingEnabled() const
     return this->antialiasing;
 }
 
+LayerBlendMode Layer::getBlendMode() const
+{
+    return this->blendMode;
+}
+
+void Layer::setBlendMode(LayerBlendMode newBlendMode)
+{
+    this->blendMode = newBlendMode;
+}
+
 void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,
                        const QSize &size, const size_t step)
 {
@@ -80,6 +91,7 @@ void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &vie
     QBrush brush(QColor(200, 200, 200), Qt::SolidPattern);
     int step2 = 2 * step;
 
+    // vypocet zacatku a konce vykreslovani sachovanice v zavislosti na offsetu a velikosti viewportu
     int x_start = offset.x();
     if(x_start < 0) {
         x_start = -((-x_start) % step2);
@@ -91,6 +103,7 @@ void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &vie
     int x_end = qMin(offset.x() + size.width(), viewPort.width());
     int y_end = qMin(offset.y() + size.height(), viewPort.height());
 
+    // vykresleni sachovanice
     int x, x_offset, step_x, step_y;
     for(int y = y_start, i = 0; y < y_end; y += step) {
         x_offset = i++ % 2 == 0 ? 0.0f : step;

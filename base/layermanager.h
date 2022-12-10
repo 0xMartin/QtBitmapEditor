@@ -12,7 +12,7 @@
 #include <QCheckBox>
 #include <QSpacerItem>
 #include <QSpinBox>
-#include <QComboBox>>
+#include <QComboBox>
 
 
 #include "project.h"

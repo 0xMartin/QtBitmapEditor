@@ -7,7 +7,22 @@
 
 
 /**
- * @brief Abstraktni trida vrstvy. Reprezentuje jednu vrstvu bitmapoveho obrazku.
+ * @brief Rezim prolinani vrstev
+ */
+enum LayerBlendMode {
+    NORMAL, /***/
+    ADDITION, /***/
+    MULTIPLY, /***/
+    DIVIDE, /***/
+    DIFFERENCE, /***/
+    DARKEN, /***/
+    LIGHTEN, /***/
+    SCREEN /***/
+};
+
+
+/**
+ * @brief Abstraktni trida vrstvy. Reprezentuje jednu vrstvu bitmapoveho obrazku ("projektu").
  */
 class Layer : public QObject
 {
@@ -82,6 +97,18 @@ public:
     bool isAntialiasingEnabled() const;
 
     /**
+     * @brief Navrati aktualne nastaveny blend mode vrstvy
+     * @return LayerBlendMode
+     */
+    LayerBlendMode getBlendMode() const;
+
+    /**
+     * @brief Zmeni blend mode teto vrstvy
+     * @param newBlendMode - Novy blend mode
+     */
+    void setBlendMode(LayerBlendMode newBlendMode);
+
+    /**
      * @brief Paint event. Vykresli vrstvu do workspacu
      * @param painter - QPainter
      */
@@ -95,6 +122,7 @@ public:
 
 protected:
     QString name; /** Nazev vrstvy */
+    LayerBlendMode blendMode;
     bool visibility; /** Viditelnost vrstvy */
     float opacity; /** Nepruhlednost vrstvy */
     bool antialiasing; /** Antialiasing povolen/zakazan */
