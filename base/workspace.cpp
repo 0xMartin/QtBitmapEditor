@@ -135,6 +135,9 @@ void Workspace::mouseReleaseEvent(QMouseEvent *event)
                 this->repaint();
             }
         }
+
+        // repaint signal
+        emit this->project->repaintSignal(this->project->getSelectedLayer());
     }
 
     // release event -> zmena offsetu workspace pomoci stredoveho tlacitka

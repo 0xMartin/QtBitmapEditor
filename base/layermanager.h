@@ -31,8 +31,24 @@ public:
      */
     explicit LayerWidget(Layer *layer, size_t height);
     ~LayerWidget();
+
+    /**
+     * @brief Navrati vrstvu ktere widget nalezi
+     * @return Layer
+     */
     Layer *getLayer() const;
+
+    /**
+     * @brief V tomto widgetu prekresli nahled vrstvy
+     */
     void repaintLayer();
+
+    /**
+     * @brief Zmeni jmeno widgetu
+     * @param name - Jmeno
+     */
+    void setName(const QString &name);
+
 protected:
     size_t height; /** Vyska obrazku nahledu vrstvy */
     Layer * layer; /** Vrstva ktere tento widget patri*/
@@ -158,6 +174,16 @@ private slots:
      * @brief Spojeni dvou vrstev
      */
     void on_layer_merge_down();
+
+    /**
+     * @brief Duplikovani vybrane vrstev
+     */
+    void on_layer_duplicate();
+
+    /**
+     * @brief Prejmenovani vybrane vrstvy
+     */
+    void on_layer_rename();
 
     /**
      * @brief V projektu nastavi aktualne vybranou vrstvu z listu

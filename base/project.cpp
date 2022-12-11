@@ -168,9 +168,29 @@ bool Project::mergaSeletedLayerDown()
             if(index > 0) {
                 Layer *buttom = this->layers->at(index - 1);
                 Layer *top = this->layers->takeAt(index);
-                //merge
+                //########################################################################
+                //merge TODO
+                //########################################################################
                 return true;
             }
+        }
+        ++index;
+    }
+    return true;
+}
+
+bool Project::dupliceteLayer()
+{
+    if(this->selected_layer == NULL) return false;
+    qsizetype index = 0;
+    for(Layer *l : *this->layers) {
+        if(l == this->selected_layer) {
+            Layer *duplicate = this->selected_layer->createDuplicate();
+            if(duplicate == NULL) {
+                return false;
+            }
+            this->layers->insert(index + 1, duplicate);
+            return true;
         }
         ++index;
     }

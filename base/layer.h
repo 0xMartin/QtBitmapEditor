@@ -125,6 +125,12 @@ public:
      */
     virtual int getType() = 0;
 
+    /**
+     * @brief Vytvori duplikat vrstvy
+     * @return Layer
+     */
+    virtual Layer *createDuplicate() const = 0;
+
 protected:
     QString name; /** Nazev vrstvy */
     LayerBlendMode blendMode;

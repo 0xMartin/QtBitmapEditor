@@ -83,7 +83,6 @@ void Eraser::mousePressEvent(const QPoint &pos)
 void Eraser::mouseReleaseEvent(const QPoint &pos)
 {
     this->mouseHelper.resetMove();
-    emit this->project->repaintSignal(this->project->getSelectedLayer());
 }
 
 void Eraser::mouseDoubleClickEvent(const QPoint &pos)

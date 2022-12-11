@@ -88,7 +88,6 @@ void Pen::mousePressEvent(const QPoint &pos)
 void Pen::mouseReleaseEvent(const QPoint &pos)
 {
     this->mouseHelper.resetMove();
-    emit this->project->repaintSignal(this->project->getSelectedLayer());
 }
 
 void Pen::mouseDoubleClickEvent(const QPoint &pos)

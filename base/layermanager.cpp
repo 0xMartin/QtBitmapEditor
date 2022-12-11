@@ -71,6 +71,12 @@ void LayerWidget::repaintLayer()
     }
 }
 
+void LayerWidget::setName(const QString &name)
+{
+    if(this->label == NULL) return;
+    this->label->setText(name);
+}
+
 void LayerWidget::on_checkBox_visible_toggle(bool visible)
 {
     if(this->layer) {
@@ -290,10 +296,9 @@ void LayerManager::updateLayerControllBinding()
 void LayerManager::on_project_repaintSignal(Layer *layer)
 {
     if(layer == NULL) return;
-    QList<QListWidgetItem*> items = this->listWidget->selectedItems();
     LayerWidget *widget;
-    for(QListWidgetItem *item : items) {
-        widget = (LayerWidget*)this->listWidget->itemWidget(item);
+    for(int i = 0; i < this->listWidget->count(); ++i) {
+        widget = (LayerWidget*)this->listWidget->itemWidget(this->listWidget->item(i));
         if(widget == NULL) continue;
         if(widget->getLayer() == layer) {
             widget->repaintLayer();
@@ -475,6 +480,80 @@ void LayerManager::on_layer_merge_down()
     }
 }
 
+void LayerManager::on_layer_duplicate()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Duplicate layer"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Duplicate layer"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    if(this->project->dupliceteLayer()) {
+        this->updateLayerList();
+        this->project->requestRepaint();
+    } else {
+        QMessageBox::warning(
+                    this,
+                    tr("Duplicate layer"),
+                    tr("Failed to duplicate layer"));
+    }
+}
+
+void LayerManager::on_layer_rename()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Rename layer"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Rename layer"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    bool ok;
+    QString name = QInputDialog::getText(
+                this,
+                tr("Rename layer"),
+                tr("Layer name:"),
+                QLineEdit::Normal,
+                l->getName(),
+                &ok);
+
+    if (ok && !name.isEmpty()) {
+        // nastavy jmeno
+        l->setName(name);
+        // proveda zmeni v listu
+        LayerWidget *widget;
+        for(int i = 0; i < this->listWidget->count(); ++i) {
+            widget = (LayerWidget*)this->listWidget->itemWidget(this->listWidget->item(i));
+            if(widget == NULL) continue;
+            if(widget->getLayer() == l) {
+                widget->setName(name);
+                break;
+            }
+        }
+    }
+}
+
 void LayerManager::on_listWidget_itemSelectionChanged()
 {
     if(this->project == NULL || this->listWidget == NULL) return;
@@ -502,7 +581,7 @@ void LayerManager::showContextMenu(const QPoint &pos)
     QMenu contextMenu(tr("Menu"), this->listWidget);
 
     QAction action1(tr("Rename Layer"), this->listWidget);
-    //connect(&action2, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    connect(&action1, SIGNAL(triggered()), this, SLOT(on_layer_rename()));
     QAction action3(tr("Move Up"), this->listWidget);
     connect(&action3, SIGNAL(triggered()), this, SLOT(on_button_up_clicked()));
     QAction action4(tr("Move Down"), this->listWidget);
@@ -512,7 +591,7 @@ void LayerManager::showContextMenu(const QPoint &pos)
     QAction action6(tr("Remove Layer"), this->listWidget);
     connect(&action6, SIGNAL(triggered()), this, SLOT(on_button_removeLayer_clicked()));
     QAction action7(tr("Duplicate Layer"), this->listWidget);
-    //connect(&action7, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    connect(&action7, SIGNAL(triggered()), this, SLOT(on_layer_duplicate()));
     QAction action8(tr("Merge Down"), this->listWidget);
     connect(&action8, SIGNAL(triggered()), this, SLOT(on_layer_merge_down()));
 

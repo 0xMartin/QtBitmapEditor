@@ -38,6 +38,8 @@ public:
 
     virtual int getType() override;
 
+    virtual Layer *createDuplicate() const override;
+
 protected:
     QSize size; /** Velikost bitmapy */
 };
