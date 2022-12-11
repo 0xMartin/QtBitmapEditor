@@ -437,6 +437,44 @@ void LayerManager::on_button_down_clicked()
     this->project->requestRepaint();
 }
 
+void LayerManager::on_layer_merge_down()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Merge layer down"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Merge layer down"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(
+                this,
+                tr("Merge layer down"),
+                QString(tr("Do you want to merage down the layer named [%1]?")).arg(l->getName()),
+                QMessageBox::Yes|QMessageBox::No);
+    if(reply == QMessageBox::Yes) {
+        if(this->project->mergaSeletedLayerDown()) {
+            this->updateLayerList();
+            this->project->requestRepaint();
+        } else {
+            QMessageBox::warning(
+                        this,
+                        tr("Move layer down"),
+                        tr("Failed to merge layers"));
+        }
+    }
+}
+
 void LayerManager::on_listWidget_itemSelectionChanged()
 {
     if(this->project == NULL || this->listWidget == NULL) return;
@@ -476,7 +514,7 @@ void LayerManager::showContextMenu(const QPoint &pos)
     QAction action7(tr("Duplicate Layer"), this->listWidget);
     //connect(&action7, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
     QAction action8(tr("Merge Down"), this->listWidget);
-    //connect(&action8, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    connect(&action8, SIGNAL(triggered()), this, SLOT(on_layer_merge_down()));
 
     contextMenu.addAction(&action1);
     contextMenu.addSeparator();

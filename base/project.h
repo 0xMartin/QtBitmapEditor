@@ -133,6 +133,12 @@ public:
     bool moveSelectedLayerDown();
 
     /**
+     * @brief Aktualne vybranou vrstvu spoji s tou, ktera se nachazi ve vykreslovani pod ni (nizsi index v listu)
+     * @return True -> uspesne provedeno
+     */
+    bool mergaSeletedLayerDown();
+
+    /**
      * @brief Paint event. Vykresli  projekt do workspacu (projekt = obrazek slozeny z vice vrstev)
      * @param offset - Offset vykreslovani
      */

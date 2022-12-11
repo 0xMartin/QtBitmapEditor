@@ -223,11 +223,11 @@ void Workspace::wheelEvent(QWheelEvent *event)
         }
     } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
         // posun v horizontalni ose
-        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->width() / 10 * INV_SCALE(this->scale);
+        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->width() / 12 * INV_SCALE(this->scale);
         this->globalOffset.setX(this->globalOffset.x() + diff);
     } else {
         // posun ve vertikalni ose
-        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->height() / 10 * INV_SCALE(this->scale);
+        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->height() / 12 * INV_SCALE(this->scale);
         this->globalOffset.setY(this->globalOffset.y() + diff);
     }
 

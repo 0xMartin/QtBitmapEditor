@@ -158,6 +158,25 @@ bool Project::moveSelectedLayerDown()
     return true;
 }
 
+bool Project::mergaSeletedLayerDown()
+{
+    if(this->selected_layer == NULL) return false;
+    if(this->layers->length() < 2) return false;
+    qsizetype index = 0;
+    for(Layer *l : *this->layers) {
+        if(l == this->selected_layer) {
+            if(index > 0) {
+                Layer *buttom = this->layers->at(index - 1);
+                Layer *top = this->layers->takeAt(index);
+                //merge
+                return true;
+            }
+        }
+        ++index;
+    }
+    return true;
+}
+
 void Project::paintEvent(QPainter &painter) {
     // vykresli vrstvy projektu
     if(this->layers) {

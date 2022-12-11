@@ -155,6 +155,11 @@ private slots:
     void on_button_down_clicked();
 
     /**
+     * @brief Spojeni dvou vrstev
+     */
+    void on_layer_merge_down();
+
+    /**
      * @brief V projektu nastavi aktualne vybranou vrstvu z listu
      */
     void on_listWidget_itemSelectionChanged();
