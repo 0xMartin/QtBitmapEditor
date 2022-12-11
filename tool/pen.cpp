@@ -76,6 +76,7 @@ void Pen::mousePressEvent(const QPoint &pos)
 
     // vykreleni po dotiku
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+    if(layer == NULL) return;
     this->painter.begin(&layer->pixmap);
     painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
     this->painter.setPen(Qt::transparent);
@@ -102,6 +103,7 @@ void Pen::mouseMoveEvent(const QPoint &pos)
         QLine line = this->mouseHelper.lineFromLastPos();
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+        if(layer == NULL) return;
         this->painter.begin(&layer->pixmap);
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);
@@ -118,6 +120,7 @@ void Pen::outOfAreaEvent(const QPoint &pos)
         QLine line(*last, pos);
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+        if(layer == NULL) return;
         this->painter.begin(&layer->pixmap);
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);

@@ -13,6 +13,7 @@
 #include <QSpacerItem>
 #include <QSpinBox>
 #include <QComboBox>
+#include <QMenu>
 
 
 #include "project.h"
@@ -157,6 +158,12 @@ private slots:
      * @brief V projektu nastavi aktualne vybranou vrstvu z listu
      */
     void on_listWidget_itemSelectionChanged();
+
+    /**
+     * @brief Zobrazi kontextove menu pro vybranou vrstvu
+     * @param pos - Pozice
+     */
+    void showContextMenu(const QPoint &pos);
 
     /*****************************************************************************************/
     // LAYER CONTROLL

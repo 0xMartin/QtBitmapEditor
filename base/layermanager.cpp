@@ -160,6 +160,9 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->listWidget = new QListWidget(this);
     connect(this->listWidget, SIGNAL(itemSelectionChanged()),
             this, SLOT(on_listWidget_itemSelectionChanged()));
+    this->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this->listWidget, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(showContextMenu(QPoint)));
     this->mainLayout->addWidget(this->listWidget);
 
 
@@ -300,6 +303,10 @@ void LayerManager::on_project_repaintSignal(Layer *layer)
     }
 }
 
+/*********************************************************************************************************************/
+// LayerManager - EVENTY PRO OVLADACI PRVKY
+/*********************************************************************************************************************/
+
 void LayerManager::on_button_addLayer_clicked()
 {
     if(this->project == NULL) {
@@ -340,6 +347,14 @@ void LayerManager::on_button_removeLayer_clicked()
         return;
     }
 
+    if(this->project->getLayers()->size() <= 1) {
+        QMessageBox::warning(
+                    this,
+                    tr("Remove layer"),
+                    tr("It is not possible to remove all layers"));
+        return;
+    }
+
     Layer *l = this->project->getSelectedLayer();
     if(l == NULL) {
         QMessageBox::warning(
@@ -357,7 +372,10 @@ void LayerManager::on_button_removeLayer_clicked()
                 QMessageBox::Yes|QMessageBox::No);
 
     if(reply == QMessageBox::Yes) {
+        // odebere vybranou vrstvu a pak oznacni vrstvu pod touto odebranou vrstvou
+        qsizetype i = this->project->getLayers()->indexOf(l) - 1;
         this->project->removeLayer(l);
+        this->project->setSelectedLayer(this->project->getLayers()->at(qMax(i, 0)));
         // update layer listu
         this->updateLayerList();
         // prekresleni projektu
@@ -439,6 +457,39 @@ void LayerManager::on_listWidget_itemSelectionChanged()
 
     // update bindingu pro ovladaci prvky vrstvy
     this->updateLayerControllBinding();
+}
+
+void LayerManager::showContextMenu(const QPoint &pos)
+{
+    QMenu contextMenu(tr("Menu"), this->listWidget);
+
+    QAction action1(tr("Rename Layer"), this->listWidget);
+    //connect(&action2, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    QAction action3(tr("Move Up"), this->listWidget);
+    connect(&action3, SIGNAL(triggered()), this, SLOT(on_button_up_clicked()));
+    QAction action4(tr("Move Down"), this->listWidget);
+    connect(&action4, SIGNAL(triggered()), this, SLOT(on_button_down_clicked()));
+    QAction action5(tr("Add Layer"), this->listWidget);
+    connect(&action5, SIGNAL(triggered()), this, SLOT(on_button_addLayer_clicked()));
+    QAction action6(tr("Remove Layer"), this->listWidget);
+    connect(&action6, SIGNAL(triggered()), this, SLOT(on_button_removeLayer_clicked()));
+    QAction action7(tr("Duplicate Layer"), this->listWidget);
+    //connect(&action7, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+    QAction action8(tr("Merge Down"), this->listWidget);
+    //connect(&action8, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+
+    contextMenu.addAction(&action1);
+    contextMenu.addSeparator();
+    contextMenu.addAction(&action3);
+    contextMenu.addAction(&action4);
+    contextMenu.addSeparator();
+    contextMenu.addAction(&action5);
+    contextMenu.addAction(&action6);
+    contextMenu.addAction(&action7);
+    contextMenu.addSeparator();
+    contextMenu.addAction(&action8);
+
+    contextMenu.exec(this->listWidget->mapToGlobal(pos));
 }
 
 void LayerManager::on_layer_antialiasing_toggled(bool value)

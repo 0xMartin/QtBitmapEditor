@@ -58,7 +58,6 @@ void Workspace::setScale(float scale)
     }
     this->scale = scale;
     this->scale -= (float)(qRound(this->scale * 100) % 5) / 100;
-    this->repaint();
 }
 
 void Workspace::addScale(float diff)
@@ -70,7 +69,6 @@ void Workspace::addScale(float diff)
     }
     this->scale = f;
     this->scale -= (float)(qRound(this->scale * 100) % 5) / 100;
-    this->repaint();
 }
 
 void Workspace::zoomIN()
@@ -216,13 +214,29 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
 
 void Workspace::wheelEvent(QWheelEvent *event)
 {
-    // zoom in & zoom out
-    if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+    if (QApplication::keyboardModifiers().testFlag(Qt::AltModifier) == true) {
+        // zoom in & zoom out
         if(event->angleDelta().y() > 0) {
             this->zoomIN();
         } else {
             this->zoomOUT();
         }
+    } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
+        // posun v horizontalni ose
+        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->width() / 10 * INV_SCALE(this->scale);
+        this->globalOffset.setX(this->globalOffset.x() + diff);
+    } else {
+        // posun ve vertikalni ose
+        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->height() / 10 * INV_SCALE(this->scale);
+        this->globalOffset.setY(this->globalOffset.y() + diff);
+    }
+
+    // jednotne vykreslovani (limitovano na max 50 fps)
+    // fps limitation
+    std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+    if(std::chrono::duration_cast<std::chrono::milliseconds>(now - begin).count() > 1000.0 / this->config.fps) {
+        begin = now;
+        this->repaint();
     }
 }
 
@@ -361,7 +375,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
         // pozicni informace
         painter.fillRect(26, this->height() - 26, this->width(), 26, QBrush(QColor(45, 45, 45), Qt::SolidPattern));
-        painter.setPen(QColor(210, 150, 150));        
+        painter.setPen(QColor(210, 150, 150));
         QString buffer = "";
         // jmeno vrstvy
         Layer *l = this->project->getSelectedLayer();

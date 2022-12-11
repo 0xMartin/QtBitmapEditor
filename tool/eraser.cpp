@@ -71,6 +71,7 @@ void Eraser::mousePressEvent(const QPoint &pos)
 
     // vykreleni po dotiku
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+    if(layer == NULL) return;
     this->painter.begin(&layer->pixmap);
     painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
     this->painter.setBrush(Qt::transparent);
@@ -97,6 +98,7 @@ void Eraser::mouseMoveEvent(const QPoint &pos)
         QLine line = this->mouseHelper.lineFromLastPos();
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+        if(layer == NULL) return;
         this->painter.begin(&layer->pixmap);
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);
@@ -114,6 +116,7 @@ void Eraser::outOfAreaEvent(const QPoint &pos)
         QLine line(*last, pos);
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+        if(layer == NULL) return;
         this->painter.begin(&layer->pixmap);
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);

@@ -74,15 +74,16 @@ bool Project::removeLayer(Layer *layer)
 {
     if(layer == NULL) return false;
     if(this->layers == NULL) return false;
+    if(this->layers->size() <= 1) return false;
 
     qsizetype index = 0;
     for(Layer *l : *this->layers) {
         if(l == layer) {
-            // odstrani vrstvu (delete + odebrani z listu)
-            delete (this->layers->takeAt(index));
             // pokud odebrana vrstava byla v projektu oznacena tak zrusi oznaceni
             if(layer == this->selected_layer)
                 this->selected_layer = NULL;
+            // odstrani vrstvu (delete + odebrani z listu)
+            delete (this->layers->takeAt(index));
             return true;
         }
         ++index;
