@@ -39,9 +39,9 @@ void Workspace::setProject(Project *project) {
 
     // vypocet vhodneho meritka pri prvnim nacteni projektu
     if(this->project->getSize().width() > this->project->getSize().height()) {
-        this->setScale(this->width() * 0.6 / this->project->getSize().width());
+        this->setScale(this->width() * 0.8 / this->project->getSize().width());
     } else {
-        this->setScale(this->scale = this->height() * 0.6 / this->project->getSize().height());
+        this->setScale(this->scale = this->height() * 0.8 / this->project->getSize().height());
     }
     this->repaint();
 }
@@ -227,11 +227,15 @@ void Workspace::wheelEvent(QWheelEvent *event)
     } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
         // posun v horizontalni ose
         int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->width() / 12 * INV_SCALE(this->scale);
-        this->globalOffset.setX(this->globalOffset.x() + diff);
+        int x = this->globalOffset.x() + diff;
+        // TODO ... x limits
+        this->globalOffset.setX(x);
     } else {
         // posun ve vertikalni ose
         int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->height() / 12 * INV_SCALE(this->scale);
-        this->globalOffset.setY(this->globalOffset.y() + diff);
+        int y = this->globalOffset.y() + diff;
+        // TODO ... y limits
+        this->globalOffset.setY(y);
     }
 
     // jednotne vykreslovani (limitovano na max 50 fps)
@@ -319,15 +323,15 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
         // x osa meritko
         int scaled_size = s.width() * this->scale;
-        int step = RULE_STEP_PX_MIN;
+        float step = RULE_STEP_PX_MIN;
         float sf;
-        for(int d = 4; d <= 20; ++d)
+        for(int d = 1; d <= 20; ++d)
         {
             sf = (float) scaled_size / d;
             if(sf < RULE_STEP_PX_MIN) {
                 break;
             }
-            if(scaled_size % d == 0) {
+            if(s.width() % d == 0) {
                 step = sf;
             }
         }
@@ -345,13 +349,13 @@ void Workspace::paintEvent(QPaintEvent *event) {
         // y osa meritko
         scaled_size = s.height() * this->scale;
         step = RULE_STEP_PX_MIN;
-        for(int d = 2; d <= 20; ++d)
+        for(int d = 1; d <= 20; ++d)
         {
             sf = (float) scaled_size / d;
             if(sf < RULE_STEP_PX_MIN) {
                 break;
             }
-            if(scaled_size % d == 0) {
+            if(s.height() % d == 0) {
                 step = sf;
             }
         }

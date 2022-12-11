@@ -83,8 +83,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // TEST
-    Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", QSize(900, 900));
-    BitmapLayer *l = new BitmapLayer(p, "Layer 1", QSize(900, 900));
+    Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", QSize(1000, 500));
+    BitmapLayer *l = new BitmapLayer(p, "Layer 1", QSize(1000, 500));
     p->addLayer(l);
     p->setSelectedLayer(l);
     this->context->setProject(p);

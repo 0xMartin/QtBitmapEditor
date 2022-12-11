@@ -5,6 +5,7 @@ BitmapLayer::BitmapLayer(QObject *parent, const QString &name, const QSize &size
     this->size = size;
     if(size.width() >= 1 && size.height() >= 1) {
         this->pixmap = QPixmap(size);
+        this->pixmap.fill(Qt::transparent);
     }
 }
 
@@ -18,6 +19,7 @@ void BitmapLayer::setSize(const QSize &newSize)
     if(newSize.width() >= 1 && newSize.height() >= 1) {
         this->size = newSize;
         this->pixmap = this->pixmap.scaled(this->size.width(), this->size.height(), Qt::KeepAspectRatio);
+        this->pixmap.fill(Qt::transparent);
     }
 }
 

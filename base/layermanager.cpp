@@ -31,7 +31,6 @@ LayerWidget::LayerWidget(Layer *layer, size_t height) : QWidget()
 
     // nahled vrstvy
     this->image = new QLabel(this);
-    this->image->setFixedSize(QSize(height, height));
     this->image->setStyleSheet("border-width: 2px;");
     this->repaintLayer();
     this->hBoxLayout->addWidget(this->image);
@@ -58,11 +57,19 @@ Layer *LayerWidget::getLayer() const
 
 void LayerWidget::repaintLayer()
 {
-    QPixmap *pixmap = new QPixmap(height, height);
+    int c_w = height * ((float)layer->getSize().width() / layer->getSize().height());
+    int c_h = height;
+    if(c_w > 120) {
+        c_w = 120;
+        c_h = 120 * ((float)layer->getSize().height() / layer->getSize().width());
+    }
+    QPixmap *pixmap = new QPixmap(c_w, c_h);
+    this->image->setFixedSize(QSize(c_w, c_h));
     if(pixmap) {
         QPainter painter(pixmap);
-        float scale = (float)this->height / qMax(layer->getSize().width(), layer->getSize().height());
-        Layer_paintBgGrid(painter, QPoint(0, 0), pixmap->size(),  pixmap->size(), 8);
+        painter.fillRect(0, 0, pixmap->width(), pixmap->height(), Qt::black);
+        Layer_paintBgGrid(painter, QPoint(0, 0), pixmap->size(), QSize(pixmap->width(), pixmap->height()), 6);
+        float scale = (float)pixmap->width() / qMax(c_w, layer->getSize().width());
         painter.scale(scale, scale);
         layer->paintEvent(painter);
         painter.end();
