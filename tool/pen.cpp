@@ -3,13 +3,14 @@
 #include <QVBoxLayout>
 #include <QPainterPath>
 
+#include "../base/config.h"
 #include "../layer/bitmaplayer.h"
 
 
 Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 {
     this->name = tr("PEN");
-    this->mouseHelper = MouseEventHelper(5);
+    this->mouseHelper = MouseEventHelper(DEFAULT_MOUSE_HELPER_DIST);
     this->layout = new QVBoxLayout(this->ui);
     this->ui->setLayout(this->layout);
     this->colorPicker = colorPicker; 
@@ -42,7 +43,13 @@ Pen::~Pen()
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
-void Pen::paintEvent(const QPoint &pos, float scale, QPainter &painter)
+void Pen::updateScale(float scale)
+{
+    // update mouse helper
+    this->mouseHelper.updateDistance(mapFunc(scale, 1.0, PIXEL_GRID_MIN_SCALE, DEFAULT_MOUSE_HELPER_DIST, 1.0));
+}
+
+void Pen::paintEvent(const QPointF &pos, float scale, QPainter &painter)
 {
     // vykresleni tvaru a veliskota nastroje do horni nahledove vrstvy
     int size = this->spinbox_size->value();
@@ -65,11 +72,12 @@ int Pen::getType() const
 // EVENTY PRO EDITACI BITMAPY
 
 
-void Pen::mousePressEvent(const QPoint &pos)
+void Pen::mousePressEvent(const QPointF &pos)
 {
-    int size = this->spinbox_size->value();
+    this->mouseHelper.processMoveEvent(pos);
 
     // refresh kresliciho nastroje
+    int size = this->spinbox_size->value();
     this->pen = QPen(this->colorPicker->getColor(),
                      size,
                      Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
@@ -85,21 +93,21 @@ void Pen::mousePressEvent(const QPoint &pos)
     this->painter.end();
 }
 
-void Pen::mouseReleaseEvent(const QPoint &pos)
+void Pen::mouseReleaseEvent(const QPointF &pos)
 {
     this->mouseHelper.resetMove();
 }
 
-void Pen::mouseDoubleClickEvent(const QPoint &pos)
+void Pen::mouseDoubleClickEvent(const QPointF &pos)
 {
 
 }
 
-void Pen::mouseMoveEvent(const QPoint &pos)
+void Pen::mouseMoveEvent(const QPointF &pos)
 {
     if(this->mouseHelper.processMoveEvent(pos)) {
         // po definovanych vzdalenost dela tah
-        QLine line = this->mouseHelper.lineFromLastPos();
+        QLineF line = this->mouseHelper.lineFromLastPos();
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         if(layer == NULL) return;
@@ -111,12 +119,12 @@ void Pen::mouseMoveEvent(const QPoint &pos)
     }
 }
 
-void Pen::outOfAreaEvent(const QPoint &pos)
+void Pen::outOfAreaEvent(const QPointF &pos)
 {
     // dokonci tah
-    const QPoint *last = this->mouseHelper.getLast();
+    const QPointF *last = this->mouseHelper.getLast();
     if(last) {
-        QLine line(*last, pos);
+        QLineF line(*last, pos);
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         if(layer == NULL) return;

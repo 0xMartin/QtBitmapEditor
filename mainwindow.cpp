@@ -4,6 +4,7 @@
 #include "layer/bitmaplayer.h"
 #include "tool/pen.h"
 #include "tool/eraser.h"
+#include "tool/brush.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -45,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->context->setLayerManager(new LayerManager(this));
     this->context->addTool(new Pen(this, this->colorPicker));
     this->context->addTool(new Eraser(this));
+    this->context->addTool(new Brush(this, this->colorPicker));
     this->context->selectToolFromList(TOOL_PEN);
     /*****************************************************************************/
 
@@ -83,8 +85,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // TEST
-    Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", QSize(1000, 500));
-    BitmapLayer *l = new BitmapLayer(p, "Layer 1", QSize(1000, 500));
+    QSize s = QSize(900, 500);
+    Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", s);
+    BitmapLayer *l = new BitmapLayer(p, "Layer 1", s);
     p->addLayer(l);
     p->setSelectedLayer(l);
     this->context->setProject(p);
@@ -174,7 +177,9 @@ void MainWindow::on_actionPen_triggered()
 
 void MainWindow::on_actionBrush_triggered()
 {
-
+    if(this->context == NULL) return;
+    this->context->selectToolFromList(TOOL_BRUSH);
+    this->highlightToolbar(this->ui->actionBrush);
 }
 
 

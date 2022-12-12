@@ -1,6 +1,7 @@
 #ifndef ERASER_H
 #define ERASER_H
 
+#include <QPen>
 #include <QSpinBox>
 #include <QSpacerItem>
 #include <QVBoxLayout>
@@ -20,15 +21,17 @@ public:
     Eraser(QObject *parent);
     ~Eraser();
 
-    virtual void paintEvent(const QPoint &pos, float scale, QPainter &painter) override;
+    virtual void updateScale(float scale) override;
+
+    virtual void paintEvent(const QPointF &pos, float scale, QPainter &painter) override;
     virtual bool overLayerPainting() const override;
     virtual int getType() const override;
 
-    virtual void mousePressEvent(const QPoint &pos) override;
-    virtual void mouseReleaseEvent(const QPoint &pos) override;
-    virtual void mouseDoubleClickEvent(const QPoint &pos) override;
-    virtual void mouseMoveEvent(const QPoint &pos) override;
-    virtual void outOfAreaEvent(const QPoint &pos) override;
+    virtual void mousePressEvent(const QPointF &pos) override;
+    virtual void mouseReleaseEvent(const QPointF &pos) override;
+    virtual void mouseDoubleClickEvent(const QPointF &pos) override;
+    virtual void mouseMoveEvent(const QPointF &pos) override;
+    virtual void outOfAreaEvent(const QPointF &pos) override;
 
 protected:
     // helper pro mouse eventy

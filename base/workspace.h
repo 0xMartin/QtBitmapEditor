@@ -6,10 +6,10 @@
 #include <QMouseEvent>
 #include <QScrollArea>
 
-
 #include "project.h"
 #include "tool.h"
 #include "../utility/mouseeventhelper.h"
+
 
 struct Config_Workspace_t {
     QFont font; /** Font pro texty ve workspace (meritka + pozicni informace)*/
@@ -100,11 +100,11 @@ protected:
     float scale;
 
     // globalni offset
-    QPoint globalOffset;
+    QPointF globalOffset;
 
     // aktualni pozice kurzoru
-    QPoint pressPos;
-    QPoint currentPos;
+    QPointF pressPos;
+    QPointF currentPos;
 
     // helper pro mouse eventy
     MouseEventHelper mouseHelper;
@@ -129,7 +129,7 @@ private:
      * @param outOfRange - Vystupni parametr (bude nastaven na true pokud kurzor bude mymo kreslici oblast)
      * @return QPoint
      */
-    QPoint calculateEventOffsetPosition(const QPoint &pos, bool &outOfRange) const;
+    QPointF calculateEventOffsetPosition(const QPointF &pos, bool &outOfRange) const;
 
     Q_PROPERTY(Tool *tool READ getTool WRITE setTool NOTIFY toolChanged)
     Q_PROPERTY(Config_Workspace_t config READ getConfig WRITE setConfig NOTIFY configChanged)

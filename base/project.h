@@ -5,14 +5,8 @@
 #include <QString>
 #include <QList>
 
+#include "config.h"
 #include "layer.h"
-
-
-// minimalni delka jmena projektu
-#define PROJECT_MIN_NAME_LENGTH 3
-
-// koncovka projektoveho souboru
-#define PROJECT_FILE_EXTENSION ".qbe"
 
 
 /**

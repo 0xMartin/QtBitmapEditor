@@ -2,24 +2,30 @@
 
 #include <QtMath>
 
-MouseEventHelper::MouseEventHelper(int moveUpdateDist)
+MouseEventHelper::MouseEventHelper(float moveUpdateDist)
 {
     this->moveUpdateDist = moveUpdateDist * moveUpdateDist;
+    this->moveUpdateDist = qMax(1.0, this->moveUpdateDist);
     this->lastPosSet = false;
-    this->press = QPoint(0, 0);
-    this->release = QPoint(0, 0);
-    this->doubleClick = QPoint(0, 0);
-    this->current = QPoint(0, 0);
-    this->last = QPoint(0, 0);
+    this->press = QPointF(0, 0);
+    this->release = QPointF(0, 0);
+    this->doubleClick = QPointF(0, 0);
+    this->current = QPointF(0, 0);
+    this->last = QPointF(0, 0);
     this->lastLDM = NEW;
 }
 
-QPoint MouseEventHelper::getCurrent() const
+void MouseEventHelper::updateDistance(float moveUpdateDist) {
+    this->moveUpdateDist = moveUpdateDist * moveUpdateDist;
+    this->moveUpdateDist = qMax(1.0, this->moveUpdateDist);
+}
+
+QPointF MouseEventHelper::getCurrent() const
 {
     return this->current;
 }
 
-const QPoint *MouseEventHelper::getLast() const
+const QPointF *MouseEventHelper::getLast() const
 {
     if(!this->lastPosSet && this->lastLDM == NEW) {
         return NULL;
@@ -28,17 +34,17 @@ const QPoint *MouseEventHelper::getLast() const
     }
 }
 
-QPoint MouseEventHelper::getPress() const
+QPointF MouseEventHelper::getPress() const
 {
     return this->press;
 }
 
-QPoint MouseEventHelper::getRelease() const
+QPointF MouseEventHelper::getRelease() const
 {
     return this->release;
 }
 
-QPoint MouseEventHelper::getDoubleClick() const
+QPointF MouseEventHelper::getDoubleClick() const
 {
     return this->doubleClick;
 }
@@ -58,44 +64,44 @@ double MouseEventHelper::distFromDoubleClick()
     return qSqrt(qPow(this->current.x() - this->doubleClick.x(), 2) + qPow(this->current.y() - this->doubleClick.y(), 2));
 }
 
-QLine MouseEventHelper::lineFromPress()
+QLineF MouseEventHelper::lineFromPress()
 {
-    return QLine(this->current, this->press);
+    return QLineF(this->current, this->press);
 }
 
-QLine MouseEventHelper::lineFromRelease()
+QLineF MouseEventHelper::lineFromRelease()
 {
-    return QLine(this->current, this->release);
+    return QLineF(this->current, this->release);
 }
 
-QLine MouseEventHelper::lineFromDoubleClick()
+QLineF MouseEventHelper::lineFromDoubleClick()
 {
-    return QLine(this->current, this->doubleClick);
+    return QLineF(this->current, this->doubleClick);
 }
 
-QLine MouseEventHelper::lineFromLastPos()
+QLineF MouseEventHelper::lineFromLastPos()
 {
-    return QLine(this->current, this->last);
+    return QLineF(this->current, this->last);
 }
 
-QPoint MouseEventHelper::diffFromPress()
+QPointF MouseEventHelper::diffFromPress()
 {
-    return QPoint(this->current.x() - this->press.x(), this->current.y() - this->press.y());
+    return QPointF(this->current.x() - this->press.x(), this->current.y() - this->press.y());
 }
 
-QPoint MouseEventHelper::diffFromRelease()
+QPointF MouseEventHelper::diffFromRelease()
 {
-    return QPoint(this->current.x() - this->release.x(), this->current.y() - this->release.y());
+    return QPointF(this->current.x() - this->release.x(), this->current.y() - this->release.y());
 }
 
-QPoint MouseEventHelper::diffFromDoubleClick()
+QPointF MouseEventHelper::diffFromDoubleClick()
 {
-    return QPoint(this->current.x() - this->doubleClick.x(), this->current.y() - this->doubleClick.y());
+    return QPointF(this->current.x() - this->doubleClick.x(), this->current.y() - this->doubleClick.y());
 }
 
-QPoint MouseEventHelper::diffFromLastPos()
+QPointF MouseEventHelper::diffFromLastPos()
 {
-    return QPoint(this->current.x() - this->last.x(), this->current.y() - this->last.y());
+    return QPointF(this->current.x() - this->last.x(), this->current.y() - this->last.y());
 }
 
 void MouseEventHelper::resetMove()
@@ -109,25 +115,25 @@ MouseEventHelper MouseEventHelper::lastAction()
     return this->lastEvent;
 }
 
-void MouseEventHelper::processPressEvent(const QPoint &pos)
+void MouseEventHelper::processPressEvent(const QPointF &pos)
 {
     this->press = pos;
     this->lastEvent = PRESS;
 }
 
-void MouseEventHelper::processReleaseEvent(const QPoint &pos)
+void MouseEventHelper::processReleaseEvent(const QPointF &pos)
 {
     this->release = pos;
     this->lastEvent = RELEASE;
 }
 
-void MouseEventHelper::processDoubleClickEvent(const QPoint &pos)
+void MouseEventHelper::processDoubleClickEvent(const QPointF &pos)
 {
     this->doubleClick = pos;
     this->lastEvent = DOUBLE_CLICK;
 }
 
-bool MouseEventHelper::processMoveEvent(const QPoint &pos)
+bool MouseEventHelper::processMoveEvent(const QPointF &pos)
 {
     // aktualni pozice
     this->current = pos;
@@ -161,5 +167,10 @@ bool MouseEventHelper::processMoveEvent(const QPoint &pos)
     }
 
     return false;
+}
+
+float mapFunc(float value, float v_from, float v_to, float r_from, float r_to) {
+    value = qMax(v_from, qMin(value, v_to));
+    return ((value - v_from) / (v_to - v_from)) * (r_to - r_from) + r_from;
 }
 

@@ -1,5 +1,7 @@
 #include "project.h"
 
+#include "config.h"
+
 #include <QWidget>
 #include <QPainter>
 #include <QtMath>
@@ -257,8 +259,4 @@ void Project::paintEvent(QPainter &painter) {
 
     // reset blend mode
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-
-    // outline
-    painter.setPen(Qt::black);
-    painter.drawRect(0, 0, this->size.width(), this->size.height());
 }

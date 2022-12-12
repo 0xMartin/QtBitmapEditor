@@ -1,5 +1,6 @@
 #include "workspace.h"
 
+#include "config.h"
 
 #include <chrono>
 #include <QApplication>
@@ -14,14 +15,13 @@
 // inverzni scale
 #define INV_SCALE(scale) (1.0 / scale)
 
-
 Workspace::Workspace(const Config_Workspace_t &config, QWidget *parent): QWidget(parent)
 {
     this->config = config;
     this->project = NULL;
     this->tool = NULL;
     this->scale = 1.0f;
-    this->mouseHelper = MouseEventHelper(5);
+    this->mouseHelper = MouseEventHelper(3);
     this->globalOffset = QPoint(0, 0);
     this->currentPos = QPoint(0, 0);
     this->pressPos = QPoint(0, 0);
@@ -52,23 +52,35 @@ Project *Workspace::getProject() const {
 
 void Workspace::setScale(float scale)
 {
+    // update scale
     if(scale <= 0.0) return;
-    if(scale > 15.0) {
-        scale = 15.0;
+    if(scale > 40.0) {
+        scale = 40.0;
     }
     this->scale = scale;
     this->scale -= (float)(qRound(this->scale * 100) % 5) / 100;
+    // update scale nastroje
+    if(this->tool) {
+        this->tool->updateScale(this->scale);
+    }
 }
 
 void Workspace::addScale(float diff)
 {
+    // update scale
     float f = this->scale + diff;
     if(f <= 0.0) return;
-    if(f > 15.0) {
-        f = 15.0;
+    if(f > 40.0 ) {
+        f = 40.0;
     }
     this->scale = f;
     this->scale -= (float)(qRound(this->scale * 100) % 5) / 100;
+    // update mouse helper
+    this->mouseHelper.updateDistance(DEFAULT_MOUSE_HELPER_DIST * INV_SCALE(this->scale));
+    // update scale nastroje
+    if(this->tool) {
+        this->tool->updateScale(this->scale);
+    }
 }
 
 void Workspace::zoomIN()
@@ -105,7 +117,7 @@ void Workspace::mousePressEvent(QMouseEvent *event)
         // press event -> projekt
         if(this->tool) {
             bool outOfArea = false;
-            QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            QPointF pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             this->pressPos = pos;
             if(outOfArea) {
                 this->tool->outOfAreaEvent(pos);
@@ -127,7 +139,7 @@ void Workspace::mouseReleaseEvent(QMouseEvent *event)
     if(event->buttons() != Qt::LeftButton) {
         if(this->tool) {
             bool outOfArea = false;
-            QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            QPointF pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
                 this->tool->outOfAreaEvent(pos);
             } else {
@@ -156,7 +168,7 @@ void Workspace::mouseDoubleClickEvent(QMouseEvent *event)
     case Qt::LeftButton:
         if(this->tool) {
             bool outOfArea = false;
-            QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            QPointF pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
                 this->tool->outOfAreaEvent(pos);
             } else {
@@ -179,7 +191,7 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
         // press event -> projekt
         if(this->tool) {
             bool outOfArea = false;
-            QPoint pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
+            QPointF pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
                 this->tool->outOfAreaEvent(pos);
             } else {
@@ -191,7 +203,7 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
     case Qt::MiddleButton:
         // move event -> zmena offsetu workspace pomoci stredoveho tlacitka
         if(this->mouseHelper.processMoveEvent(event->pos())) {
-            QPoint diff = this->mouseHelper.diffFromLastPos();
+            QPointF diff = this->mouseHelper.diffFromLastPos();
             this->globalOffset += diff * INV_SCALE(this->scale) * this->config.mouseSensitivity;
             paint = true;
         }
@@ -226,13 +238,13 @@ void Workspace::wheelEvent(QWheelEvent *event)
         }
     } else if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier) == true) {
         // posun v horizontalni ose
-        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->width() / 12 * INV_SCALE(this->scale);
+        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->width() / 14 * INV_SCALE(this->scale);
         int x = this->globalOffset.x() + diff;
         // TODO ... x limits
         this->globalOffset.setX(x);
     } else {
         // posun ve vertikalni ose
-        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->height() / 12 * INV_SCALE(this->scale);
+        int diff = (event->angleDelta().y() > 0 ? 1 : -1) * this->height() / 14 * INV_SCALE(this->scale);
         int y = this->globalOffset.y() + diff;
         // TODO ... y limits
         this->globalOffset.setY(y);
@@ -254,10 +266,16 @@ Tool *Workspace::getTool() const
 
 void Workspace::setTool(Tool *newTool)
 {
+    // prida novy nastroj
     if (tool == newTool)
         return;
     tool = newTool;
     emit toolChanged();
+
+    // update scale nastroje
+    if(this->tool) {
+        this->tool->updateScale(this->scale);
+    }
 }
 
 const Config_Workspace_t &Workspace::getConfig() const
@@ -290,7 +308,8 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
 
         // vykresleni pozadi obrazku (sachovnice)
-        Layer_paintBgGrid(painter, offset, this->size(), s * this->scale, 15);
+        float tile_size = this->scale >= 15 ? this->scale : 15; /** Velikost policka = 15 a pokud se zobrazi pixel grid zmeni velikost na hodnotu scale */
+        Layer_paintBgGrid(painter, offset, this->size(), s * this->scale, tile_size);
 
 
         //-------PROJECT-------------------------
@@ -303,6 +322,9 @@ void Workspace::paintEvent(QPaintEvent *event) {
         this->project->paintEvent(painter);
         // vraceni zpet do puvodniho stavu
         painter.restore();
+        // outline
+        painter.setPen(Qt::black);
+        painter.drawRect(offset.x(), offset.y(), s.width() * this->scale, s.height() * this->scale);
         //-------PROJECT-------------------------
 
 
@@ -314,12 +336,33 @@ void Workspace::paintEvent(QPaintEvent *event) {
         }
 
 
+        // pixel grid (jen kdyz je obrazek hodne priblizen)
+        if(this->scale >= PIXEL_GRID_MIN_SCALE) {
+            painter.setPen(QColor(100, 100, 100));
+            int s_w = s.width() * this->scale;
+            int s_h = s.height() * this->scale;
+            for(float x = 0; (int)x < s_w; x += this->scale) {
+                painter.drawLine(
+                            offset.x() + x,
+                            offset.y(),
+                            offset.x() + x,
+                            offset.y() + s_h);
+            }
+            for(float y = 0; (int)y < s_h; y += this->scale) {
+                painter.drawLine(
+                            offset.x(),
+                            offset.y() + y,
+                            offset.x() + s_w,
+                            offset.y() + y);
+            }
+        }
+
+
         // vykresleni ramecku meritek
         painter.fillRect(26, 0, this->width(), 26, QBrush(QColor(50, 50, 50), Qt::SolidPattern));
         painter.fillRect(0, 26, 26, this->height(), QBrush(QColor(50, 50, 50), Qt::SolidPattern));
         painter.setFont(this->config.font);
         painter.setPen(QColor(150, 150, 150));
-
 
         // x osa meritko
         int scaled_size = s.width() * this->scale;
@@ -393,12 +436,12 @@ void Workspace::paintEvent(QPaintEvent *event) {
         buffer = buffer.leftJustified(31, ' ');
         // pozice
         bool b;
-        QPoint pos = this->calculateEventOffsetPosition(this->currentPos, b);
-        buffer += "X: " + QString::number(pos.x()) + " Y: " + QString::number(pos.y());
+        QPointF pos = this->calculateEventOffsetPosition(this->currentPos, b);
+        buffer += "X: " + QString::number(pos.x(), 'f', 0) + " Y: " + QString::number(pos.y(), 'f', 0);
         buffer = buffer.leftJustified(51, ' ');
         // dx & dy
         pos = pos - this->pressPos;
-        buffer += "DX: " + QString::number(pos.x()) + " DY: " + QString::number(pos.y());
+        buffer += "DX: " + QString::number(pos.x(), 'f', 0) + " DY: " + QString::number(pos.y(), 'f', 0);
         // paint info
         painter.drawText(QPointF(
                              40,
@@ -408,11 +451,11 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
 }
 
-QPoint Workspace::calculateEventOffsetPosition(const QPoint &pos, bool &outOfRange) const
+QPointF Workspace::calculateEventOffsetPosition(const QPointF &pos, bool &outOfRange) const
 {
     // workspace center offset : (widget.size - project.size) / 2
     QSize s = this->project->getSize();
-    QPoint offset(-(this->width() - s.width() * this->scale) / 2,
+    QPointF offset(-(this->width() - s.width() * this->scale) / 2,
                   -(this->height() - s.height() * this->scale) / 2);
 
     // mouse event offset

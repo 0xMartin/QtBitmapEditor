@@ -1,9 +1,9 @@
 #ifndef MOUSEEVENTHELPER_H
 #define MOUSEEVENTHELPER_H
 
-#include <QPoint>
+#include <QPointF>
 #include <QMouseEvent>
-#include <QLine>
+#include <QLineF>
 
 enum MouseEventHelperAction {
     NONE,
@@ -23,37 +23,43 @@ public:
      * @brief Helper trida pro mouse eventy
      * @param moveUpdateDist - Minimalni vzdalenost od predchozi zaznamenane pozice pro move event
      */
-    MouseEventHelper(int moveUpdateDist = 5);
+    MouseEventHelper(float moveUpdateDist = 5);
+
+    /**
+     * @brief Prepocita move update distance
+     * @param moveUpdateDist - Vzdalenost
+     */
+    void updateDistance(float moveUpdateDist);
 
     /**
      * @brief Pozice mouse press eventu
-     * @return QPoint
+     * @return QPointF
      */
-    QPoint getPress() const;
+    QPointF getPress() const;
 
     /**
      * @brief Pozice mouse release eventu
-     * @return QPoint
+     * @return QPointF
      */
-    QPoint getRelease() const;
+    QPointF getRelease() const;
 
     /**
      * @brief Pozice mouse double click eventu
-     * @return QPoint
+     * @return QPointF
      */
-    QPoint getDoubleClick() const;
+    QPointF getDoubleClick() const;
 
     /**
      * @brief Aktulani pozice kurzoru
-     * @return QPoint
+     * @return QPointF
      */
-    QPoint getCurrent() const;
+    QPointF getCurrent() const;
 
     /**
      * @brief Posledni zaznamenana pozice v move eventu
-     * @return QPoint
+     * @return QPointF
      */
-    const QPoint *getLast() const;
+    const QPointF *getLast() const;
 
     /**
      * @brief Vzdalenost od pozice kde naposledy byl zaznamenan press event
@@ -74,52 +80,52 @@ public:
     double distFromDoubleClick();
 
     /**
-     * @brief Vytvori QLine <current, press>
-     * @return QLine
+     * @brief Vytvori QLineF <current, press>
+     * @return QLineF
      */
-    QLine lineFromPress();
+    QLineF lineFromPress();
 
     /**
-     * @brief Vytvori QLine <current, release>
-     * @return QLine
+     * @brief Vytvori QLineF <current, release>
+     * @return QLineF
      */
-    QLine lineFromRelease();
+    QLineF lineFromRelease();
 
     /**
-     * @brief Vytvori QLine <current, double click>
-     * @return QLine
+     * @brief Vytvori QLineF <current, double click>
+     * @return QLineF
      */
-    QLine lineFromDoubleClick();
+    QLineF lineFromDoubleClick();
 
     /**
-     * @brief Vytvori QLine <current, last>
-     * @return QLine
+     * @brief Vytvori QLineF <current, last>
+     * @return QLineF
      */
-    QLine lineFromLastPos();
+    QLineF lineFromLastPos();
 
     /**
      * @brief Vypocita diferenci [press - last]
-     * @return QPoint
+     * @return QPointF
      */
-    QPoint diffFromPress();
+    QPointF diffFromPress();
 
     /**
      * @brief Vypocita diferenci [release - last]
-     * @return QPoint
+     * @return QPointF
      */
-    QPoint diffFromRelease();
+    QPointF diffFromRelease();
 
     /**
      * @brief Vypocita diferenci [double_click - last]
-     * @return QPoint
+     * @return QPointF
      */
-    QPoint diffFromDoubleClick();
+    QPointF diffFromDoubleClick();
 
     /**
      * @brief Vypocita diferenci [current - last]
-     * @return QPoint
+     * @return QPointF
      */
-    QPoint diffFromLastPos();
+    QPointF diffFromLastPos();
 
     /**
      * @brief Resetuje move event (reset merene vzdalenosti)
@@ -133,22 +139,22 @@ public:
     MouseEventHelper lastAction();
 
     // procedury pro zpracovani jednotlivych eventu (vzdy volat)
-    void processPressEvent(const QPoint &pos);
-    void processReleaseEvent(const QPoint &pos);
-    void processDoubleClickEvent(const QPoint &pos);
-    bool processMoveEvent(const QPoint &pos); /** Navrati TRUE pokud byla pozice aktualizovana*/
+    void processPressEvent(const QPointF &pos);
+    void processReleaseEvent(const QPointF &pos);
+    void processDoubleClickEvent(const QPointF &pos);
+    bool processMoveEvent(const QPointF &pos); /** Navrati TRUE pokud byla pozice aktualizovana*/
 
 protected:
-    int moveUpdateDist; /** Minimalni vzdalenost od predchozi zaznamenane pozice pro move event */
+    float moveUpdateDist; /** Minimalni vzdalenost od predchozi zaznamenane pozice pro move event */
     bool lastPosSet;
 
     MouseEventHelperAction lastEvent = NONE; /** Posledni zaznamenany event */
 
-    QPoint press; /** Pozice mouse press eventu */
-    QPoint release; /** Pozice mouse release eventu */
-    QPoint doubleClick; /** Pozice mouse double click eventu */
-    QPoint current; /** Aktulani pozice kurzoru */
-    QPoint last; /** Predchozi pozice kurzoru */
+    QPointF press; /** Pozice mouse press eventu */
+    QPointF release; /** Pozice mouse release eventu */
+    QPointF doubleClick; /** Pozice mouse double click eventu */
+    QPointF current; /** Aktulani pozice kurzoru */
+    QPointF last; /** Predchozi pozice kurzoru */
 
 private:
     enum LastLoadMode {
@@ -156,7 +162,18 @@ private:
     };
 
     LastLoadMode lastLDM; /** Zpusop nacteni last pozice */
-    QPoint last_tmp; /** Docasna promenna pro last */
+    QPointF last_tmp; /** Docasna promenna pro last */
 };
+
+/**
+ * @brief Map funkce. Prevede hodnotu z jednoho rozsahu hodnot do druheho
+ * @param value - Hodnota ktera bude prevadena
+ * @param v_from - Pocatecni hodnota vstupniho rozsahu
+ * @param v_to - Koncova hodnota vstupniho rozsahu
+ * @param r_from - Pocatecni hodnota vystupniho rozsahu
+ * @param r_to - Koncova hodnota vystupniho rozsahu
+ * @return
+ */
+Q_DECL_EXPORT float mapFunc(float value, float v_from, float v_to, float r_from, float r_to);
 
 #endif // MOUSEEVENTHELPER_H

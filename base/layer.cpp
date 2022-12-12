@@ -78,7 +78,7 @@ void Layer::setBlendMode(LayerBlendMode newBlendMode)
 }
 
 void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,
-                       const QSize &size, const size_t step)
+                       const QSize &size, const float step)
 {
     // vykresleni pozadi obrazku (sachovnice)
     painter.fillRect(
@@ -89,26 +89,27 @@ void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &vie
                 QBrush(Qt::white, Qt::SolidPattern));
 
     QBrush brush(QColor(200, 200, 200), Qt::SolidPattern);
-    int step2 = 2 * step;
+    float step2 = 2 * step;
 
     // vypocet zacatku a konce vykreslovani sachovanice v zavislosti na offsetu a velikosti viewportu
     int x_start = offset.x();
     if(x_start < 0) {
-        x_start = -((-x_start) % step2);
+        x_start = -((-x_start) % (int)(step2));
     }
     int y_start = offset.y();
     if(y_start < 0) {
-        y_start = -((-y_start) % step2);
+        y_start = -((-y_start) % (int)(step2));
     }
     int x_end = qMin(offset.x() + size.width(), viewPort.width());
     int y_end = qMin(offset.y() + size.height(), viewPort.height());
 
     // vykresleni sachovanice
-    int x, x_offset, step_x, step_y;
-    for(int y = y_start, i = 0; y < y_end; y += step) {
+    float x, y = y_start;
+    float x_offset, step_x, step_y;
+    for(int i = 0; (int)y < y_end; y += step) {
         x_offset = i++ % 2 == 0 ? 0.0f : step;
         step_y = y + (int)step < y_end ? step : (y_end - y);
-        for(x = x_offset + x_start; x < x_end; x += step2) {
+        for(x = x_offset + x_start; (int)x < x_end; x += step2) {
             step_x = x + (int)step < x_end ? step : (x_end - x);
             painter.fillRect(x, y, step_x, step_y, brush);
         }

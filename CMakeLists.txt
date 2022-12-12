@@ -21,6 +21,8 @@ set(QBE_TOOL
     tool/pen.cpp
     tool/eraser.h
     tool/eraser.cpp
+    tool/brush.h
+    tool/brush.cpp
 )
 
 # LAYER
@@ -35,6 +37,8 @@ set(QBE_UTILITY
     utility/mouseeventhelper.cpp
     utility/colorpicker.h
     utility/colorpicker.cpp
+    utility/gradientwidget.h
+    utility/gradientwidget.cpp
 )
 
 # UI
@@ -58,6 +62,7 @@ set(QBE_RES
 set(QBE_BASE
     base/app_context.h
     base/app_context.cpp
+    base/config.h
     base/dialogs.h
     base/project.h
     base/project.cpp

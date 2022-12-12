@@ -149,6 +149,6 @@ protected:
  * @param step - Velikost jednoho ctverecku pozadi (relana ve view portu)
  */
 Q_DECL_EXPORT void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,
-                                     const QSize &size, const size_t step);
+                                     const QSize &size, const float step);
 
 #endif // LAYER_H

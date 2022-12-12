@@ -1,7 +1,7 @@
-#ifndef PEN_H
-#define PEN_H
+#ifndef BRUSH_H
+#define BRUSH_H
 
-#include <QPen>
+#include <QBrush>
 #include <QSpinBox>
 #include <QSpacerItem>
 #include <QVBoxLayout>
@@ -12,17 +12,17 @@
 #include "../utility/mouseeventhelper.h"
 
 
-#define TOOL_PEN 1000
+#define TOOL_BRUSH 1002
 
 /**
  * @brief Nastroj tuzka
  */
-class Pen : public Tool
+class Brush : public Tool
 {
 public:
-    Pen(QObject *parent, ColorPicker *colorPicker);
+    Brush(QObject *parent, ColorPicker *colorPicker);
 
-    ~Pen();
+    ~Brush();
 
     virtual void updateScale(float scale) override;
 
@@ -44,13 +44,18 @@ protected:
     QPainter painter;
 
     // tuzka
-    QPen pen;
+    QBrush brush;
 
     // UI controllers
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
     QSpinBox *spinbox_size;
     QCheckBox *checkBox_Antialiasing;
+
+    /**
+     * @brief Po rovne care provede tah nastrojem stetec (Bresenham algoritmus)
+     */
+    void paintLineWithBrush(QPainter &painter, const QLineF &line);
 };
 
 #endif // PEN_H

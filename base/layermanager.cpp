@@ -57,6 +57,7 @@ Layer *LayerWidget::getLayer() const
 
 void LayerWidget::repaintLayer()
 {
+    // vypocet sirky a vysky nahledu vrstvy (maxilani sirka je 120)
     int c_w = height * ((float)layer->getSize().width() / layer->getSize().height());
     int c_h = height;
     if(c_w > 120) {
@@ -69,10 +70,17 @@ void LayerWidget::repaintLayer()
         QPainter painter(pixmap);
         painter.fillRect(0, 0, pixmap->width(), pixmap->height(), Qt::black);
         Layer_paintBgGrid(painter, QPoint(0, 0), pixmap->size(), QSize(pixmap->width(), pixmap->height()), 6);
+        // vypocet scale tak aby se do pixelmapy vlezla nejdelsi strana
         float scale = (float)pixmap->width() / qMax(c_w, layer->getSize().width());
+        // pokud je samotna vrstva mensi nez minimalni velikost nahledu (height x height) -> musi zvetsit
+        if(layer->getSize().width() < height && layer->getSize().height()) {
+            scale *= (float)height / qMax(layer->getSize().width(), layer->getSize().height());
+        }
         painter.scale(scale, scale);
+        // vykresli vrstvu do nahledu
         layer->paintEvent(painter);
         painter.end();
+        // labelu nastavi pixmapu
         this->image->setPixmap(*pixmap);
         delete pixmap;
     }

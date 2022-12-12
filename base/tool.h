@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QList>
 
+#include "config.h"
 #include "project.h"
 #include "layer.h"
 
@@ -35,12 +36,17 @@ public:
     void setProject(Project *newProject);
 
     /**
+     * @brief Event pro obnoveni meritka
+     */
+    virtual void updateScale(float scale) = 0;
+
+    /**
      * @brief Vykresli nastroj
      * @param pos - Aktualni pozice kurzoru na workspacu
      * @param scale - Meritko
      * @param painter - QPainter
      */
-    virtual void paintEvent(const QPoint &pos, float scale, QPainter &painter) = 0;
+    virtual void paintEvent(const QPointF &pos, float scale, QPainter &painter) = 0;
 
     /**
      * @brief Urcuje zda nastroj bude vykreslovan do horni vrstvy (nahled nastroje -> napr velikost stetce)
@@ -61,11 +67,11 @@ public:
     const QString &getName() const;
 
     // events
-    virtual void mousePressEvent(const QPoint &pos) = 0;
-    virtual void mouseReleaseEvent(const QPoint &pos) = 0;
-    virtual void mouseDoubleClickEvent(const QPoint &pos) = 0;
-    virtual void mouseMoveEvent(const QPoint &pos) = 0;
-    virtual void outOfAreaEvent(const QPoint &pos) = 0;
+    virtual void mousePressEvent(const QPointF &pos) = 0;
+    virtual void mouseReleaseEvent(const QPointF &pos) = 0;
+    virtual void mouseDoubleClickEvent(const QPointF &pos) = 0;
+    virtual void mouseMoveEvent(const QPointF &pos) = 0;
+    virtual void outOfAreaEvent(const QPointF &pos) = 0;
 
 signals:
     void projectChanged();
