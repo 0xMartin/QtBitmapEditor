@@ -14,7 +14,10 @@ Brush::Brush(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     this->layout = new QVBoxLayout(this->ui);
     this->ui->setLayout(this->layout);
     this->colorPicker = colorPicker;
-    // velikost pera
+    // gradient
+    this->gradientEditor = new GradientEditor();
+    this->layout->addWidget(this->gradientEditor);
+    // velikost stetce
     this->spinbox_size = new QSpinBox();
     this->spinbox_size->setPrefix(tr("Brush Size:"));
     this->spinbox_size->setSuffix("px");

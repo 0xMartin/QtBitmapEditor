@@ -33,7 +33,7 @@ public:
      * @brief GradientEditor
      * @param parent
      */
-    GradientEditor(QWidget *parent);
+    explicit GradientEditor(QWidget *parent = NULL);
 
     /**
      * @brief getGradient

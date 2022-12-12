@@ -8,6 +8,7 @@
 #include <QCheckBox>
 
 #include "../utility/colorpicker.h"
+#include "../utility/gradientwidget.h"
 #include "../base/tool.h"
 #include "../utility/mouseeventhelper.h"
 
@@ -49,6 +50,7 @@ protected:
     // UI controllers
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
+    GradientEditor *gradientEditor;
     QSpinBox *spinbox_size;
     QCheckBox *checkBox_Antialiasing;
 
