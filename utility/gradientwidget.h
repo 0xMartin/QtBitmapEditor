@@ -8,6 +8,8 @@
 #include <QLinearGradient>
 #include <QConicalGradient>
 
+#include "mouseeventhelper.h"
+
 
 /**
  * @brief The ColorPoint class
@@ -16,6 +18,7 @@ class ColorPoint {
 public:
     QColor color;
     float position;
+    bool selected;
 
     ColorPoint(QColor color, float position);
 };
@@ -34,34 +37,42 @@ public:
      * @param parent
      */
     explicit GradientEditor(QWidget *parent = NULL);
+    ~GradientEditor();
 
     /**
      * @brief getGradient
      * @return
      */
-    const QList<ColorPoint> &getGradient() const;
+    const QList<ColorPoint*> &getGradient() const;
 
+public slots:
     /**
      * @brief clearGradient
      */
     void clearGradient();
 
-public slots:
     /**
-     * @brief changeColor
-     * @param index
+     * @brief addColor
      */
-    void changeColor(qsizetype index);
+    void addColor();
 
     /**
-     * @brief changePosition
-     * @param index
-     * @param position
+     * @brief changeColorOfSelected
      */
-    void changePosition(qsizetype index, float position);
+    void changeColorOfSelected();
+
+    /**
+     * @brief removeSelected
+     */
+    void removeSelected();
+
+private slots:
+    void showContextMenu(const QPoint &pos);
 
 protected:
-    QList<ColorPoint> gradient; /** List s barvamy - gradient */
+    QList<ColorPoint*> gradient; /** List s barvamy - gradient */
+
+    MouseEventHelper mouseHelper;
 
     // events
     void paintEvent(QPaintEvent *event) override;
