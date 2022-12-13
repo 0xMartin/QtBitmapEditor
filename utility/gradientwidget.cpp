@@ -80,7 +80,10 @@ void GradientEditor::clearGradient()
 
 void GradientEditor::addColor()
 {
-    QColor c = QColorDialog::getColor(Qt::black, parentWidget());
+    QColor c = QColorDialog::getColor(Qt::black,
+                                      parentWidget(),
+                                      "Gradient Color",
+                                      QColorDialog::ShowAlphaChannel);
     float p = (this->mouseHelper.getPress().x() - SIDE_PADDING) / (this->width() - 2 * SIDE_PADDING);
     p = qMax(0.0, qMin(p, 1.0));
     this->gradient.append(new ColorPoint(c, p));
@@ -92,7 +95,10 @@ void GradientEditor::changeColorOfSelected()
     for(ColorPoint *pt : this->gradient) {
         if(pt == NULL) continue;
         if(pt->selected) {
-            pt->color = QColorDialog::getColor(pt->color, parentWidget());
+            pt->color = QColorDialog::getColor(pt->color,
+                                               parentWidget(),
+                                               "Gradient Color",
+                                               QColorDialog::ShowAlphaChannel);
             this->repaint();
             break;
         }

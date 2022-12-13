@@ -264,7 +264,7 @@ void Brush::updateBrush(QBrush &b)
                         0,
                         0,
                         this->project->getSize().width(),
-                        this->project->getSize().height()
+                        0
                         );
             b = QBrush(g);
         }

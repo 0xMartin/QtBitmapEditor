@@ -146,7 +146,8 @@ public:
 
 signals:
     /**
-     * @brief Signal je vyvolan ve chvili kdy doslo k prekresleni nejak z vrstev projektu
+     * @brief Signal je vyvolan ve chvili kdy doslo k prekresleni nejake z vrstev projektu
+     * (zmena jejiho obsahu!! ne vykresleni do workspacu) [volano externe z workspacu]
      * @param layer - Vrsrva ktera byla prekreslena
      */
     void repaintSignal(Layer *layer);

@@ -45,6 +45,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionEye_Dropper"/>
     <addaction name="actionPen"/>
     <addaction name="actionEraser"/>
     <addaction name="actionBrush"/>
@@ -272,6 +273,15 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionEye_Dropper">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/icons/color_picker.png</normaloff>:/src/icons/color_picker.png</iconset>
+   </property>
+   <property name="text">
+    <string>Eye Dropper</string>
    </property>
   </action>
  </widget>

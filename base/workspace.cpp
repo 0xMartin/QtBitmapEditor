@@ -26,6 +26,7 @@ Workspace::Workspace(const Config_Workspace_t &config, QWidget *parent): QWidget
     this->currentPos = QPoint(0, 0);
     this->pressPos = QPoint(0, 0);
     this->begin = std::chrono::steady_clock::now();
+    this->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     this->setMinimumSize(QSize(400, 400));
     this->setBackgroundRole(QPalette::Base);
@@ -110,8 +111,8 @@ void Workspace::mousePressEvent(QMouseEvent *event)
 
     switch (event->buttons()) {
     case Qt::LeftButton:
-        // press event -> projekt
-        if(this->tool) {
+        // press event -> nastroj
+        if(this->tool != NULL) {
             bool outOfArea = false;
             QPointF pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             this->pressPos = pos;
@@ -131,9 +132,9 @@ void Workspace::mousePressEvent(QMouseEvent *event)
 
 void Workspace::mouseReleaseEvent(QMouseEvent *event)
 {
-    // release event  -> projekt
+    // release event  -> nastroj
     if(event->buttons() != Qt::LeftButton) {
-        if(this->tool) {
+        if(this->tool != NULL) {
             bool outOfArea = false;
             QPointF pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
@@ -148,7 +149,7 @@ void Workspace::mouseReleaseEvent(QMouseEvent *event)
         emit this->project->repaintSignal(this->project->getSelectedLayer());
     }
 
-    // release event -> zmena offsetu workspace pomoci stredoveho tlacitka
+    // release event -> pohyb workspace pomoci stredoveho tlacitka
     if(event->buttons() != Qt::MiddleButton) {
         this->mouseHelper.resetMove();
         // nastaveni zakladniho kurzoru
@@ -159,10 +160,10 @@ void Workspace::mouseReleaseEvent(QMouseEvent *event)
 
 void Workspace::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    // double click -> projekt
     switch (event->buttons()) {
     case Qt::LeftButton:
-        if(this->tool) {
+        // double click -> nastroj
+        if(this->tool != NULL) {
             bool outOfArea = false;
             QPointF pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
@@ -180,12 +181,13 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
 {
     this->currentPos = event->pos();
 
+    // lokalni paint request promenna
     bool paint = false;
 
-    switch (event->buttons()) {
-    case Qt::LeftButton:
-        // press event -> projekt
-        if(this->tool) {
+    // event nastroje
+    if(this->tool != NULL) {
+        if(event->buttons() == Qt::LeftButton || tool->isMouseTrackingEnabled()) {
+            // press event -> projekt
             bool outOfArea = false;
             QPointF pos = this->calculateEventOffsetPosition(event->pos(), outOfArea);
             if(outOfArea) {
@@ -195,24 +197,25 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
                 paint = true;
             }
         }
-        break;
-    case Qt::MiddleButton:
+    }
+    // pohyb workspace pomoci stredniho tlacitka mysi
+    if(event->buttons() == Qt::MiddleButton) {
         // move event -> zmena offsetu workspace pomoci stredoveho tlacitka
         if(this->mouseHelper.processMoveEvent(event->pos())) {
             QPointF diff = this->mouseHelper.diffFromLastPos();
             this->globalOffset += diff * INV_SCALE(this->scale) * this->config.mouseSensitivity;
             paint = true;
         }
-        break;
     }
 
+    // prekresleni nastroje pokud ma povolene vykreslovani do overlay
     if(this->tool != NULL) {
         if(this->tool->overLayerPainting()) {
             paint = true;
         }
     }
 
-    // jednotne vykreslovani (limitovano na max 50 fps)
+    // pozdavek na vykreslovani (limitovano na max 50 fps)
     if(paint) {
         // fps limitation
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
@@ -257,16 +260,21 @@ void Workspace::wheelEvent(QWheelEvent *event)
 
 Tool *Workspace::getTool() const
 {
-    return tool;
+    return this->tool;
 }
 
 void Workspace::setTool(Tool *newTool)
 {
     // prida novy nastroj
-    if (tool == newTool)
+    if (this->tool == newTool)
         return;
-    tool = newTool;
+    this->tool = newTool;
     emit toolChanged();
+
+    // update nastroje
+    if(this->tool != NULL) {
+        this->tool->updatTool(this->scale);
+    }
 }
 
 const Config_Workspace_t &Workspace::getConfig() const
@@ -323,7 +331,9 @@ void Workspace::paintEvent(QPaintEvent *event) {
 
         // overlayer
         if(this->tool != NULL) {
+            painter.save();
             this->tool->paintEvent(this->currentPos, this->scale, painter);
+            painter.restore();
         }
 
 
@@ -434,10 +444,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         pos = pos - this->pressPos;
         buffer += "DX: " + QString::number(pos.x(), 'f', 0) + " DY: " + QString::number(pos.y(), 'f', 0);
         // paint info
-        painter.drawText(QPointF(
-                             40,
-                             this->height() - 9),
-                         buffer);
+        painter.drawText(QPointF(40, this->height() - 9), buffer);
     }
 
 }
@@ -447,7 +454,7 @@ QPointF Workspace::calculateEventOffsetPosition(const QPointF &pos, bool &outOfR
     // workspace center offset : (widget.size - project.size) / 2
     QSize s = this->project->getSize();
     QPointF offset(-(this->width() - s.width() * this->scale) / 2,
-                  -(this->height() - s.height() * this->scale) / 2);
+                   -(this->height() - s.height() * this->scale) / 2);
 
     // mouse event offset
     offset += pos;

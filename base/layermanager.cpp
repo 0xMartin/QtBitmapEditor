@@ -112,7 +112,6 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_removeLayer = NULL;
     this->button_up = NULL;
     this->button_down = NULL;
-    this->setMaximumWidth(500);
     this->mainLayout = new QVBoxLayout(this);
     this->mainLayout->setSpacing(0);
     this->setLayout(this->mainLayout);

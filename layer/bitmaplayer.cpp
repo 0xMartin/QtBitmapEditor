@@ -4,7 +4,7 @@ BitmapLayer::BitmapLayer(QObject *parent, const QString &name, const QSize &size
 {
     this->size = size;
     if(size.width() >= 1 && size.height() >= 1) {
-        this->image = QImage(size.width(), size.height(), QImage::Format_ARGB32);
+        this->image = QImage(size, QImage::Format_ARGB32);
         this->image.fill(Qt::transparent);
     }
 }

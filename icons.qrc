@@ -15,5 +15,6 @@
         <file>src/icons/zoom_out.png</file>
         <file>src/icons/arrow_down.png</file>
         <file>src/icons/arrow_up.png</file>
+        <file>src/icons/color_picker.png</file>
     </qresource>
 </RCC>

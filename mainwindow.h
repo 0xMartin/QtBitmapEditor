@@ -83,6 +83,11 @@ private slots:
     void on_actionAbout_triggered();
 
     /**
+     * @brief Vybera nastro "eye dropper"
+     */
+    void on_actionEye_Dropper_triggered();
+
+    /**
      * @brief Vybere nastroj "pen"
      */
     void on_actionPen_triggered();

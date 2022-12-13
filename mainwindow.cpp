@@ -6,6 +6,7 @@
 #include "tool/eraser.h"
 #include "tool/brush.h"
 #include "tool/fillcolor.h"
+#include "tool/eyedropper.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -20,17 +21,15 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->toolBar->addWidget(this->colorPicker);
     this->ui->toolBar->addAction(this->ui->actionZoom_in);
     this->ui->toolBar->addAction(this->ui->actionZoom_out);
-    this->ui->toolBar->addSeparator();
+    this->ui->toolBar->addAction(this->ui->actionEye_Dropper);
     this->ui->toolBar->addAction(this->ui->actionPen);
     this->ui->toolBar->addAction(this->ui->actionEraser);
     this->ui->toolBar->addAction(this->ui->actionBrush);
     this->ui->toolBar->addAction(this->ui->actionFill);
     this->ui->toolBar->addAction(this->ui->actionText);
-    this->ui->toolBar->addSeparator();
     this->ui->toolBar->addAction(this->ui->actionCircle);
     this->ui->toolBar->addAction(this->ui->actionRectangle);
     this->ui->toolBar->addAction(this->ui->actionPolygon);
-    this->ui->toolBar->addSeparator();
     // label pro status bar
     this->statusLabel = new QLabel(this->ui->statusbar);
     this->statusLabel->setAlignment(Qt::AlignLeft);
@@ -49,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->context->addTool(new Eraser(this));
     this->context->addTool(new Brush(this, this->colorPicker));
     this->context->addTool(new FillColor(this, this->colorPicker));
+    this->context->addTool(new EyeDropper(this, this->colorPicker));
     this->context->selectToolFromList(TOOL_PEN);
     /*****************************************************************************/
 
@@ -168,6 +168,12 @@ void MainWindow::on_actionAbout_triggered()
 
 }
 
+void MainWindow::on_actionEye_Dropper_triggered()
+{
+    if(this->context == NULL) return;
+    this->context->selectToolFromList(TOOL_EYEDROPPER);
+    this->highlightToolbar(this->ui->actionEye_Dropper);
+}
 
 void MainWindow::on_actionPen_triggered()
 {
@@ -269,4 +275,5 @@ void MainWindow::on_actionZoom_out_triggered()
     this->context->getWorkspace()->zoomOUT();
     this->context->getWorkspace()->repaint();
 }
+
 

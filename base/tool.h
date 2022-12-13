@@ -46,7 +46,7 @@ public:
     virtual void updatTool(float scale) = 0;
 
     /**
-     * @brief Vykresli nastroj
+     * @brief Vykresli nastroj do overlayer
      * @param pos - Aktualni pozice kurzoru na workspacu
      * @param scale - Meritko
      * @param painter - QPainter
@@ -71,12 +71,25 @@ public:
      */
     const QString &getName() const;
 
+    /**
+     * @brief Povoli/Zakaze mouse tracking (True -> mouseMoveEvent je volan i pokud neni stisknute tlacitko)
+     * @param mouseTracking - Povoli/Zakaze mouse tracking
+     */
+    void setMouseTracking(bool mouseTracking);
+
+    /**
+     * @brief Zjisti zda je pro nastroj povolen mouse tracking
+     * @return bool
+     */
+    bool isMouseTrackingEnabled() const;
+
     // events
     virtual void mousePressEvent(const QPointF &pos) = 0;
     virtual void mouseReleaseEvent(const QPointF &pos) = 0;
     virtual void mouseDoubleClickEvent(const QPointF &pos) = 0;
     virtual void mouseMoveEvent(const QPointF &pos) = 0;
     virtual void outOfAreaEvent(const QPointF &pos) = 0;
+
 
 signals:
     void projectChanged();
@@ -90,6 +103,9 @@ protected:
 
     // jmeno nastoroje
     QString name;
+
+    // mouse tracking
+    bool mouseTracking;
 
     /**
      * @brief Pomocna funkce pro navrace aktualne vybrane vrstvy s konrolou typu vrstvy
