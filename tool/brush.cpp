@@ -14,6 +14,23 @@ Brush::Brush(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     this->layout = new QVBoxLayout(this->ui);
     this->ui->setLayout(this->layout);
     this->colorPicker = colorPicker;
+    // tvar
+    this->comboBox_shape = new QComboBox();
+    this->comboBox_shape->addItem(tr("Solid"));
+    this->comboBox_shape->addItem(tr("Dense 1"));
+    this->comboBox_shape->addItem(tr("Dense 2"));
+    this->comboBox_shape->addItem(tr("Dense 3"));
+    this->comboBox_shape->addItem(tr("Dense 4"));
+    this->comboBox_shape->addItem(tr("Dense 5"));
+    this->comboBox_shape->addItem(tr("Dense 6"));
+    this->comboBox_shape->addItem(tr("Horizontal"));
+    this->comboBox_shape->addItem(tr("Vertical"));
+    this->comboBox_shape->addItem(tr("Cross"));
+    this->comboBox_shape->addItem(tr("Diagonal 1"));
+    this->comboBox_shape->addItem(tr("Diagonal 2"));
+    this->comboBox_shape->addItem(tr("Diagonal Cross"));
+    this->comboBox_shape->addItem(tr("Linear Gradient"));
+    this->layout->addWidget(this->comboBox_shape);
     // gradient
     this->gradientEditor = new GradientEditor();
     this->layout->addWidget(this->gradientEditor);
@@ -34,12 +51,14 @@ Brush::Brush(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     this->layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     // refresh
-    this->brush = QBrush(this->colorPicker->getColor(), Qt::SolidPattern);
+    this->refreshBrush();
 }
 
 Brush::~Brush()
 {
     if(this->layout) delete this->layout;
+    if(this->comboBox_shape) delete this->comboBox_shape;
+    if(this->gradientEditor) delete this->gradientEditor;
     if(this->spinbox_size) delete this->spinbox_size;
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
@@ -78,10 +97,10 @@ void Brush::mousePressEvent(const QPointF &pos)
     this->mouseHelper.processMoveEvent(pos);
 
     // refresh kresliciho nastroje
-    int size = this->spinbox_size->value();
-    this->brush = QBrush(this->colorPicker->getColor(), Qt::Dense1Pattern);
+    this->refreshBrush();
 
     // vykreleni po dotiku
+    int size = this->spinbox_size->value();
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
     if(layer == NULL) return;
     this->painter.begin(&layer->pixmap);
@@ -99,7 +118,6 @@ void Brush::mouseReleaseEvent(const QPointF &pos)
 
 void Brush::mouseDoubleClickEvent(const QPointF &pos)
 {
-
 }
 
 void Brush::mouseMoveEvent(const QPointF &pos)
@@ -171,5 +189,61 @@ void Brush::paintLineWithBrush(QPainter &painter, const QLineF &line)
             err += dx;
             y0 += sy;
         }
+    }
+}
+
+void Brush::refreshBrush()
+{
+    switch (this->comboBox_shape->currentIndex()) {
+    case 0: // Solid
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::SolidPattern);
+        break;
+    case 1: // Dense 1
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::Dense1Pattern);
+        break;
+    case 2: // Dense 2
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::Dense2Pattern);
+        break;
+    case 3: // Dense 3
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::Dense3Pattern);
+        break;
+    case 4: // Dense 4
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::Dense4Pattern);
+        break;
+    case 5: // Dense 5
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::Dense5Pattern);
+        break;
+    case 6: // Dense 6
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::Dense6Pattern);
+        break;
+    case 7: // Horizontal
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::HorPattern);
+        break;
+    case 8: // Vertical
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::VerPattern);
+        break;
+    case 9: // Cross
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::CrossPattern);
+        break;
+    case 10: // Diagonal 1
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::BDiagPattern);
+        break;
+    case 11: // Diagonal 2
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::FDiagPattern);
+        break;
+    case 12: // Diagonal Cross
+        this->brush = QBrush(this->colorPicker->getColor(), Qt::DiagCrossPattern);
+        break;
+    case 13: // Linear Gradient
+        if(this->gradientEditor != NULL) {
+            QLinearGradient g = this->gradientEditor->getAsLinearGradient(
+                        0,
+                        0,
+                        this->project->getSize().width(),
+                        this->project->getSize().height()
+                        );
+            this->brush = QBrush(g);
+        }
+        break;
     }
 }

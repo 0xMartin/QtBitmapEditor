@@ -23,7 +23,7 @@ GradientEditor::GradientEditor(QWidget *parent) : QWidget(parent)
     this->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
     this->setFixedHeight(70);
     this->gradient.append(new ColorPoint(Qt::red, 0.0));
-    this->gradient.append(new ColorPoint(QColor(210, 20, 190, 120), 1.0));
+    this->gradient.append(new ColorPoint(QColor(210, 20, 190), 1.0));
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(showContextMenu(QPoint)));
@@ -36,6 +36,36 @@ GradientEditor::~GradientEditor()
 
 const QList<ColorPoint*> &GradientEditor::getGradient() const
 {
+    return gradient;
+}
+
+QLinearGradient GradientEditor::getAsLinearGradient(qreal xStart, qreal yStart, qreal xFinalStop, qreal yFinalStop) const
+{
+    QLinearGradient gradient(xStart, yStart, xFinalStop, yFinalStop);
+    for(ColorPoint *pt : this->gradient) {
+        if(pt == NULL) continue;
+        gradient.setColorAt(pt->position, pt->color);
+    }
+    return gradient;
+}
+
+QRadialGradient GradientEditor::getAsRadialGradient(qreal cx, qreal cy, qreal radius) const
+{
+    QRadialGradient gradient(cx, cy, radius);
+    for(ColorPoint *pt : this->gradient) {
+        if(pt == NULL) continue;
+        gradient.setColorAt(pt->position, pt->color);
+    }
+    return gradient;
+}
+
+QConicalGradient GradientEditor::getAsConicalGradient(qreal cx, qreal cy, qreal startAngle) const
+{
+    QConicalGradient gradient(cx, cy, startAngle);
+    for(ColorPoint *pt : this->gradient) {
+        if(pt == NULL) continue;
+        gradient.setColorAt(pt->position, pt->color);
+    }
     return gradient;
 }
 

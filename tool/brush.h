@@ -6,6 +6,7 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 #include <QCheckBox>
+#include <QComboBox>
 
 #include "../utility/colorpicker.h"
 #include "../utility/gradientwidget.h"
@@ -50,6 +51,7 @@ protected:
     // UI controllers
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
+    QComboBox *comboBox_shape;
     GradientEditor *gradientEditor;
     QSpinBox *spinbox_size;
     QCheckBox *checkBox_Antialiasing;
@@ -58,6 +60,11 @@ protected:
      * @brief Po rovne care provede tah nastrojem stetec (Bresenham algoritmus)
      */
     void paintLineWithBrush(QPainter &painter, const QLineF &line);
+
+    /**
+     * @brief refreshBrush
+     */
+    void refreshBrush();
 };
 
 #endif // PEN_H

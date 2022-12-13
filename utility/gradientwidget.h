@@ -45,6 +45,34 @@ public:
      */
     const QList<ColorPoint*> &getGradient() const;
 
+    /**
+     * @brief getAsLinearGradient
+     * @param xStart
+     * @param yStart
+     * @param xFinalStop
+     * @param yFinalStop
+     * @return
+     */
+    QLinearGradient getAsLinearGradient(qreal xStart, qreal yStart, qreal xFinalStop, qreal yFinalStop) const;
+
+    /**
+     * @brief getAsRadialGradient
+     * @param cx
+     * @param cy
+     * @param radius
+     * @return
+     */
+    QRadialGradient getAsRadialGradient(qreal cx, qreal cy, qreal radius) const;
+
+    /**
+     * @brief getAsConicalGradient
+     * @param cx
+     * @param cy
+     * @param startAngle
+     * @return
+     */
+    QConicalGradient getAsConicalGradient(qreal cx, qreal cy, qreal startAngle) const;
+
 public slots:
     /**
      * @brief clearGradient
