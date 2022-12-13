@@ -254,6 +254,7 @@ void MainWindow::on_actionZoom_in_triggered()
     if(this->context == NULL) return;
     if(this->context->getWorkspace() == NULL) return;
     this->context->getWorkspace()->zoomIN();
+    this->context->getWorkspace()->repaint();
 }
 
 
@@ -262,5 +263,6 @@ void MainWindow::on_actionZoom_out_triggered()
     if(this->context == NULL) return;
     if(this->context->getWorkspace() == NULL) return;
     this->context->getWorkspace()->zoomOUT();
+    this->context->getWorkspace()->repaint();
 }
 

@@ -11,42 +11,52 @@ Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 {
     this->name = tr("PEN");
     this->mouseHelper = MouseEventHelper(DEFAULT_MOUSE_HELPER_DIST);
+    this->colorPicker = colorPicker; 
+
+    //****************************************************************************************
+    // sestaveni UI pro ovladani nastroje
+    //****************************************************************************************
+    this->ui = new QWidget();
     this->layout = new QVBoxLayout(this->ui);
     this->ui->setLayout(this->layout);
-    this->colorPicker = colorPicker; 
+
     // velikost pera
     this->spinbox_size = new QSpinBox();
     this->spinbox_size->setPrefix(tr("Pen Size:"));
     this->spinbox_size->setSuffix("px");
-    this->spinbox_size->setMinimum(1);
-    this->spinbox_size->setValue(10);
-    this->spinbox_size->setMaximum(1000);
+    this->spinbox_size->setMinimum(MIN_TOOL_SIZE);
+    this->spinbox_size->setMaximum(MAX_TOOL_SIZE);
+    this->spinbox_size->setValue(DEFAULT_TOOL_SIZE);
     this->layout->addWidget(this->spinbox_size);
+
     // antialiasing
     this->checkBox_Antialiasing = new QCheckBox();
     this->checkBox_Antialiasing->setChecked(true);
     this->checkBox_Antialiasing->setText(tr("Smooth Painting Mode"));
     this->layout->addWidget(this->checkBox_Antialiasing);
-    // spacer
-    this->layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-    // refresh
-    this->pen = QPen(this->colorPicker->getColor(),
-                     this->spinbox_size->value(),
-                     Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
+    // spacer
+    this->layout->addSpacerItem(
+                new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
 Pen::~Pen()
 {
     if(this->layout) delete this->layout;
     if(this->spinbox_size) delete this->spinbox_size;
+    if(this->label_shape) delete this->label_shape;
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
-void Pen::updateScale(float scale)
+void Pen::updatTool(float scale)
 {
     // update mouse helper
     this->mouseHelper.updateDistance(mapFunc(scale, 1.0, PIXEL_GRID_MIN_SCALE, DEFAULT_MOUSE_HELPER_DIST, 1.0));
+
+    // update pen
+    this->pen = QPen(this->colorPicker->getColor(),
+                     this->spinbox_size->value(),
+                     Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
 }
 
 void Pen::paintEvent(const QPointF &pos, float scale, QPainter &painter)
@@ -68,21 +78,17 @@ int Pen::getType() const
     return TOOL_PEN;
 }
 
+
 /*****************************************************************************************/
 // EVENTY PRO EDITACI BITMAPY
-
+/*****************************************************************************************/
 
 void Pen::mousePressEvent(const QPointF &pos)
 {
     this->mouseHelper.processMoveEvent(pos);
 
-    // refresh kresliciho nastroje
-    int size = this->spinbox_size->value();
-    this->pen = QPen(this->colorPicker->getColor(),
-                     size,
-                     Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
-
     // vykreleni po dotiku
+    int size = this->spinbox_size->value();
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
     if(layer == NULL) return;
     this->painter.begin(&layer->pixmap);

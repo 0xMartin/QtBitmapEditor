@@ -20,14 +20,15 @@ void ColorPicker::changeColor()
     QColor newColor = QColorDialog::getColor(color, parentWidget());
     if (newColor != color)
     {
-        setColor(newColor);
+        this->setColor(newColor);
     }
 }
 
 void ColorPicker::setColor( const QColor& color )
 {
     this->color = color;
-    updateColor();
+    emit this->colorChange(color);
+    this->updateColor();
 }
 
 const QColor& ColorPicker::getColor() const
@@ -35,6 +36,6 @@ const QColor& ColorPicker::getColor() const
     return color;
 }
 
-void ColorPicker::changeEvent(QEvent *) {
+void ColorPicker::changeEvent(QEvent * event) {
     this->setFixedSize(QSize(25, 25));
 }

@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QLabel>
 
 #include "../utility/colorpicker.h"
 #include "../utility/gradientwidget.h"
@@ -21,12 +22,12 @@
  */
 class Brush : public Tool
 {
+    Q_OBJECT
 public:
     Brush(QObject *parent, ColorPicker *colorPicker);
-
     ~Brush();
 
-    virtual void updateScale(float scale) override;
+    virtual void updatTool(float scale) override;
 
     virtual void paintEvent(const QPointF &pos, float scale, QPainter &painter) override;
     virtual bool overLayerPainting() const override;
@@ -52,6 +53,7 @@ protected:
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
     QComboBox *comboBox_shape;
+    QLabel *label_shape;
     GradientEditor *gradientEditor;
     QSpinBox *spinbox_size;
     QCheckBox *checkBox_Antialiasing;
@@ -62,9 +64,15 @@ protected:
     void paintLineWithBrush(QPainter &painter, const QLineF &line);
 
     /**
-     * @brief refreshBrush
+     * @brief Provede update stetce
+     * @param b - Reference stetce
      */
-    void refreshBrush();
+    void updateBrush(QBrush &b);
+
+private slots:
+    void on_comboBox_shape_changed(int index);
+
+    void on_color_changed(const QColor& color);
 };
 
 #endif // PEN_H

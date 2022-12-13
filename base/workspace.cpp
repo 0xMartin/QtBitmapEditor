@@ -59,10 +59,6 @@ void Workspace::setScale(float scale)
     }
     this->scale = scale;
     this->scale -= (float)(qRound(this->scale * 100) % 5) / 100;
-    // update scale nastroje
-    if(this->tool) {
-        this->tool->updateScale(this->scale);
-    }
 }
 
 void Workspace::addScale(float diff)
@@ -77,10 +73,6 @@ void Workspace::addScale(float diff)
     this->scale -= (float)(qRound(this->scale * 100) % 5) / 100;
     // update mouse helper
     this->mouseHelper.updateDistance(DEFAULT_MOUSE_HELPER_DIST * INV_SCALE(this->scale));
-    // update scale nastroje
-    if(this->tool) {
-        this->tool->updateScale(this->scale);
-    }
 }
 
 void Workspace::zoomIN()
@@ -112,6 +104,10 @@ float Workspace::getScale() const
 
 void Workspace::mousePressEvent(QMouseEvent *event)
 {
+    if(this->tool) {
+        this->tool->updatTool(this->scale);
+    }
+
     switch (event->buttons()) {
     case Qt::LeftButton:
         // press event -> projekt
@@ -271,11 +267,6 @@ void Workspace::setTool(Tool *newTool)
         return;
     tool = newTool;
     emit toolChanged();
-
-    // update scale nastroje
-    if(this->tool) {
-        this->tool->updateScale(this->scale);
-    }
 }
 
 const Config_Workspace_t &Workspace::getConfig() const

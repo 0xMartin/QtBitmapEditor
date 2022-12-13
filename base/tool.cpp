@@ -2,7 +2,6 @@
 
 Tool::Tool(QObject *parent) : QObject(parent)
 {
-    this->ui = NULL;
     this->project = NULL;
     this->ui = new QWidget();
     this->name = "";
@@ -13,7 +12,7 @@ Tool::~Tool()
     if(this->ui) delete this->ui;
 }
 
-QWidget *Tool::getUI()
+QWidget *Tool::getUI() const
 {
     return this->ui;
 }

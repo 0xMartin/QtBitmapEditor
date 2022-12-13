@@ -12,7 +12,7 @@
 
 
 /**
- * @brief The ColorPoint class
+ * @brief Barva s pozici v gradientu
  */
 class ColorPoint {
 public:
@@ -25,76 +25,79 @@ public:
 
 
 /**
- * @brief The GradientEditor class
+ * @brief Nastroj pro editovani gradientu
  */
 class GradientEditor : public QWidget
 {
     Q_OBJECT
-
 public:
     /**
-     * @brief GradientEditor
-     * @param parent
+     * @brief Nastroj pro editovani gradientu
+     * @param parent - Parent QWidget
      */
     explicit GradientEditor(QWidget *parent = NULL);
     ~GradientEditor();
 
     /**
-     * @brief getGradient
-     * @return
+     * @brief Navrati list obsahujici barvy a jijich pozice gradientu
+     * @return QList<ColorPoint*>
      */
     const QList<ColorPoint*> &getGradient() const;
 
     /**
-     * @brief getAsLinearGradient
-     * @param xStart
-     * @param yStart
-     * @param xFinalStop
-     * @param yFinalStop
-     * @return
+     * @brief Z konfigurace vytvori linearni gradient
+     * @param xStart - Start pozice (x) gradientu
+     * @param yStart - Start pozice (y) gradientu
+     * @param xFinalStop - Koncova pozice (x) gradientu
+     * @param yFinalStop - Koncova pozice (y) gradientu
+     * @return QLinearGradient
      */
     QLinearGradient getAsLinearGradient(qreal xStart, qreal yStart, qreal xFinalStop, qreal yFinalStop) const;
 
     /**
-     * @brief getAsRadialGradient
-     * @param cx
-     * @param cy
-     * @param radius
-     * @return
+     * @brief Z konfigurace vytvori radialni gradient
+     * @param cx - Center pozice (x)
+     * @param cy - Center pozice (y)
+     * @param radius - Radius kruhu
+     * @return QRadialGradient
      */
     QRadialGradient getAsRadialGradient(qreal cx, qreal cy, qreal radius) const;
 
     /**
-     * @brief getAsConicalGradient
-     * @param cx
-     * @param cy
-     * @param startAngle
-     * @return
+     * @brief Z konfigurace vytvori konicky gradient
+     * @param cx - Center pozice (x)
+     * @param cy - Center pozice (y)
+     * @param startAngle - Pocatecni uhel
+     * @return QConicalGradient
      */
     QConicalGradient getAsConicalGradient(qreal cx, qreal cy, qreal startAngle) const;
 
 public slots:
     /**
-     * @brief clearGradient
+     * @brief Odstrani vsechny barvy z gradientu
      */
     void clearGradient();
 
     /**
-     * @brief addColor
+     * @brief Prida novou barvu do gradientu
      */
     void addColor();
 
     /**
-     * @brief changeColorOfSelected
+     * @brief Zmeni barvu aktualne vybraneho bodu v gradientu
      */
     void changeColorOfSelected();
 
     /**
-     * @brief removeSelected
+     * @brief Odstrani aktualne vybrany bod (barvu)
      */
     void removeSelected();
 
 private slots:
+    /**
+     * @brief Zobrazi kontextove menu (2 varianty - 1. pro vybranou barvu - 2. pro gradient jako celek)
+     * @param pos - Pozice kurzoru
+     */
     void showContextMenu(const QPoint &pos);
 
 protected:

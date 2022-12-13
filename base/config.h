@@ -14,5 +14,14 @@
 // koncovka projektoveho souboru
 #define PROJECT_FILE_EXTENSION ".qbe"
 
+// minimalni velikost tuzka/stetce/gumy
+#define MIN_TOOL_SIZE 1
+
+// maximalni velikost tuzka/stetce/gumy
+#define MAX_TOOL_SIZE 1000
+
+// zakladni velikost tuzka/stetce
+#define DEFAULT_TOOL_SIZE 25
+
 
 #endif // CONFIG_H

@@ -27,7 +27,7 @@ enum LayerBlendMode {
 
 
 /**
- * @brief Abstraktni trida vrstvy. Reprezentuje jednu vrstvu bitmapoveho obrazku ("projektu").
+ * @brief Abstraktni trida vrstvy. Reprezentuje jednu vrstvu obrazku ("projektu").
  */
 class Layer : public QObject
 {

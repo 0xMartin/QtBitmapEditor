@@ -17,11 +17,12 @@
  */
 class Eraser : public Tool
 {
+    Q_OBJECT
 public:
     Eraser(QObject *parent);
     ~Eraser();
 
-    virtual void updateScale(float scale) override;
+    virtual void updatTool(float scale) override;
 
     virtual void paintEvent(const QPointF &pos, float scale, QPainter &painter) override;
     virtual bool overLayerPainting() const override;

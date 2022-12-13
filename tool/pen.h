@@ -6,6 +6,7 @@
 #include <QSpacerItem>
 #include <QVBoxLayout>
 #include <QCheckBox>
+#include <QLabel>
 
 #include "../utility/colorpicker.h"
 #include "../base/tool.h"
@@ -19,12 +20,13 @@
  */
 class Pen : public Tool
 {
+    Q_OBJECT
 public:
     Pen(QObject *parent, ColorPicker *colorPicker);
 
     ~Pen();
 
-    virtual void updateScale(float scale) override;
+    virtual void updatTool(float scale) override;
 
     virtual void paintEvent(const QPointF &pos, float scale, QPainter &painter) override;
     virtual bool overLayerPainting() const override;
@@ -50,7 +52,9 @@ protected:
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
     QSpinBox *spinbox_size;
+    QLabel *label_shape;
     QCheckBox *checkBox_Antialiasing;
+
 };
 
 #endif // PEN_H

@@ -8,6 +8,7 @@
 #include <QAction>
 
 
+// padding po bocich gradientu (px)
 #define SIDE_PADDING 8
 
 

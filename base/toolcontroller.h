@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QList>
 #include <QLabel>
+#include <QScrollArea>
 
 #include "tool.h"
 #include "project.h"
@@ -56,6 +57,7 @@ protected:
 
     QLabel *header;
     QVBoxLayout *layout;
+    QScrollArea *scroll;
 
 private:
     Q_PROPERTY(Tool *tool READ getTool WRITE setTool NOTIFY toolChanged)

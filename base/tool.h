@@ -9,6 +9,11 @@
 #include "project.h"
 #include "layer.h"
 
+/**
+ * @brief Abstraktni trida pro graficky nastroj. Nastroje umoznuji manipulovat s vrstvamy v projektu.
+ * Kazdy nastroj zpracovava eventy od workspacu a podle nich vykonava svoji cinost. Nastavovat nastroj
+ * je mozne pomoci UI ktere si kazdy nastroje definuje.
+ */
 class Tool : public QObject
 {
     Q_OBJECT
@@ -18,10 +23,10 @@ public:
     virtual ~Tool();
 
     /**
-     * @brief Navrati UI tohoto nastroje
+     * @brief Navrati UI pro ovladani nastroje
      * @return QWidget
      */
-    QWidget *getUI();
+    QWidget *getUI() const;
 
     /**
      * @brief Navrati aktualne vybrany projekt
@@ -36,9 +41,9 @@ public:
     void setProject(Project *newProject);
 
     /**
-     * @brief Event pro obnoveni meritka
+     * @brief Event pro obnoveni nastroje
      */
-    virtual void updateScale(float scale) = 0;
+    virtual void updatTool(float scale) = 0;
 
     /**
      * @brief Vykresli nastroj
