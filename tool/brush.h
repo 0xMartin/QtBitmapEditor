@@ -18,7 +18,7 @@
 #define TOOL_BRUSH 1002
 
 /**
- * @brief Nastroj tuzka
+ * @brief Nastroj stetec
  */
 class Brush : public Tool
 {

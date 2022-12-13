@@ -5,6 +5,7 @@
 #include "tool/pen.h"
 #include "tool/eraser.h"
 #include "tool/brush.h"
+#include "tool/fillcolor.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -47,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->context->addTool(new Pen(this, this->colorPicker));
     this->context->addTool(new Eraser(this));
     this->context->addTool(new Brush(this, this->colorPicker));
+    this->context->addTool(new FillColor(this, this->colorPicker));
     this->context->selectToolFromList(TOOL_PEN);
     /*****************************************************************************/
 
@@ -185,7 +187,9 @@ void MainWindow::on_actionBrush_triggered()
 
 void MainWindow::on_actionFill_triggered()
 {
-
+    if(this->context == NULL) return;
+    this->context->selectToolFromList(TOOL_FILLCOLOR);
+    this->highlightToolbar(this->ui->actionFill);
 }
 
 

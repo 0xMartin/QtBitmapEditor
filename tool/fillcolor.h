@@ -1,30 +1,28 @@
-#ifndef PEN_H
-#define PEN_H
+#ifndef FILLCOLOR_H
+#define FILLCOLOR_H
 
-#include <QPen>
 #include <QSpinBox>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include <QCheckBox>
 #include <QLabel>
+#include <QSlider>
 
 #include "../utility/colorpicker.h"
 #include "../base/tool.h"
-#include "../utility/mouseeventhelper.h"
 
 
-#define TOOL_PEN 1000
+#define TOOL_FILLCOLOR 1003
 
 /**
- * @brief Nastroj tuzka
+ * @brief Nastroj pro vyplneni barvou
  */
-class Pen : public Tool
+class FillColor : public Tool
 {
     Q_OBJECT
 public:
-    Pen(QObject *parent, ColorPicker *colorPicker);
+    FillColor(QObject *parent, ColorPicker *colorPicker);
 
-    ~Pen();
+    ~FillColor();
 
     virtual void updatTool(float scale) override;
 
@@ -39,20 +37,24 @@ public:
     virtual void outOfAreaEvent(const QPointF &pos) override;
 
 protected:
-    // helper pro mouse eventy
-    MouseEventHelper mouseHelper;
-
     // Painter pro kresleni do vrstvy
     QPainter painter;
-
-    // tuzka
-    QPen pen;
 
     // UI controllers
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
-    QSpinBox *spinbox_size;
-    QCheckBox *checkBox_Antialiasing;
+    QSpinBox *spinbox_tolerance_red;
+    QSpinBox *spinbox_tolerance_green;
+    QSpinBox *spinbox_tolerance_blue;
+    QSpinBox *spinbox_tolerance_alpha;
+    QSlider *slider_tolerance_all;
+
+private:
+    void floodFill(QImage &image, const QPoint &start, const QColor &color,
+                   int toleranceR, int toleranceG, int toleranceB, int tolerance);
+
+private slots:
+    void valueChanged(int value);
 
 };
 

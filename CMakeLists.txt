@@ -23,6 +23,8 @@ set(QBE_TOOL
     tool/eraser.cpp
     tool/brush.h
     tool/brush.cpp
+    tool/fillcolor.h
+    tool/fillcolor.cpp
 )
 
 # LAYER

@@ -44,7 +44,6 @@ Pen::~Pen()
 {
     if(this->layout) delete this->layout;
     if(this->spinbox_size) delete this->spinbox_size;
-    if(this->label_shape) delete this->label_shape;
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
@@ -91,7 +90,7 @@ void Pen::mousePressEvent(const QPointF &pos)
     int size = this->spinbox_size->value();
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
     if(layer == NULL) return;
-    this->painter.begin(&layer->pixmap);
+    this->painter.begin(&layer->image);
     painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
     this->painter.setPen(Qt::transparent);
     this->painter.setBrush(this->colorPicker->getColor());
@@ -117,7 +116,7 @@ void Pen::mouseMoveEvent(const QPointF &pos)
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         if(layer == NULL) return;
-        this->painter.begin(&layer->pixmap);
+        this->painter.begin(&layer->image);
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);
         this->painter.drawLine(line);
@@ -134,7 +133,7 @@ void Pen::outOfAreaEvent(const QPointF &pos)
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         if(layer == NULL) return;
-        this->painter.begin(&layer->pixmap);
+        this->painter.begin(&layer->image);
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);
         this->painter.drawLine(line);

@@ -23,5 +23,8 @@
 // zakladni velikost tuzka/stetce
 #define DEFAULT_TOOL_SIZE 25
 
+// zakladni tolerance pro nastroj "fill color"
+#define DEFAULT_FILL_TOLERANCE 10
+
 
 #endif // CONFIG_H
