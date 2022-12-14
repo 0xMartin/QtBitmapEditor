@@ -2,11 +2,9 @@
 #define EYEDROPPER_H
 
 #include <QPen>
-#include <QSpinBox>
 #include <QSpacerItem>
 #include <QVBoxLayout>
-#include <QCheckBox>
-#include <QLabel>
+#include <QListWidget>
 #include <ctime>
 
 #include "../utility/colorpicker.h"
@@ -14,6 +12,7 @@
 
 
 #define TOOL_EYEDROPPER 1004
+
 
 /**
  * @brief Nastroj pro ziskani barvy z workspacu
@@ -23,7 +22,6 @@ class EyeDropper : public Tool
     Q_OBJECT
 public:
     EyeDropper(QObject *parent, ColorPicker *colorPicker);
-
     ~EyeDropper();
 
     virtual void updatTool(float scale) override;
@@ -51,6 +49,8 @@ protected:
     // UI controllers
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
+
+    QListWidget *listWidget;
 
 };
 

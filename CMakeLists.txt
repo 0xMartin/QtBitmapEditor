@@ -43,6 +43,8 @@ set(QBE_UTILITY
     utility/colorpicker.cpp
     utility/gradientwidget.h
     utility/gradientwidget.cpp
+    utility/coloritem.h
+    utility/coloritem.cpp
 )
 
 # UI

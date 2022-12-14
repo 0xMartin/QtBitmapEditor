@@ -3,6 +3,8 @@
 #include <QVBoxLayout>
 #include <QPainterPath>
 
+#include "../utility/coloritem.h"
+
 
 EyeDropper::EyeDropper(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 {
@@ -17,6 +19,9 @@ EyeDropper::EyeDropper(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     this->layout = new QVBoxLayout(this->ui);
     this->ui->setLayout(this->layout);
 
+    // list s barvama
+    this->listWidget = new QListWidget(this->ui);
+    this->layout->addWidget(this->listWidget);
 
     // spacer
     this->layout->addSpacerItem(
@@ -26,6 +31,10 @@ EyeDropper::EyeDropper(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 EyeDropper::~EyeDropper()
 {
     if(this->layout) delete this->layout;
+    if(this->listWidget) {
+        this->listWidget->clear();
+        delete this->listWidget;
+    }
 }
 
 void EyeDropper::updatTool(float scale)
@@ -125,7 +134,17 @@ void EyeDropper::mousePressEvent(const QPointF &pos)
 {
     if(this->colorPicker != NULL) {
         if(this->buffer.rect().contains(this->pos)) {
-            this->colorPicker->setColor(QColor(this->buffer.pixel(this->pos)));
+            QColor c = QColor(this->buffer.pixel(this->pos));
+            // nastavy barvu do externiho color pickeru
+            this->colorPicker->setColor(c);
+            // prida tuto barvu i do listu
+            const QSize size = QSize(50, 45);
+            ColorItem *cItem = new ColorItem(c, this->colorPicker, size, this->ui);
+            QListWidgetItem *item = new QListWidgetItem();
+            item->setSizeHint(size);
+            this->listWidget->insertItem(0, item);
+            this->listWidget->setItemWidget(item, cItem);
+            this->listWidget->repaint();
         }
     }
 }
@@ -153,3 +172,4 @@ void EyeDropper::mouseMoveEvent(const QPointF &pos)
 void EyeDropper::outOfAreaEvent(const QPointF &pos)
 {
 }
+

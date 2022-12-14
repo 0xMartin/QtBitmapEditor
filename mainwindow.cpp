@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
     QSize s = QSize(900, 500);
     Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", s);
     BitmapLayer *l = new BitmapLayer(p, "Layer 1", s);
-    p->addLayer(l);
+    p->addLayerAtTop(l);
     p->setSelectedLayer(l);
     this->context->setProject(p);
 

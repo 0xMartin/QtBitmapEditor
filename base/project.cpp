@@ -62,14 +62,40 @@ Layers_t *Project::getLayers() const {
     return this->layers;
 }
 
-bool Project::addLayer(Layer *layer)
+bool Project::addLayerAtTop(Layer *layer)
 {
     if(layer == NULL) return false;
     if(this->layers == NULL) return false;
 
     this->layers->push_back(layer);
-
     return true;
+}
+
+bool Project::insertLayer(qsizetype index, Layer *layer)
+{
+    if(layer == NULL) return false;
+    if(this->layers == NULL) return false;
+
+    this->layers->insert(index, layer);
+    return true;
+}
+
+bool Project::insertLayerAbove(Layer *layer)
+{
+    if(layer == NULL) return false;
+    if(this->layers == NULL) return false;
+
+    qsizetype index = 0;
+    for(Layer *l : *this->layers) {
+        if(l == this->selected_layer) {
+            // prida novou vrstvu
+            this->layers->insert(index + 1, layer);
+            return true;
+        }
+        ++index;
+    }
+
+    return false;
 }
 
 bool Project::removeLayer(Layer *layer)

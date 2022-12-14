@@ -352,7 +352,7 @@ void LayerManager::on_button_addLayer_clicked()
     if (ok && !text.isEmpty()) {
         // vytvoreni vrstvy a pridani do projektu
         Layer *layer = new BitmapLayer(this->project, text, this->project->getSize());
-        this->project->addLayer(layer);
+        this->project->insertLayerAbove(layer);
         this->project->setSelectedLayer(layer);
         // repaint projektu
         this->project->requestRepaint();

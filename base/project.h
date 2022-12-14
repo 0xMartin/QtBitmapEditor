@@ -77,12 +77,29 @@ public:
     Layers_t *getLayers() const;
 
     /**
-     * @brief Prida novou vrstvu do projektu. Vrstavy budou odstraneni
+     * @brief Prida novou vrstvu do projektu (jako horni vrstvu). Vrstavy budou odstraneni
      * z pameti pri volani destruktoru projektu.
      * @param layer - Pointer na vrstvu
      * @return True -> vrstva uspesne pridana
      */
-    bool addLayer(Layer *layer);
+    bool addLayerAtTop(Layer *layer);
+
+    /**
+     * @brief Prida novou vrstvu do projektu na definovene misto. Vrstavy budou odstraneni
+     * z pameti pri volani destruktoru projektu.
+     * @param index - Index vrstvy
+     * @param layer - Pointer na vrstvu
+     * @return True -> vrstva uspesne pridana
+     */
+    bool insertLayer(qsizetype index, Layer *layer);
+
+    /**
+     * @brief Prida novou vrstvu do projektu nad aktualne oznacenou. Vrstavy budou odstraneni
+     * z pameti pri volani destruktoru projektu.
+     * @param layer - Pointer na vrstvu
+     * @return True -> vrstva uspesne pridana
+     */
+    bool insertLayerAbove(Layer *layer);
 
     /**
      * @brief Odebere vrstvu z projektu. Automtaticky zavola i jeji destruktor
