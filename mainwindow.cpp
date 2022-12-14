@@ -70,6 +70,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->splitter_horizontal->addWidget(this->splitter_vertical);
     this->setCentralWidget(this->splitter_horizontal);
+    this->splitter_horizontal->setStretchFactor(0, 3);
+    this->splitter_horizontal->setStretchFactor(1, 1);
     /*****************************************************************************/
 
 

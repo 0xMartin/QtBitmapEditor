@@ -191,6 +191,12 @@ private slots:
     void on_listWidget_itemSelectionChanged();
 
     /**
+     * @brief Double click event list -> tato udalost otevre dialog pro prejmenovani vrstvy
+     * @param item - QListWidgetItem
+     */
+    void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
+
+    /**
      * @brief Zobrazi kontextove menu pro vybranou vrstvu
      * @param pos - Pozice
      */

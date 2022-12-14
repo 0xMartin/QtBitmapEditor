@@ -57,33 +57,35 @@ Layer *LayerWidget::getLayer() const
 
 void LayerWidget::repaintLayer()
 {
-    // vypocet sirky a vysky nahledu vrstvy (maxilani sirka je 120)
+    // vypocet sirky a vysky nahledu vrstvy (maxilani sirka je 110)
     int c_w = height * ((float)layer->getSize().width() / layer->getSize().height());
     int c_h = height;
-    if(c_w > 120) {
-        c_w = 120;
-        c_h = 120 * ((float)layer->getSize().height() / layer->getSize().width());
+    if(c_w > 110) {
+        c_w = 110;
+        c_h = 110 * ((float)layer->getSize().height() / layer->getSize().width());
     }
-    QPixmap *pixmap = new QPixmap(c_w, c_h);
+
+    // priprava pixmapy
+    QPixmap pixmap(c_w, c_h);
     this->image->setFixedSize(QSize(c_w, c_h));
-    if(pixmap) {
-        QPainter painter(pixmap);
-        painter.fillRect(0, 0, pixmap->width(), pixmap->height(), Qt::black);
-        Layer_paintBgGrid(painter, QPoint(0, 0), pixmap->size(), QSize(pixmap->width(), pixmap->height()), 6);
-        // vypocet scale tak aby se do pixelmapy vlezla nejdelsi strana
-        float scale = (float)pixmap->width() / qMax(c_w, layer->getSize().width());
-        // pokud je samotna vrstva mensi nez minimalni velikost nahledu (height x height) -> musi zvetsit
-        if(layer->getSize().width() < height && layer->getSize().height()) {
-            scale *= (float)height / qMax(layer->getSize().width(), layer->getSize().height());
-        }
-        painter.scale(scale, scale);
-        // vykresli vrstvu do nahledu
-        layer->paintEvent(painter);
-        painter.end();
-        // labelu nastavi pixmapu
-        this->image->setPixmap(*pixmap);
-        delete pixmap;
+    QPainter painter(&pixmap);
+    painter.fillRect(0, 0, pixmap.width(), pixmap.height(), Qt::black);
+    Layer_paintBgGrid(painter, QPoint(0, 0), pixmap.size(), QSize(pixmap.width(), pixmap.height()), 6);
+
+    // vypocet scale tak aby se do pixelmapy vlezla nejdelsi strana
+    float scale = (float)pixmap.width() / qMax(c_w, layer->getSize().width());
+    // pokud je samotna vrstva mensi nez minimalni velikost nahledu (height x height) -> musi zvetsit
+    if(layer->getSize().width() < height && layer->getSize().height()) {
+        scale *= (float)height / qMax(layer->getSize().width(), layer->getSize().height());
     }
+    painter.scale(scale, scale);
+
+    // vykresli vrstvu do nahledu
+    layer->paintEvent(painter);
+    painter.end();
+
+    // labelu nastavi pixmapu
+    this->image->setPixmap(pixmap);
 }
 
 void LayerWidget::setName(const QString &name)
@@ -115,6 +117,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->mainLayout = new QVBoxLayout(this);
     this->mainLayout->setSpacing(0);
     this->setLayout(this->mainLayout);
+    this->setMaximumWidth(1000);
 
 
     // header
@@ -180,6 +183,8 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->listWidget = new QListWidget(this);
     connect(this->listWidget, SIGNAL(itemSelectionChanged()),
             this, SLOT(on_listWidget_itemSelectionChanged()));
+    connect(this->listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+            this, SLOT(on_listWidget_itemDoubleClicked(QListWidgetItem*)));
     this->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this->listWidget, SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(showContextMenu(QPoint)));
@@ -588,6 +593,11 @@ void LayerManager::on_listWidget_itemSelectionChanged()
 
     // update bindingu pro ovladaci prvky vrstvy
     this->updateLayerControllBinding();
+}
+
+void LayerManager::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
+{
+    this->on_layer_rename();
 }
 
 void LayerManager::showContextMenu(const QPoint &pos)
