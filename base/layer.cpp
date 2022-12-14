@@ -2,6 +2,9 @@
 
 #include "project.h"
 
+#include <QRegion>
+
+
 Layer::Layer(QObject *parent, const QString &name) : QObject(parent)
 {
     this->name = name;
@@ -9,9 +12,11 @@ Layer::Layer(QObject *parent, const QString &name) : QObject(parent)
     this->opacity = 1.0;
     this->antialiasing = true;
     this->blendMode = NORMAL;
+    this->mask = NULL;
 }
 
 Layer::~Layer() {
+    if(this->mask) delete this->mask;
 }
 
 void Layer::setVisible(bool visibility) {
@@ -75,6 +80,29 @@ LayerBlendMode Layer::getBlendMode() const
 void Layer::setBlendMode(LayerBlendMode newBlendMode)
 {
     this->blendMode = newBlendMode;
+}
+
+void Layer::applyLayerMask(QPainter &painter)
+{
+    if(this->mask != NULL) {
+        painter.setClipRegion(QRegion(*this->mask));
+    }
+}
+
+void Layer::createMask(const QSize size)
+{
+    if(this->mask) delete this->mask;
+    this->mask = new QBitmap(size);
+}
+
+void Layer::resizeMask(const QSize size)
+{
+    // ################################################################################################################
+}
+
+QBitmap *Layer::getMask() const
+{
+    return this->mask;
 }
 
 void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,

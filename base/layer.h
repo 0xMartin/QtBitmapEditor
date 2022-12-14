@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QPainter>
 #include <QDebug>
+#include <QBitmap>
 
 
 /**
@@ -114,6 +115,30 @@ public:
     void setBlendMode(LayerBlendMode newBlendMode);
 
     /**
+     * @brief Aplikuje masku vrstvy na painter
+     * @param painter - QPainter
+     */
+    void applyLayerMask(QPainter &painter);
+
+    /**
+     * @brief Vytvori novou masku (aktualni masku automaticky odstrani z pameti)
+     * @param size - Velikost masky
+     */
+    void createMask(const QSize size);
+
+    /**
+     * @brief Zmeni velikost aktualni masky (zachova data)
+     * @param size - Velikost masky
+     */
+    void resizeMask(const QSize size);
+
+    /**
+     * @brief Navrati masku vrtvy
+     * @return QBitmap
+     */
+    QBitmap *getMask() const;
+
+    /**
      * @brief Paint event. Vykresli vrstvu do workspacu
      * @param painter - QPainter
      */
@@ -133,10 +158,11 @@ public:
 
 protected:
     QString name; /** Nazev vrstvy */
-    LayerBlendMode blendMode;
+    LayerBlendMode blendMode; /** Blend moder vrstvy */
     bool visibility; /** Viditelnost vrstvy */
     float opacity; /** Nepruhlednost vrstvy */
     bool antialiasing; /** Antialiasing povolen/zakazan */
+    QBitmap *mask; /** Maska vrstvy */
 
 };
 
