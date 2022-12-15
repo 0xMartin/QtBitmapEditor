@@ -22,10 +22,6 @@ EyeDropper::EyeDropper(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     // list s barvama
     this->listWidget = new QListWidget(this->ui);
     this->layout->addWidget(this->listWidget);
-
-    // spacer
-    this->layout->addSpacerItem(
-                new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
 EyeDropper::~EyeDropper()

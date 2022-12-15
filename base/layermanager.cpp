@@ -135,8 +135,10 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->projectControllLayout = new QHBoxLayout(this->projectControl);
     this->projectControl->setLayout(this->projectControllLayout);
 
-    // blend mode
+    // project edit mode
     this->comboBox_editMode = new QComboBox(this);
+    connect(this->comboBox_editMode, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(on_project_edit_mode_changed(int)));
     this->comboBox_editMode->setToolTip(tr("EDIT MODE"));
     this->comboBox_editMode->addItem(tr("IMAGE"));
     this->comboBox_editMode->addItem(tr("MASK"));
@@ -220,7 +222,6 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     connect(this->button_addLayer, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
     this->button_addLayer->setToolTip(QString(tr("Add Layer")));
     this->button_addLayer->setIcon(QIcon(":/src/icons/new_layer.png"));
-    this->button_addLayer->setIconSize(QSize(22, 22));
     this->listControllLayout->addWidget(this->button_addLayer);
 
     // remove  tlacitko
@@ -228,7 +229,6 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     connect(this->button_removeLayer, SIGNAL(clicked()), this, SLOT(on_button_removeLayer_clicked()));
     this->button_removeLayer->setToolTip(QString(tr("Remove Layer")));
     this->button_removeLayer->setIcon(QIcon(":/src/icons/remove_layer.png"));
-    this->button_removeLayer->setIconSize(QSize(22, 22));
     this->listControllLayout->addWidget(this->button_removeLayer);
 
     // up tlacitko
@@ -236,7 +236,6 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     connect(this->button_up, SIGNAL(clicked()), this, SLOT(on_button_up_clicked()));
     this->button_up->setToolTip(QString(tr("Move Layer Up")));
     this->button_up->setIcon(QIcon(":/src/icons/arrow_up.png"));
-    this->button_up->setIconSize(QSize(22, 22));
     this->listControllLayout->addWidget(this->button_up);
 
     // down tlacitko
@@ -244,25 +243,23 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     connect(this->button_down, SIGNAL(clicked()), this, SLOT(on_button_down_clicked()));
     this->button_down->setToolTip(QString(tr("Move Layer Down")));
     this->button_down->setIcon(QIcon(":/src/icons/arrow_down.png"));
-    this->button_down->setIconSize(QSize(22, 22));
     this->listControllLayout->addWidget(this->button_down);
+
+    // mask tlacitko
+    this->button_mask = new QPushButton(this->listControl);
+    connect(this->button_mask, SIGNAL(clicked()), this, SLOT(on_button_mask_clicked()));
+    this->button_mask->setToolTip(QString(tr("Layer Mask")));
+    this->button_mask->setIcon(QIcon(":/src/icons/layer_mask.png"));
+    this->listControllLayout->addWidget(this->button_mask);
 }
 
 LayerManager::~LayerManager() {
     if(this->header) delete this->header;
-    if(this->spinbox_opacity) delete this->spinbox_opacity;
-    if(this->comboBox_blend) delete this->comboBox_blend;
-    if(this->listWidget) delete this->listWidget;
-    if(this->button_addLayer) delete this->button_addLayer;
-    if(this->button_removeLayer) delete this->button_removeLayer;
-    if(this->button_up) delete this->button_up;
-    if(this->button_down) delete this->button_down;
     if(this->mainLayout) delete this->mainLayout;
     if(this->listControl) delete this->listControl;
     if(this->layerControl) delete this->layerControl;
     if(this->projectControl) delete this->projectControl;
-    if(this->projectControllLayout) delete this->projectControllLayout;
-    if(this->comboBox_editMode) delete this->comboBox_editMode;
+    if(this->listWidget) delete this->listWidget;
 }
 
 void LayerManager::setProject(Project *project)
@@ -309,6 +306,7 @@ void LayerManager::changeEvent(QEvent * event)
     if(this->button_removeLayer) this->button_removeLayer->setFixedSize(QSize(30, 30));
     if(this->button_up) this->button_up->setFixedSize(QSize(30, 30));
     if(this->button_down) this->button_down->setFixedSize(QSize(30, 30));
+    if(this->button_mask) this->button_mask->setFixedSize(QSize(30, 30));
 }
 
 void LayerManager::updateLayerControllBinding()
@@ -478,6 +476,42 @@ void LayerManager::on_button_down_clicked()
     this->project->requestRepaint();
 }
 
+void LayerManager::on_button_mask_clicked() {
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Move layer down"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Move layer down"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    if(l->getMask() == NULL) {
+        // vytvori novou masku
+        l->createMask();
+    } else {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(
+                    this,
+                    tr("Remove Mask"),
+                    QString(tr("Do you want to delete the mask for layer named [%1]?")).arg(l->getName()),
+                    QMessageBox::Yes|QMessageBox::No);
+        if(reply == QMessageBox::Yes) {
+            // odstrani masku
+            l->deleteMask();
+        }
+    }
+    this->project->requestRepaint();
+}
+
 void LayerManager::on_layer_merge_down()
 {
     if(this->project == NULL) {
@@ -610,6 +644,9 @@ void LayerManager::on_listWidget_itemSelectionChanged()
 
     // update bindingu pro ovladaci prvky vrstvy
     this->updateLayerControllBinding();
+
+    // prekasli projekt (v nekterych jinych praconich modech jinich nez "PROJECT_EDIT" muze byt vyzadovano)
+    this->project->requestRepaint();
 }
 
 void LayerManager::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
@@ -676,5 +713,19 @@ void LayerManager::on_layer_opacity_changed(int value)
     if(l == NULL) return;
     l->setOpacity(value / 100.0);
     l->requestRepaint();
+}
+
+void LayerManager::on_project_edit_mode_changed(int index)
+{
+    if(this->project == NULL) return;
+    switch (index) {
+    case 0:
+        this->project->setMode(PROJECT_EDIT);
+        break;
+    case 1:
+        this->project->setMode(MASK_EDIT);
+        break;
+    }
+    this->project->requestRepaint();
 }
 

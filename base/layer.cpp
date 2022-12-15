@@ -89,19 +89,30 @@ void Layer::applyLayerMask(QPainter &painter)
     }
 }
 
-void Layer::createMask(const QSize size)
+void Layer::createMask()
 {
     if(this->mask) delete this->mask;
-    this->mask = new QBitmap(size);
+    Project *parent = (Project*) this->parent();
+    if(parent == NULL) return;
+    this->mask = new QBitmap(parent->getSize());
+    if(this->mask != NULL) {
+        this->mask->fill(Qt::black);
+    }
 }
 
-void Layer::resizeMask(const QSize size)
+void Layer::updateMaskSize()
 {
     if(this->mask == NULL) {
-        this->createMask(size);
+        this->createMask();
     } else {
         //this->mask = this->mask->scaled(size.width(), size.height(), Qt::KeepAspectRatio);
     }
+}
+
+void Layer::deleteMask()
+{
+    if(this->mask) delete this->mask;
+    this->mask = NULL;
 }
 
 QBitmap *Layer::getMask() const

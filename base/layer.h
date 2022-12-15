@@ -122,15 +122,18 @@ public:
 
     /**
      * @brief Vytvori novou masku (aktualni masku automaticky odstrani z pameti)
-     * @param size - Velikost masky
      */
-    void createMask(const QSize size);
+    void createMask();
 
     /**
      * @brief Zmeni velikost aktualni masky (zachova data)
-     * @param size - Velikost masky
      */
-    void resizeMask(const QSize size);
+    void updateMaskSize();
+
+    /**
+     * @brief Odebere masku
+     */
+    void deleteMask();
 
     /**
      * @brief Navrati masku vrtvy

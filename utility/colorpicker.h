@@ -1,17 +1,20 @@
 #ifndef COLORPICKER_H
 #define COLORPICKER_H
 
-#include <QPushButton>
+
+#include <QWidget>
+#include <QBoxLayout>
 #include <QColor>
 
 /**
  * @brief Widget umoznuje zvolit barvu a tu nasled i pak zobrazi ve svem nahledu
  */
-class ColorPicker : public QPushButton
+class ColorPicker : public QWidget
 {
     Q_OBJECT
 public:
     explicit ColorPicker(QWidget* parent);
+    ~ColorPicker();
 
     /**
      * @brief Nastavi novou barvu
@@ -24,8 +27,6 @@ public:
      * @return QColor
      */
     const QColor& getColor() const;
-
-    virtual void changeEvent(QEvent * event);
 
 public slots:
     /**
@@ -45,9 +46,15 @@ signals:
      */
     void colorChange(const QColor& color);
 
+protected:
+    virtual void mousePressEvent(QMouseEvent *event) override;
+
 private:
     // aktualni barva
     QColor color;
+
+    QBoxLayout* layout;
+    QWidget *colorWidget;
 };
 
 #endif // COLORPICKER_H

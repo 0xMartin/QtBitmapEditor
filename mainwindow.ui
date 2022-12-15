@@ -81,8 +81,11 @@
    <property name="windowTitle">
     <string>Tool bar</string>
    </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
    <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
+    <enum>LeftToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>

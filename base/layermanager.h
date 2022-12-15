@@ -135,6 +135,7 @@ protected:
     QPushButton *button_removeLayer; /** Tlacikto pro odebrani vybrane vrstvy */
     QPushButton *button_up; /** Tlacitko pro presunuti vrstvy nahoru */
     QPushButton *button_down; /** Tlacikto pro presunuti vrstvy dolu */
+    QPushButton *button_mask; /** Tlacikto pro presunuti/odebrani masky vrstvy */
 
 
     virtual void changeEvent(QEvent * event) override;
@@ -174,6 +175,11 @@ private slots:
      * @brief Presunuti aktualne vybrane vrstvy o jedno dolu
      */
     void on_button_down_clicked();
+
+    /**
+     * @brief Vytvoreni/Odstraneni masky u aktualne vybrane vrstvy
+     */
+    void on_button_mask_clicked();
 
     /**
      * @brief Spojeni dvou vrstev
@@ -228,6 +234,16 @@ private slots:
      * @param value - Hodnota opacity
      */
     void on_layer_opacity_changed(int value);
+
+    /*****************************************************************************************/
+    // LAYER CONTROLL
+    /*****************************************************************************************/
+
+    /**
+     * @brief Zmena editacniho modu projektu
+     * @param index - Index v listu
+     */
+    void on_project_edit_mode_changed(int index);
 
 };
 

@@ -16,5 +16,6 @@
         <file>src/icons/arrow_down.png</file>
         <file>src/icons/arrow_up.png</file>
         <file>src/icons/color_picker.png</file>
+        <file>src/icons/layer_mask.png</file>
     </qresource>
 </RCC>
