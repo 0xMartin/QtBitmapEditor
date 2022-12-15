@@ -27,6 +27,8 @@ set(QBE_TOOL
     tool/fillcolor.cpp
     tool/eyedropper.h
     tool/eyedropper.cpp
+    tool/text.h
+    tool/text.cpp
 )
 
 # LAYER

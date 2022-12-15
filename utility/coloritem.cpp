@@ -9,6 +9,7 @@ ColorItem::ColorItem(const QColor &color, ColorPicker *colorPicker, const QSize 
     this->colorPicker = colorPicker;
 
     // UI
+    this->setCursor(Qt::PointingHandCursor);
     this->setFixedHeight(size.height());
     this->layout = new QHBoxLayout(this);
 

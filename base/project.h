@@ -10,6 +10,15 @@
 
 
 /**
+ * @brief Pracovni mode projektu
+ */
+enum ProjectEditMode_t {
+    PROJECT_EDIT, /** Zakladni mod, editovani projektu. Vsechny vrstvy se vykresluji tak jak realne budou vypadat na obrazku */
+    MASK_EDIT /** Mod pro editaci masek. Je videt vzdy jen maska aktualne vybrane vrstvy */
+};
+
+
+/**
  * @brief Datovy typ pro vektor vrstev obrazu
  */
 typedef QList<Layer*> Layers_t;
@@ -156,6 +165,19 @@ public:
     bool dupliceteLayer();
 
     /**
+     * @brief Navrati pracovni mod
+     * @return WorkspaceMode_t
+     */
+    ProjectEditMode_t getMode() const;
+
+    /**
+     * @brief Nastavi novy pracovni mod
+     * @param newMode - WorkspaceMode_t
+     */
+    void setMode(ProjectEditMode_t newMode);
+
+
+    /**
      * @brief Paint event. Vykresli  projekt do workspacu (projekt = obrazek slozeny z vice vrstev)
      * @param offset - Offset vykreslovani
      */
@@ -176,14 +198,17 @@ protected:
     // cesta k souboru s ulozenym projektem
     QString path;
 
-    // velikost obrazku
+    // velikost obrazu (vsechny vrstvy maji stejnou velikost jak projekt)
     QSize size;
 
-    // vektor vrstev
+    // list vrstev
     Layers_t *layers;
 
     // aktualne vybrana vrstva (focus)
     Layer *selected_layer;
+
+    // pracovni mode
+    ProjectEditMode_t mode;
 
 };
 

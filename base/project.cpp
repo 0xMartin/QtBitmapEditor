@@ -14,6 +14,7 @@ Project::Project(QObject *parent, const QString &name, const QString &path, cons
     this->setPath(path);
     this->setSize(size);
     this->selected_layer = NULL;
+    this->mode = PROJECT_EDIT;
     this->layers = new Layers_t();
 }
 
@@ -225,11 +226,24 @@ bool Project::dupliceteLayer()
     return true;
 }
 
+ProjectEditMode_t Project::getMode() const
+{
+    return this->mode;
+}
+
+void Project::setMode(ProjectEditMode_t newMode)
+{
+    this->mode = newMode;
+}
+
 void Project::paintEvent(QPainter &painter) {
-    // vykresli vrstvy projektu
-    if(this->layers) {
+    if(this->layers == NULL) return;
+
+    switch (this->mode) {
+    case PROJECT_EDIT:
+        // vykresli postupne vsechny vrstvy projektu (normalni pracovni mod)
         for(Layer *layer : *this->layers) {
-            if(layer) {
+            if(layer != NULL) {
                 if(!layer->isVisible()) continue;
                 // antialiasing
                 painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
@@ -277,12 +291,23 @@ void Project::paintEvent(QPainter &painter) {
                     painter.setCompositionMode(QPainter::CompositionMode_Exclusion);
                     break;
                 }
-                // paint layer
+                // aplikuje masku vrtvy pokud existuje
+                if(layer->getMask() != NULL)  {
+                    layer->applyLayerMask(painter);
+                }
+                // vykresli vrstvu do projektu
                 layer->paintEvent(painter);
             }
         }
+        break;
+    case MASK_EDIT:
+        // vykreli nahled jen aktualne vybrane masky (mode editace masek)
+        if(this->selected_layer != NULL) {
+            QBitmap *mask = this->selected_layer->getMask();
+            if(mask != NULL) {
+                painter.drawPixmap(0, 0, *mask);
+            }
+        }
+        break;
     }
-
-    // reset blend mode
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 }

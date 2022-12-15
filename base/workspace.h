@@ -11,11 +11,15 @@
 #include "../utility/mouseeventhelper.h"
 
 
+/**
+ * @brief Konfiguracn struktura pro workspace
+ */
 struct Config_Workspace_t {
     QFont font; /** Font pro texty ve workspace (meritka + pozicni informace)*/
     float mouseSensitivity; /** Citlivost mysi */
     int fps; /** Maximalni rychlost vykreslovani*/
 };
+
 
 /**
  * @brief Tato komponenta se stara o spravne vykreslovani projektu (obrazku) a
@@ -72,6 +76,30 @@ public:
      */
     float getScale() const;
 
+    /**
+     * @brief Navrati aktualne vybrany nastroj
+     * @return Tool
+     */
+    Tool *getTool() const;
+
+    /**
+     * @brief Nastavy novy nastroj
+     * @param newTool - Novy nastroj
+     */
+    void setTool(Tool *newTool);
+
+    /**
+     * @brief Navrati konfiguraci workspacu
+     * @return Config_Workspace_t
+     */
+    const Config_Workspace_t &getConfig() const;
+
+    /**
+     * @brief Nastavi novou konfiguraci
+     * @param newConfig - Config_Workspace_t
+     */
+    void setConfig(const Config_Workspace_t &newConfig);
+
     // events
     virtual void mousePressEvent(QMouseEvent *event) override;
     virtual void mouseReleaseEvent(QMouseEvent *event) override;
@@ -79,18 +107,13 @@ public:
     virtual void mouseMoveEvent(QMouseEvent *event) override;
     virtual void wheelEvent(QWheelEvent *event) override;
 
-    Tool *getTool() const;
-    void setTool(Tool *newTool);
-
-    const Config_Workspace_t &getConfig() const;
-    void setConfig(const Config_Workspace_t &newConfig);
-
 signals:
     void toolChanged();
 
     void configChanged();
 
 protected:
+    // konfigurace
     Config_Workspace_t config;
 
     // aktualni projekt
@@ -99,21 +122,21 @@ protected:
     // merito zobrazeni
     float scale;
 
-    // globalni offset
+    // globalni offset (pro pohybovani projektem)
     QPointF globalOffset;
 
-    // aktualni pozice kurzoru
+    // aktualni pozice kurzoru (pro press a current)
     QPointF pressPos;
     QPointF currentPos;
 
     // helper pro mouse eventy
     MouseEventHelper mouseHelper;
 
-    // aktualne zvoleny graficky nastroj
+    // aktualne zvoleny graficky nastroj (manipuluje z projektem)
     Tool *tool;
 
     /**
-     * @brief QWidget paint event
+     * @brief [[[ Hlavni paint event ]]]
      * @param event - QPaintEvent
      */
     void paintEvent(QPaintEvent *event) override;

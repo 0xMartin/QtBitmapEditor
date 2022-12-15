@@ -97,7 +97,11 @@ void Layer::createMask(const QSize size)
 
 void Layer::resizeMask(const QSize size)
 {
-    // ################################################################################################################
+    if(this->mask == NULL) {
+        this->createMask(size);
+    } else {
+        //this->mask = this->mask->scaled(size.width(), size.height(), Qt::KeepAspectRatio);
+    }
 }
 
 QBitmap *Layer::getMask() const

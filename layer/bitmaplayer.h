@@ -12,7 +12,7 @@
 class BitmapLayer : public Layer
 {
 public:
-    QImage image; /** Obraz */
+    QImage image; /** Obraz vrstvy */
 
     /**
      * @brief Vytvori bitmapovou vrstvu

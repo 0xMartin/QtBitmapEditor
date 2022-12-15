@@ -107,8 +107,23 @@ protected:
     Project *project;
 
 
-    // hlavni komponenty manazeru vrstev
+    // layout
+    QVBoxLayout *mainLayout;
+    // project controll
+    QWidget *projectControl;
+    QHBoxLayout *projectControllLayout;
+    // layer controll
+    QWidget *layerControl;
+    QHBoxLayout *layerControllLayout;
+    // list controll
+    QWidget *listControl;
+    QHBoxLayout *listControllLayout;
+
+
+    // hlavni komponenty ovladaci manazeru vrstev
     QLabel *header;
+    // project controll
+    QComboBox *comboBox_editMode;
     // layer controll
     QCheckBox *checkBox_antialiasing; /** Ovladani antialiasingu vybrane vrstvy */
     QSpinBox *spinbox_opacity; /** Ovladani opacity vybrane vrstvy */
@@ -120,16 +135,6 @@ protected:
     QPushButton *button_removeLayer; /** Tlacikto pro odebrani vybrane vrstvy */
     QPushButton *button_up; /** Tlacitko pro presunuti vrstvy nahoru */
     QPushButton *button_down; /** Tlacikto pro presunuti vrstvy dolu */
-
-
-    // layout
-    QVBoxLayout *mainLayout;
-    // list controll
-    QWidget *listControl;
-    QHBoxLayout *listControlLayout;
-    // layer controll
-    QWidget *layerControl;
-    QHBoxLayout *layerControllLayout;
 
 
     virtual void changeEvent(QEvent * event) override;

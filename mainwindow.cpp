@@ -7,6 +7,7 @@
 #include "tool/brush.h"
 #include "tool/fillcolor.h"
 #include "tool/eyedropper.h"
+#include "tool/text.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -49,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->context->addTool(new Brush(this, this->colorPicker));
     this->context->addTool(new FillColor(this, this->colorPicker));
     this->context->addTool(new EyeDropper(this, this->colorPicker));
+    this->context->addTool(new Text(this, this->colorPicker));
     this->context->selectToolFromList(TOOL_PEN);
     /*****************************************************************************/
 
@@ -203,7 +205,9 @@ void MainWindow::on_actionFill_triggered()
 
 void MainWindow::on_actionText_triggered()
 {
-
+    if(this->context == NULL) return;
+    this->context->selectToolFromList(TOOL_TEXT);
+    this->highlightToolbar(this->ui->actionText);
 }
 
 

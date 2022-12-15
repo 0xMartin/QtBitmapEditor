@@ -128,7 +128,22 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->mainLayout->addWidget(this->header);
 
 
-    // ovladani aktualni vrstvy (opacity)
+    // ovladni projektu (mode -> normal / prace s maskama)
+    //------------------------------------------------------------------------------------------
+    this->projectControl = new QWidget(this);
+    this->mainLayout->addWidget(this->projectControl);
+    this->projectControllLayout = new QHBoxLayout(this->projectControl);
+    this->projectControl->setLayout(this->projectControllLayout);
+
+    // blend mode
+    this->comboBox_editMode = new QComboBox(this);
+    this->comboBox_editMode->setToolTip(tr("EDIT MODE"));
+    this->comboBox_editMode->addItem(tr("IMAGE"));
+    this->comboBox_editMode->addItem(tr("MASK"));
+    this->projectControllLayout->addWidget(this->comboBox_editMode);
+
+
+    // ovladani aktualne vybrane vrstvy
     //------------------------------------------------------------------------------------------
     this->layerControl = new QWidget(this);
     this->mainLayout->addWidget(this->layerControl);
@@ -175,7 +190,6 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->spinbox_opacity->setValue(100);
     this->layerControllLayout->addWidget(this->spinbox_opacity);
 
-
     this->updateLayerControllBinding();
 
     // list s vrstvama
@@ -191,15 +205,15 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->mainLayout->addWidget(this->listWidget);
 
 
-    // tlaciky pro ovladani listu vrstev (add, remove, up, down)
+    // tlaciky pro ovladani listu vrstev (add, remove, up, down, vytvoreni masky, odebrani masky)
     //------------------------------------------------------------------------------------------
     this->listControl = new QWidget(this);
     this->mainLayout->addWidget(this->listControl);
-    this->listControlLayout = new QHBoxLayout(this->listControl);
-    this->listControl->setLayout(this->listControlLayout);
+    this->listControllLayout = new QHBoxLayout(this->listControl);
+    this->listControl->setLayout(this->listControllLayout);
 
     //spacer
-    this->listControlLayout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed));
+    this->listControllLayout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Fixed));
 
     // add layer tlacitko
     this->button_addLayer = new QPushButton(this->listControl);
@@ -207,7 +221,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_addLayer->setToolTip(QString(tr("Add Layer")));
     this->button_addLayer->setIcon(QIcon(":/src/icons/new_layer.png"));
     this->button_addLayer->setIconSize(QSize(22, 22));
-    this->listControlLayout->addWidget(this->button_addLayer);
+    this->listControllLayout->addWidget(this->button_addLayer);
 
     // remove  tlacitko
     this->button_removeLayer = new QPushButton(this->listControl);
@@ -215,7 +229,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_removeLayer->setToolTip(QString(tr("Remove Layer")));
     this->button_removeLayer->setIcon(QIcon(":/src/icons/remove_layer.png"));
     this->button_removeLayer->setIconSize(QSize(22, 22));
-    this->listControlLayout->addWidget(this->button_removeLayer);
+    this->listControllLayout->addWidget(this->button_removeLayer);
 
     // up tlacitko
     this->button_up = new QPushButton(this->listControl);
@@ -223,7 +237,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_up->setToolTip(QString(tr("Move Layer Up")));
     this->button_up->setIcon(QIcon(":/src/icons/arrow_up.png"));
     this->button_up->setIconSize(QSize(22, 22));
-    this->listControlLayout->addWidget(this->button_up);
+    this->listControllLayout->addWidget(this->button_up);
 
     // down tlacitko
     this->button_down = new QPushButton(this->listControl);
@@ -231,7 +245,7 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
     this->button_down->setToolTip(QString(tr("Move Layer Down")));
     this->button_down->setIcon(QIcon(":/src/icons/arrow_down.png"));
     this->button_down->setIconSize(QSize(22, 22));
-    this->listControlLayout->addWidget(this->button_down);
+    this->listControllLayout->addWidget(this->button_down);
 }
 
 LayerManager::~LayerManager() {
@@ -246,6 +260,9 @@ LayerManager::~LayerManager() {
     if(this->mainLayout) delete this->mainLayout;
     if(this->listControl) delete this->listControl;
     if(this->layerControl) delete this->layerControl;
+    if(this->projectControl) delete this->projectControl;
+    if(this->projectControllLayout) delete this->projectControllLayout;
+    if(this->comboBox_editMode) delete this->comboBox_editMode;
 }
 
 void LayerManager::setProject(Project *project)
@@ -273,9 +290,9 @@ void LayerManager::updateLayerList()
     if(layers == NULL) return;
 
     for(auto it = layers->crbegin() ; it != layers->crend(); ++it) {
-        LayerWidget *w = new LayerWidget(*it, 60); // dealokace pri clear
+        LayerWidget *w = new LayerWidget(*it, 50); // dealokace pri clear
         QListWidgetItem *item = new QListWidgetItem(listWidget); // dealokace pri clear
-        item->setSizeHint(QSize(80, 80));
+        item->setSizeHint(QSize(80, 70));
         this->listWidget->insertItem(0, item);
         this->listWidget->setItemWidget(item, w);
         // oznaceni teto vrstvy ?

@@ -103,6 +103,36 @@ float Workspace::getScale() const
     return this->scale;
 }
 
+Tool *Workspace::getTool() const
+{
+    return this->tool;
+}
+
+void Workspace::setTool(Tool *newTool)
+{
+    // prida novy nastroj
+    if (this->tool == newTool)
+        return;
+    this->tool = newTool;
+    emit toolChanged();
+
+    // update nastroje
+    if(this->tool != NULL) {
+        this->tool->updatTool(this->scale);
+    }
+}
+
+const Config_Workspace_t &Workspace::getConfig() const
+{
+    return this->config;
+}
+
+void Workspace::setConfig(const Config_Workspace_t &newConfig)
+{
+    this->config = newConfig;
+    emit configChanged();
+}
+
 void Workspace::mousePressEvent(QMouseEvent *event)
 {
     if(this->tool) {
@@ -258,41 +288,11 @@ void Workspace::wheelEvent(QWheelEvent *event)
     }
 }
 
-Tool *Workspace::getTool() const
-{
-    return this->tool;
-}
-
-void Workspace::setTool(Tool *newTool)
-{
-    // prida novy nastroj
-    if (this->tool == newTool)
-        return;
-    this->tool = newTool;
-    emit toolChanged();
-
-    // update nastroje
-    if(this->tool != NULL) {
-        this->tool->updatTool(this->scale);
-    }
-}
-
-const Config_Workspace_t &Workspace::getConfig() const
-{
-    return this->config;
-}
-
-void Workspace::setConfig(const Config_Workspace_t &newConfig)
-{
-    this->config = newConfig;
-    emit configChanged();
-}
-
 void Workspace::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    // vykresleni pozadi
+    // vykresleni celkoveho pozadi wokspacu
     painter.fillRect(this->rect(), QBrush(QColor(37, 37, 37), Qt::SolidPattern));
 
 
@@ -327,9 +327,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         //-------PROJECT-------------------------
 
 
-        painter.setRenderHint(QPainter::Antialiasing, true);
-
-        // overlayer
+        // overlayer vrstva (pro tool)
         if(this->tool != NULL) {
             painter.save();
             this->tool->paintEvent(this->currentPos, this->scale, painter);
@@ -364,6 +362,7 @@ void Workspace::paintEvent(QPaintEvent *event) {
         painter.fillRect(0, 26, 26, this->height(), QBrush(QColor(50, 50, 50), Qt::SolidPattern));
         painter.setFont(this->config.font);
         painter.setPen(QColor(150, 150, 150));
+
 
         // x osa meritko
         int scaled_size = s.width() * this->scale;
@@ -407,12 +406,14 @@ void Workspace::paintEvent(QPaintEvent *event) {
         from_start_to_0 = qCeil((float)offset.y() / step);
         QFontMetrics fm(this->config.font);
         px = -px_step * from_start_to_0;
+        int i;
+        QString num;
         for(int y = offset.y() - step * from_start_to_0;
             y < this->height();
             y+= step, px += px_step) {
 
-            QString num = QString::number(px, 'f', 0);
-            int i = 0;
+            num = QString::number(px, 'f', 0);
+            i = 0;
             for(QChar &c : num) {
                 painter.drawText(QPointF(8, y + (i + 0.9) * (fm.height() - 4) + 5), c);
                 ++i;
