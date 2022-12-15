@@ -56,8 +56,10 @@ Layer *Tool::layerCheck(int type)
     if(this->project == NULL) return NULL;
     Layer *l = this->project->getSelectedLayer();
     if(l != NULL && type >= 0) {
-        if(l->getType() != type) return NULL;
-        if(!l->isVisible()) return NULL;
+        if(this->project->getMode() != MASK_EDIT) {
+            if(l->getType() != type) return NULL;
+            if(!l->isVisible()) return NULL;
+        }
     }
     return l;
 }

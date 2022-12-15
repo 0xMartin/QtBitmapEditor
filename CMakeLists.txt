@@ -72,6 +72,7 @@ set(QBE_RES
 set(QBE_BASE
     base/app_context.h
     base/app_context.cpp
+    base/module.h
     base/config.h
     base/dialogs.h
     base/project.h

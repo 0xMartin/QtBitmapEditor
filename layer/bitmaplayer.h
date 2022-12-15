@@ -16,11 +16,11 @@ public:
 
     /**
      * @brief Vytvori bitmapovou vrstvu
-     * @param parent - QObject
+     * @param project - Projekt ve kterem se vrstva nachazi
      * @param name - Jmeno vrstvy
      * @param size - Rozmery bitmapy
      */
-    BitmapLayer(QObject *parent, const QString &name, const QSize &size);
+    BitmapLayer(QObject *project, const QString &name, const QSize &size);
 
     /**
      * @brief Navrati rozmery bitmapy

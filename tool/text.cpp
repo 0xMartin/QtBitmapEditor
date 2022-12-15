@@ -4,7 +4,7 @@
 #include <QPainterPath>
 
 #include "../base/config.h"
-#include "../layer/bitmaplayer.h"
+#include "../layer/textlayer.h"
 
 
 Text::Text(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
@@ -60,16 +60,12 @@ void Text::updatTool(float scale)
 
 void Text::paintEvent(const QPointF &pos, float scale, QPainter &painter)
 {
-    // vykresleni tvaru a veliskota nastroje do horni nahledove vrstvy
-    int size = this->spinbox_size->value();
-    painter.setPen(Qt::black);
-    float s = size * scale;
-    painter.drawEllipse(pos.x() - s/2, pos.y() - s/2, s, s);
+
 }
 
 bool Text::overLayerPainting() const
 {
-    return true;
+    return false;
 }
 
 int Text::getType() const
@@ -79,23 +75,23 @@ int Text::getType() const
 
 
 /*****************************************************************************************/
-// EVENTY PRO EDITACI BITMAPY
+// EVENTY PRO EDITACI TEXTU
 /*****************************************************************************************/
 
 void Text::mousePressEvent(const QPointF &pos)
 {
     this->mouseHelper.processMoveEvent(pos);
+    // prida novou textovou vrstvu do projektu
+    if(this->project != NULL) {
+        TextLayer *layer = new TextLayer(
+                    this->project,
+                    "Text " + QString::number(this->project->getLayers()->size() + 1),
+                    "Text",
+                    QPoint(pos.x(), pos.y()));
+        qDebug() << "AAA";
+        this->project->insertLayerAbove(layer);
+    }
 
-    // vykreleni po dotiku
-    int size = this->spinbox_size->value();
-    BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
-    if(layer == NULL) return;
-    this->painter.begin(&layer->image);
-    painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
-    this->painter.setPen(Qt::transparent);
-    this->painter.setBrush(this->colorPicker->getColor());
-    this->painter.drawEllipse(pos.x() - size/2, pos.y() - size/2, size, size);
-    this->painter.end();
 }
 
 void Text::mouseReleaseEvent(const QPointF &pos)
@@ -110,38 +106,10 @@ void Text::mouseDoubleClickEvent(const QPointF &pos)
 
 void Text::mouseMoveEvent(const QPointF &pos)
 {
-    if(this->mouseHelper.processMoveEvent(pos)) {
-        // po definovanych vzdalenost dela tah
-        QLineF line = this->mouseHelper.lineFromLastPos();
 
-        BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
-        if(layer == NULL) return;
-        this->painter.begin(&layer->image);
-        painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
-        this->painter.setPen(this->pen);
-        this->painter.drawLine(line);
-        this->painter.end();
-    }
 }
 
 void Text::outOfAreaEvent(const QPointF &pos)
 {
-    // dokonci tah
-    const QPointF *last = this->mouseHelper.getLast();
-    if(last) {
-        QLineF line(*last, pos);
 
-        BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
-        if(layer == NULL) return;
-        this->painter.begin(&layer->image);
-        painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
-        this->painter.setPen(this->pen);
-        this->painter.drawLine(line);
-        this->painter.end();
-
-        // reset
-        this->mouseHelper.resetMove();
-        // request repain
-        layer->requestRepaint();
-    }
 }

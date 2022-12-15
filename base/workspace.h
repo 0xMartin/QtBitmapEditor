@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QScrollArea>
 
+#include "module.h"
 #include "project.h"
 #include "tool.h"
 #include "../utility/mouseeventhelper.h"
@@ -18,6 +19,7 @@ struct Config_Workspace_t {
     QFont font; /** Font pro texty ve workspace (meritka + pozicni informace)*/
     float mouseSensitivity; /** Citlivost mysi */
     int fps; /** Maximalni rychlost vykreslovani*/
+    QColor maskColor; /** Barva masky v editacnim rezimu (moznost prizpusobeni pro lepsi praci) */
 };
 
 
@@ -25,7 +27,7 @@ struct Config_Workspace_t {
  * @brief Tato komponenta se stara o spravne vykreslovani projektu (obrazku) a
  * grafickou manipulaci s nim.
  */
-class Workspace : public QWidget
+class Workspace : public QWidget, public Module
 {
     Q_OBJECT
 public:
@@ -108,8 +110,14 @@ public:
     virtual void wheelEvent(QWheelEvent *event) override;
 
 signals:
+    /**
+     * @brief Signal vyvolan ve chvili zmeny nastroje
+     */
     void toolChanged();
 
+    /**
+     * @brief Signal vyvolan ve chvili zmeny konfiguracni struktury
+     */
     void configChanged();
 
 protected:
@@ -156,6 +164,40 @@ private:
 
     Q_PROPERTY(Tool *tool READ getTool WRITE setTool NOTIFY toolChanged)
     Q_PROPERTY(Config_Workspace_t config READ getConfig WRITE setConfig NOTIFY configChanged)
+
+public slots:
+    /**
+     * @brief Zobrazi kontextove menu workspacu
+     * @param pos - Pozice
+     */
+    void showContextMenu(const QPoint &pos);
+
+    /**
+     * @brief Zmeni barvu masky (jen pro usnadneni pri praci "zabraneni splynuti barev")
+     */
+    void changeMaskColor();
+
+    /**
+     * @brief Vymaze masku (vse ve vrstve bude viditelny)
+     */
+    void clearMask();
+
+    /**
+     * @brief Nastavi masku (nic ve vrstve nebude viditelne)
+     */
+    void setMask();
+
+    /**
+     * @brief Zkopiruje masku (masku muze vlozit do jine libovolne masky / pri
+     *  vytvareni dalsi masky se automaticky prekopiruje do nove vznikle masky)
+     */
+    void maskCopy();
+
+    /**
+     * @brief Vlozi zkopirovanou masku do masky aktualne vybrane vrstvy
+     */
+    void maskPaste();
+
 };
 
 /**

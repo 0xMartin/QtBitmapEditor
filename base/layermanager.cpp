@@ -132,7 +132,7 @@ void LayerWidget::repaintMask()
     painter.drawPixmap(0, 0, *this->layer->getMask());
 
     // vykresli preskrtnuty masky pokud neni aktivni
-    if(!this->layer->getMaskActive()) {
+    if(!this->layer->isMaskActive()) {
         float inv = 1.0 / scale;
         painter.setPen(QPen(Qt::red, (int)(3 * inv)));
         painter.drawLine(0, 0, c_w * inv, c_h * inv);
@@ -683,7 +683,7 @@ void LayerManager::on_mask_active_deactivate()
     }
 
     // aktivuje / deaktivuje masku vybrane vrstvy
-    l->setMaskActive(!l->getMaskActive());
+    l->setMaskActive(!l->isMaskActive());
 
     // prekresli projekt
     this->project->requestRepaint();

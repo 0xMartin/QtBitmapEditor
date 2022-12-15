@@ -7,13 +7,14 @@
 #include <QLabel>
 #include <QScrollArea>
 
+#include "module.h"
 #include "tool.h"
 #include "project.h"
 
 /**
  * @brief Komponenta tool kontroler umoznuje nastavovat parametry zvoleneho nastroje
  */
-class ToolController : public QWidget
+class ToolController : public QWidget, public Module
 {
     Q_OBJECT
 

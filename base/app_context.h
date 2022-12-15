@@ -99,6 +99,23 @@ public:
      */
     bool selectToolFromList(int toolType);
 
+    /**********************************************************************************/
+    // sekce kopirovani
+
+    /**
+     * @brief Zkopiruje do pameti kontextu masku vrstvy
+     * @param mask - Ukazatel na masku
+     */
+    void copyMask(QBitmap *mask);
+
+    /**
+     * @brief Ziska kopii masky z pameti
+     * @return QBitmap
+     */
+    QBitmap *getMaskCopy() const;
+
+    /**********************************************************************************/
+
 signals:
     void workspaceChanged();
 
@@ -107,6 +124,7 @@ signals:
     void layerManagerChanged();
 
 protected:
+    // hlavni komponenty aplikace
     Project *project; /** Aktualne ovevtreni projekt*/
     QList<Tool*> tools; /** List nastroju */
     Tool *tool; /** Aktualne pouzivany graficky nastroj */
@@ -115,6 +133,13 @@ protected:
     LayerManager *layerManager; /** Komponenta pro spravu vrstev projektu*/
 
 private:
+    /**********************************************************************************/
+    // sekce kopirovani
+
+    // kopirovane objekty
+    QBitmap *copymask;
+    /**********************************************************************************/
+
     Q_PROPERTY(Workspace *workspace READ getWorkspace WRITE setWorkspace NOTIFY workspaceChanged)
     Q_PROPERTY(ToolController *toolController READ getToolController WRITE setToolController NOTIFY toolControllerChanged)
     Q_PROPERTY(LayerManager *layerManager READ getLayerManager WRITE setLayerManager NOTIFY layerManagerChanged)

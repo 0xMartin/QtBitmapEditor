@@ -8,6 +8,8 @@ AppContext::AppContext()
     this->workspace = NULL;
     this->layerManager = NULL;
     this->toolController = NULL;
+
+    this->copymask = NULL;
 }
 
 AppContext::~AppContext()
@@ -56,6 +58,7 @@ void AppContext::setWorkspace(Workspace *newWorkspace)
     if (this->workspace == newWorkspace)
         return;
     this->workspace = newWorkspace;
+    this->workspace->setContext(this);
     emit workspaceChanged();
 }
 
@@ -69,6 +72,7 @@ void AppContext::setToolController(ToolController *newToolController)
     if (this->toolController == newToolController)
         return;
     this->toolController = newToolController;
+    this->toolController->setContext(this);
     emit toolControllerChanged();
 }
 
@@ -82,6 +86,7 @@ void AppContext::setLayerManager(LayerManager *newLayerManager)
     if (this->layerManager == newLayerManager)
         return;
     this->layerManager = newLayerManager;
+    this->layerManager->setContext(this);
     emit layerManagerChanged();
 }
 
@@ -112,3 +117,17 @@ bool AppContext::selectToolFromList(int toolType)
     }
     return false;
 }
+
+void AppContext::copyMask(QBitmap *mask)
+{
+    if(mask == NULL) return;
+    if(this->copymask) delete this->copymask;
+    this->copymask = new QBitmap(mask->size());
+    *this->copymask = *mask;
+}
+
+QBitmap *AppContext::getMaskCopy() const
+{
+    return this->copymask;
+}
+

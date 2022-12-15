@@ -28,9 +28,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->toolBar->addAction(this->ui->actionBrush);
     this->ui->toolBar->addAction(this->ui->actionFill);
     this->ui->toolBar->addAction(this->ui->actionText);
-    this->ui->toolBar->addAction(this->ui->actionCircle);
-    this->ui->toolBar->addAction(this->ui->actionRectangle);
-    this->ui->toolBar->addAction(this->ui->actionPolygon);
+    //this->ui->toolBar->addAction(this->ui->actionCircle);
+    //this->ui->toolBar->addAction(this->ui->actionRectangle);
+    //this->ui->toolBar->addAction(this->ui->actionPolygon);
     // label pro status bar
     this->statusLabel = new QLabel(this->ui->statusbar);
     this->statusLabel->setAlignment(Qt::AlignLeft);
@@ -208,24 +208,6 @@ void MainWindow::on_actionText_triggered()
     if(this->context == NULL) return;
     this->context->selectToolFromList(TOOL_TEXT);
     this->highlightToolbar(this->ui->actionText);
-}
-
-
-void MainWindow::on_actionRectangle_triggered()
-{
-
-}
-
-
-void MainWindow::on_actionCircle_triggered()
-{
-
-}
-
-
-void MainWindow::on_actionPolygon_triggered()
-{
-
 }
 
 

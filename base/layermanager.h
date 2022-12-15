@@ -15,7 +15,7 @@
 #include <QComboBox>
 #include <QMenu>
 
-
+#include "module.h"
 #include "project.h"
 
 /**
@@ -78,7 +78,7 @@ private slots:
 /**
  * @brief Komponenta pro spravu vrstev projektu
  */
-class LayerManager : public QWidget
+class LayerManager : public QWidget, public Module
 {
     Q_OBJECT
 

@@ -36,10 +36,10 @@ class Layer : public QObject
 public:
     /**
      * @brief Konstruktor abstraktni tridy pro vrstvu
-     * @param parent - QObject
+     * @param project - Projekt ve kterem se vrstva nachazi
      * @param name - Jmeno vrstvy
      */
-    Layer(QObject *parent, const QString &name);
+    Layer(QObject *project, const QString &name);
 
     virtual ~Layer();
 
@@ -136,6 +136,12 @@ public:
     void deleteMask();
 
     /**
+     * @brief Vlozi jinou masku do aktualni masky
+     * @param newMask - Jina maska
+     */
+    void maskPaste(QBitmap *newMask);
+
+    /**
      * @brief Navrati masku vrtvy
      * @return QBitmap
      */
@@ -145,7 +151,7 @@ public:
      * @brief Navrati stav o tom zda je maska vrstvy aktivni
      * @return True -> Je aktivni (bude se aplikovat pri vykreslovani)
      */
-    bool getMaskActive() const;
+    bool isMaskActive() const;
 
     /**
      * @brief Nastavi stav aktivnosti masky vrstvy

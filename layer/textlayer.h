@@ -19,12 +19,14 @@ public:
 
     /**
      * @brief Vytvori bitmapovou vrstvu
-     * @param parent - QObject
+     * @param project - Projekt ve kterem se vrstva nachazi
      * @param name - Jmeno vrstvy
      * @param size - Rozmery bitmapy
      * @param text - Inicializacni text
+     * @param pos - Pozice textu
      */
-    TextLayer(QObject *parent, const QString &name, const QString &text);
+    TextLayer(QObject *project, const QString &name,
+              const QString &text, const QPoint &pos);
 
     virtual void paintEvent(QPainter &painter) override;
 

@@ -1,6 +1,6 @@
 #include "bitmaplayer.h"
 
-BitmapLayer::BitmapLayer(QObject *parent, const QString &name, const QSize &size) : Layer(parent, name)
+BitmapLayer::BitmapLayer(QObject *project, const QString &name, const QSize &size) : Layer(project, name)
 {
     this->size = size;
     if(size.width() >= 1 && size.height() >= 1) {

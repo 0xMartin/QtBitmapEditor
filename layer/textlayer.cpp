@@ -1,8 +1,10 @@
 #include "textlayer.h"
 
-TextLayer::TextLayer(QObject *parent, const QString &name, const QString &text) : Layer(parent, name)
+TextLayer::TextLayer(QObject *project, const QString &name,
+                     const QString &text, const QPoint &pos) : Layer(project, name)
 {
     this->text = text;
+    this->position = pos;
     this->font.setFamily("Times");
     this->font.setPixelSize(40);
     this->font.setStyle(QFont::StyleNormal);
@@ -23,7 +25,7 @@ int TextLayer::getType()
 Layer *TextLayer::createDuplicate() const
 {
     // vytvoreni duplikatu
-    TextLayer *layer = new TextLayer(this->parent(), this->name, this->text);
+    TextLayer *layer = new TextLayer(this->parent(), this->name, this->text, this->position);
     layer->mask = this->duplicateMask();
     layer->maskActive = this->maskActive;
     layer->opacity = this->opacity;
@@ -32,7 +34,6 @@ Layer *TextLayer::createDuplicate() const
     // #############################
     layer->font = this->font;
     layer->color = this->color;
-    layer->position = this->position;
     // #############################
     return layer;
 }

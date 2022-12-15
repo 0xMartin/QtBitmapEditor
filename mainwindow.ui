@@ -51,9 +51,6 @@
     <addaction name="actionBrush"/>
     <addaction name="actionFill"/>
     <addaction name="actionText"/>
-    <addaction name="actionCircle"/>
-    <addaction name="actionRectangle"/>
-    <addaction name="actionPolygon"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -190,24 +187,6 @@
     <string>Text</string>
    </property>
   </action>
-  <action name="actionCircle">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/src/icons/circle.png</normaloff>:/src/icons/circle.png</iconset>
-   </property>
-   <property name="text">
-    <string>Circle</string>
-   </property>
-  </action>
-  <action name="actionPolygon">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/src/icons/polygon.png</normaloff>:/src/icons/polygon.png</iconset>
-   </property>
-   <property name="text">
-    <string>Polygon</string>
-   </property>
-  </action>
   <action name="actionEraser">
    <property name="icon">
     <iconset resource="icons.qrc">
@@ -233,15 +212,6 @@
    </property>
    <property name="text">
     <string>Remove layer</string>
-   </property>
-  </action>
-  <action name="actionRectangle">
-   <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/src/icons/rect.png</normaloff>:/src/icons/rect.png</iconset>
-   </property>
-   <property name="text">
-    <string>Rectangle</string>
    </property>
   </action>
   <action name="actionZoom_in">

@@ -108,21 +108,6 @@ private slots:
     void on_actionText_triggered();
 
     /**
-     * @brief Vybere nastroj "Rectangle"
-     */
-    void on_actionRectangle_triggered();
-
-    /**
-     * @brief Vybere nastroj "circle"
-     */
-    void on_actionCircle_triggered();
-
-    /**
-     * @brief Vybere nastroj "polygon"
-     */
-    void on_actionPolygon_triggered();
-
-    /**
      * @brief Vybere nastroj "Eraser"
      */
     void on_actionEraser_triggered();

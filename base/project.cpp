@@ -298,7 +298,7 @@ void Project::paintEvent(QPainter &painter) {
                     break;
                 }
                 // aplikuje masku vrtvy pokud existuje
-                if(layer->getMaskActive()) {
+                if(layer->isMaskActive()) {
                     if(layer->getMask() != NULL)  {
                         layer->applyLayerMask(painter);
                     }
@@ -313,8 +313,7 @@ void Project::paintEvent(QPainter &painter) {
         if(this->selected_layer != NULL) {
             QBitmap *mask = this->selected_layer->getMask();
             if(mask != NULL) {
-                // maska
-                painter.setPen(Qt::black);
+                // maska (nutne nastavit barvu pred volanim teto paint funkce, externe) !!!
                 painter.drawPixmap(0, 0, *mask);
 
                 // vykresli vrstvu do projektu

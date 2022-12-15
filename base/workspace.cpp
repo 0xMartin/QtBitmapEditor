@@ -1,12 +1,17 @@
 #include "workspace.h"
 
 #include "config.h"
+#include "dialogs.h"
+#include "app_context.h"
 
 #include <chrono>
 #include <QApplication>
 #include <QPainter>
 #include <QtMath>
 #include <QScrollBar>
+#include <QMenu>
+#include <QColorDialog>
+#include <QMessageBox>
 
 
 // velikost useku meritka v pixelech
@@ -32,6 +37,10 @@ Workspace::Workspace(const Config_Workspace_t &config, QWidget *parent): QWidget
     this->setBackgroundRole(QPalette::Base);
     this->setAutoFillBackground(true);
     this->setMouseTracking(true);
+
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(showContextMenu(QPoint)));
 }
 
 void Workspace::setProject(Project *project) {
@@ -327,6 +336,9 @@ void Workspace::paintEvent(QPaintEvent *event) {
         // aplikace scale
         painter.scale(this->scale, this->scale);
         // vykresleni projektu
+        if(this->project->getMode() == MASK_EDIT) {
+            painter.setPen(this->config.maskColor);
+        }
         this->project->paintEvent(painter);
         // vraceni zpet do puvodniho stavu
         painter.restore();
@@ -496,6 +508,179 @@ QPointF Workspace::calculateEventOffsetPosition(const QPointF &pos, bool &outOfR
     return offset;
 }
 
+void Workspace::showContextMenu(const QPoint &pos)
+{
+    if(this->project == NULL) return;
+
+    QMenu contextMenu(tr("Menu"), this);
+    if(this->project->getMode() == MASK_EDIT) {
+        QAction action1(tr("Change Mask Color"), this);
+        connect(&action1, SIGNAL(triggered()), this, SLOT(changeMaskColor()));
+        QAction action2(tr("Clear Mask"), this);
+        connect(&action2, SIGNAL(triggered()), this, SLOT(clearMask()));
+        QAction action3(tr("Set Mask"), this);
+        connect(&action3, SIGNAL(triggered()), this, SLOT(setMask()));
+        QAction action4(tr("Copy Mask"), this);
+        connect(&action4, SIGNAL(triggered()), this, SLOT(maskCopy()));
+        QAction action5(tr("Paste Mask"), this);
+        connect(&action5, SIGNAL(triggered()), this, SLOT(maskPaste()));
+
+        contextMenu.addAction(&action1);
+        contextMenu.addAction(&action2);
+        contextMenu.addAction(&action3);
+        contextMenu.addAction(&action4);
+        contextMenu.addAction(&action5);
+
+        contextMenu.exec(this->mapToGlobal(pos));
+    } else {
+        // nyni neni implementovano #########################################
+    }
+}
+
+void Workspace::changeMaskColor()
+{
+    this->config.maskColor = QColorDialog::getColor(this->config.maskColor, parentWidget());
+    this->repaint();
+}
+
+void Workspace::clearMask()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Clear Mask"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Clear Mask"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    if(l->getMask() == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Clear Mask"),
+                    DIALOG_NO_MASK);
+        return;
+    }
+
+    l->getMask()->fill(Qt::black);
+    this->repaint();
+}
+
+void Workspace::setMask()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Set Mask"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Set Mask"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    if(l->getMask() == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Set Mask"),
+                    DIALOG_NO_MASK);
+        return;
+    }
+
+    l->getMask()->fill(Qt::white);
+    this->repaint();
+}
+
+void Workspace::maskCopy()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Copy Mask"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Copy Mask"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    if(l->getMask() == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Copy Mask"),
+                    DIALOG_NO_MASK);
+        return;
+    }
+
+    // zkopiruje masku do kontextu aplikace
+    AppContext *cntx = (AppContext*)this->getContext();
+    if(cntx != NULL) {
+        cntx->copyMask(l->getMask());
+    }
+}
+
+void Workspace::maskPaste()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Paste Mask"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Paste Mask"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    if(l->getMask() == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Paste Mask"),
+                    DIALOG_NO_MASK);
+        return;
+    }
+
+    // prekopiruje masku z kontextu do aktualne vybrane masky
+    AppContext *cntx = (AppContext*)this->getContext();
+    if(cntx != NULL) {
+        QBitmap *mask = cntx->getMaskCopy();
+        if(mask != NULL) {
+            // vlozi zkopirovano masku do masky vybrane vrstvy
+            l->maskPaste(mask);
+            // prekresli workspace
+            this->repaint();
+            // vyvola signal pro prekresleni vrstvy
+            emit this->project->repaintSignal(l);
+        }
+    }
+}
+
 Config_Workspace_t Workspace_defaultConfig()
 {
     Config_Workspace_t cnfg;
@@ -506,6 +691,8 @@ Config_Workspace_t Workspace_defaultConfig()
     cnfg.fps = 50;
 
     cnfg.mouseSensitivity = 1.3;
+
+    cnfg.maskColor = Qt::black;
 
     return cnfg;
 }

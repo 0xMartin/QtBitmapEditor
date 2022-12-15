@@ -5,7 +5,7 @@
 #include <QRegion>
 
 
-Layer::Layer(QObject *parent, const QString &name) : QObject(parent)
+Layer::Layer(QObject *project, const QString &name) : QObject(project)
 {
     this->name = name;
     this->visibility = true;
@@ -118,12 +118,28 @@ void Layer::deleteMask()
     this->maskActive = false;
 }
 
+void Layer::maskPaste(QBitmap *newMask)
+{
+    if(newMask == NULL) return;
+
+    if(this->mask == NULL) {
+        this->createMask();
+    }
+
+    if(this->mask != NULL) {
+        if(this->mask->size().width() == newMask->size().width() &&
+                this->mask->size().height() == newMask->size().height()) {
+            *this->mask = *newMask;
+        }
+    }
+}
+
 QBitmap *Layer::getMask() const
 {
     return this->mask;
 }
 
-bool Layer::getMaskActive() const
+bool Layer::isMaskActive() const
 {
     return this->maskActive;
 }
