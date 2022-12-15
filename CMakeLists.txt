@@ -35,6 +35,8 @@ set(QBE_TOOL
 set(QBE_LAYER
     layer/bitmaplayer.h
     layer/bitmaplayer.cpp
+    layer/textlayer.h
+    layer/textlayer.cpp
 )
 
 # UTILITY

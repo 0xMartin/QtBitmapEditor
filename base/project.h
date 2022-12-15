@@ -191,6 +191,11 @@ signals:
      */
     void repaintSignal(Layer *layer);
 
+    /**
+     * @brief Signal je vyvolan ve chvili kdy je pozmenen list vrstev projektu
+     */
+    void layerListChanged();
+
 protected:
     // jmeno projektu
     QString name;

@@ -69,6 +69,8 @@ bool Project::addLayerAtTop(Layer *layer)
     if(this->layers == NULL) return false;
 
     this->layers->push_back(layer);
+    emit this->layerListChanged();
+
     return true;
 }
 
@@ -78,6 +80,8 @@ bool Project::insertLayer(qsizetype index, Layer *layer)
     if(this->layers == NULL) return false;
 
     this->layers->insert(index, layer);
+    emit this->layerListChanged();
+
     return true;
 }
 
@@ -91,6 +95,7 @@ bool Project::insertLayerAbove(Layer *layer)
         if(l == this->selected_layer) {
             // prida novou vrstvu
             this->layers->insert(index + 1, layer);
+            emit this->layerListChanged();
             return true;
         }
         ++index;
@@ -113,6 +118,7 @@ bool Project::removeLayer(Layer *layer)
                 this->selected_layer = NULL;
             // odstrani vrstvu (delete + odebrani z listu)
             delete (this->layers->takeAt(index));
+            emit this->layerListChanged();
             return true;
         }
         ++index;
@@ -317,7 +323,7 @@ void Project::paintEvent(QPainter &painter) {
             } else {
                 painter.setPen(QPen(Qt::red, 5));
                 painter.drawLine(3, 3, this->size.width() - 3, this->size.height() - 3);
-                painter.drawLine(3, this->size.height() - 3, this->size.width(), 3);
+                painter.drawLine(3, this->size.height() - 3, this->size.width() - 3, 3);
             }
         }
         break;
