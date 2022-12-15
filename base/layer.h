@@ -142,6 +142,18 @@ public:
     QBitmap *getMask() const;
 
     /**
+     * @brief Navrati stav o tom zda je maska vrstvy aktivni
+     * @return True -> Je aktivni (bude se aplikovat pri vykreslovani)
+     */
+    bool getMaskActive() const;
+
+    /**
+     * @brief Nastavi stav aktivnosti masky vrstvy
+     * @param newMaskActive - Stav
+     */
+    void setMaskActive(bool newMaskActive);
+
+    /**
      * @brief Paint event. Vykresli vrstvu do workspacu
      * @param painter - QPainter
      */
@@ -152,6 +164,11 @@ public:
      * @return ID
      */
     virtual int getType() = 0;
+
+    /**
+     * @brief Vyrvori duplikat aktualni masky
+     */
+    QBitmap *duplicateMask() const;
 
     /**
      * @brief Vytvori duplikat vrstvy
@@ -166,6 +183,7 @@ protected:
     float opacity; /** Nepruhlednost vrstvy */
     bool antialiasing; /** Antialiasing povolen/zakazan */
     QBitmap *mask; /** Maska vrstvy */
+    bool maskActive; /** True -> maska je aktivni pri vykreslovani */
 
 };
 

@@ -283,3 +283,19 @@ void MainWindow::on_actionZoom_out_triggered()
 }
 
 
+
+void MainWindow::on_actionSwitch_Image_Mask_triggered()
+{
+    if(this->context == NULL) return;
+
+    // zmeni mod (PROJECT_EDIT <-> MASK_EDIT)
+    if(this->context->getLayerManager() != NULL &&
+            this->context->getProject() != NULL) {
+        if(this->context->getProject()->getMode() == PROJECT_EDIT) {
+            this->context->getLayerManager()->selectMode(MASK_EDIT);
+        } else {
+            this->context->getLayerManager()->selectMode(PROJECT_EDIT);
+        }
+    }
+}
+

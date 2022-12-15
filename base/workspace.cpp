@@ -306,9 +306,18 @@ void Workspace::paintEvent(QPaintEvent *event) {
                     );
 
 
-        // vykresleni pozadi obrazku (sachovnice)
-        float tile_size = this->scale >= 15 ? this->scale : 15; /** Velikost policka = 15 a pokud se zobrazi pixel grid zmeni velikost na hodnotu scale */
-        Layer_paintBgGrid(painter, offset, this->size(), s * this->scale, tile_size);
+        // vykresleni pozadi obrazku
+        float tile_size;
+        switch(this->project->getMode()) {
+        case PROJECT_EDIT:
+            // sachovnice
+            tile_size = this->scale >= 15 ? this->scale : 15; /** Velikost policka = 15 a pokud se zobrazi pixel grid zmeni velikost na hodnotu scale */
+            Layer_paintBgGrid(painter, offset, this->size(), s * this->scale, tile_size);
+            break;
+        case MASK_EDIT:
+            painter.fillRect(offset.x(), offset.y(), s.width() * this->scale, s.height() * this->scale, QBrush(Qt::white));
+            break;
+        }
 
 
         //-------PROJECT-------------------------
@@ -444,6 +453,16 @@ void Workspace::paintEvent(QPaintEvent *event) {
         // dx & dy
         pos = pos - this->pressPos;
         buffer += "DX: " + QString::number(pos.x(), 'f', 0) + " DY: " + QString::number(pos.y(), 'f', 0);
+        buffer = buffer.leftJustified(73, ' ');
+        // mode
+        switch (this->project->getMode()) {
+        case PROJECT_EDIT:
+            buffer += "[IMG EDIT]";
+            break;
+        case MASK_EDIT:
+            buffer += "[MASK EDIT]";
+            break;
+        }
         // paint info
         painter.drawText(QPointF(40, this->height() - 9), buffer);
     }

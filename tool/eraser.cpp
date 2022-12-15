@@ -88,7 +88,16 @@ void Eraser::mousePressEvent(const QPointF &pos)
     int size = this->spinbox_size->value();
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
     if(layer == NULL) return;
-    this->painter.begin(&layer->image);
+    switch(this->project->getMode()) {
+    case PROJECT_EDIT:
+        this->painter.begin(&layer->image);
+        break;
+    case MASK_EDIT:
+        if(layer->getMask() == NULL) return;
+        this->painter.begin(layer->getMask());
+        break;
+    }
+
     painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
     this->painter.setBrush(Qt::transparent);
     this->painter.setCompositionMode(QPainter::CompositionMode_Clear);
@@ -114,7 +123,16 @@ void Eraser::mouseMoveEvent(const QPointF &pos)
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         if(layer == NULL) return;
-        this->painter.begin(&layer->image);
+        switch(this->project->getMode()) {
+        case PROJECT_EDIT:
+            this->painter.begin(&layer->image);
+            break;
+        case MASK_EDIT:
+            if(layer->getMask() == NULL) return;
+            this->painter.begin(layer->getMask());
+            break;
+        }
+
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);
         this->painter.setCompositionMode(QPainter::CompositionMode_Clear);
@@ -132,7 +150,16 @@ void Eraser::outOfAreaEvent(const QPointF &pos)
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         if(layer == NULL) return;
-        this->painter.begin(&layer->image);
+        switch(this->project->getMode()) {
+        case PROJECT_EDIT:
+            this->painter.begin(&layer->image);
+            break;
+        case MASK_EDIT:
+            if(layer->getMask() == NULL) return;
+            this->painter.begin(layer->getMask());
+            break;
+        }
+
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setPen(this->pen);
         this->painter.setCompositionMode(QPainter::CompositionMode_Clear);

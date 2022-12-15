@@ -65,11 +65,13 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionSwitch_Image_Mask"/>
     <addaction name="actionZoom_in"/>
     <addaction name="actionZoom_out"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_layer"/>
     <addaction name="actionRemove_layer"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -285,6 +287,14 @@
    </property>
    <property name="text">
     <string>Eye Dropper</string>
+   </property>
+  </action>
+  <action name="actionSwitch_Image_Mask">
+   <property name="text">
+    <string>Switch Image/Mask</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>

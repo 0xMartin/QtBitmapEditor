@@ -44,6 +44,11 @@ public:
     void repaintLayer();
 
     /**
+     * @brief V tomto widgetu prekresli nahled masky
+     */
+    void repaintMask();
+
+    /**
      * @brief Zmeni jmeno widgetu
      * @param name - Jmeno
      */
@@ -56,6 +61,7 @@ protected:
     // UI
     QHBoxLayout *hBoxLayout;
     QLabel *image;
+    QLabel *mask;
     QLabel *label;
     QCheckBox *checkBox_visible;
 
@@ -101,6 +107,12 @@ public:
      * @brief updateLayerList
      */
     void updateLayerList();
+
+    /**
+     * @brief Vybere novy pracovni mod projektu
+     * @param mode - Pracovni mod
+     */
+    void selectMode(ProjectEditMode_t mode);
 
 protected:
     // aktualni projekt
@@ -190,6 +202,11 @@ private slots:
      * @brief Duplikovani vybrane vrstev
      */
     void on_layer_duplicate();
+
+    /**
+     * @brief Aktivuje/Deaktivuje masku aktualne vybrane vrstvy
+     */
+    void on_mask_active_deactivate();
 
     /**
      * @brief Prejmenovani vybrane vrstvy

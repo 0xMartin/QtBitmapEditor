@@ -141,6 +141,8 @@ private slots:
 
     void on_actionZoom_out_triggered();
 
+    void on_actionSwitch_Image_Mask_triggered();
+
 private:
     // UI
     Ui::MainWindow *ui;

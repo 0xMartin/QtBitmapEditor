@@ -13,6 +13,7 @@ Layer::Layer(QObject *parent, const QString &name) : QObject(parent)
     this->antialiasing = true;
     this->blendMode = NORMAL;
     this->mask = NULL;
+    this->maskActive = false;
 }
 
 Layer::~Layer() {
@@ -98,6 +99,7 @@ void Layer::createMask()
     if(this->mask != NULL) {
         this->mask->fill(Qt::black);
     }
+    this->maskActive = true;
 }
 
 void Layer::updateMaskSize()
@@ -113,11 +115,30 @@ void Layer::deleteMask()
 {
     if(this->mask) delete this->mask;
     this->mask = NULL;
+    this->maskActive = false;
 }
 
 QBitmap *Layer::getMask() const
 {
     return this->mask;
+}
+
+bool Layer::getMaskActive() const
+{
+    return this->maskActive;
+}
+
+void Layer::setMaskActive(bool newMaskActive)
+{
+    this->maskActive = newMaskActive;
+}
+
+QBitmap *Layer::duplicateMask() const
+{
+    if(this->mask == NULL) return NULL;
+    QBitmap *duplicate = new QBitmap(this->mask->size());
+    *duplicate = *mask;
+    return duplicate;
 }
 
 void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,

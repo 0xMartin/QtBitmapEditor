@@ -111,6 +111,7 @@ void FillColor::mousePressEvent(const QPointF &pos)
         int tG = (this->spinbox_tolerance_green->value() / 100.0) * 255;
         int tB = (this->spinbox_tolerance_blue->value() / 100.0) * 255;
         int tA = (this->spinbox_tolerance_alpha->value() / 100.0) * 255;
+
         this->floodFill(
                     layer->image,
                     QPoint(pos.x(), pos.y()),

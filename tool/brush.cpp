@@ -122,7 +122,16 @@ void Brush::mousePressEvent(const QPointF &pos)
     int size = this->spinbox_size->value();
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
     if(layer == NULL) return;
-    this->painter.begin(&layer->image);
+    switch(this->project->getMode()) {
+    case PROJECT_EDIT:
+        this->painter.begin(&layer->image);
+        break;
+    case MASK_EDIT:
+        if(layer->getMask() == NULL) return;
+        this->painter.begin(layer->getMask());
+        break;
+    }
+
     painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
     this->painter.setBrush(this->brush);
     this->painter.setPen(Qt::transparent);
@@ -147,7 +156,16 @@ void Brush::mouseMoveEvent(const QPointF &pos)
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         if(layer == NULL) return;
-        this->painter.begin(&layer->image);
+        switch(this->project->getMode()) {
+        case PROJECT_EDIT:
+            this->painter.begin(&layer->image);
+            break;
+        case MASK_EDIT:
+            if(layer->getMask() == NULL) return;
+            this->painter.begin(layer->getMask());
+            break;
+        }
+
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setBrush(this->brush);
         this->paintLineWithBrush(this->painter, line);
@@ -164,7 +182,16 @@ void Brush::outOfAreaEvent(const QPointF &pos)
 
         BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
         if(layer == NULL) return;
-        this->painter.begin(&layer->image);
+        switch(this->project->getMode()) {
+        case PROJECT_EDIT:
+            this->painter.begin(&layer->image);
+            break;
+        case MASK_EDIT:
+            if(layer->getMask() == NULL) return;
+            this->painter.begin(layer->getMask());
+            break;
+        }
+
         painter.setRenderHint(QPainter::Antialiasing, this->checkBox_Antialiasing->isChecked());
         this->painter.setBrush(this->brush);
         this->paintLineWithBrush(this->painter, line);

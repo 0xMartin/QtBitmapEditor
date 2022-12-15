@@ -35,6 +35,12 @@ LayerWidget::LayerWidget(Layer *layer, size_t height) : QWidget()
     this->repaintLayer();
     this->hBoxLayout->addWidget(this->image);
 
+    // nahled masky vrstvy
+    this->mask = new QLabel(this);
+    this->mask->setStyleSheet("border-width: 2px;");
+    this->repaintMask();
+    this->hBoxLayout->addWidget(this->mask);
+
     // nazev vrstvy
     this->label = new QLabel(layer->getName(), this);
     this->hBoxLayout->addWidget(this->label);
@@ -69,6 +75,7 @@ void LayerWidget::repaintLayer()
     QPixmap pixmap(c_w, c_h);
     this->image->setFixedSize(QSize(c_w, c_h));
     QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
     painter.fillRect(0, 0, pixmap.width(), pixmap.height(), Qt::black);
     Layer_paintBgGrid(painter, QPoint(0, 0), pixmap.size(), QSize(pixmap.width(), pixmap.height()), 6);
 
@@ -86,6 +93,56 @@ void LayerWidget::repaintLayer()
 
     // labelu nastavi pixmapu
     this->image->setPixmap(pixmap);
+}
+
+void LayerWidget::repaintMask()
+{
+    if(this->layer->getMask() == NULL) {
+        this->mask->setVisible(false);
+        return;
+    } else {
+        this->mask->setVisible(true);
+    }
+
+    // vypocet sirky a vysky nahledu vrstvy (maxilani sirka je 110)
+    int c_w = height * ((float)layer->getSize().width() / layer->getSize().height());
+    int c_h = height;
+    if(c_w > 110) {
+        c_w = 110;
+        c_h = 110 * ((float)layer->getSize().height() / layer->getSize().width());
+    }
+
+    // priprava pixmapy
+    QPixmap pixmap(c_w, c_h);
+    this->mask->setFixedSize(QSize(c_w, c_h));
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.fillRect(0, 0, pixmap.width(), pixmap.height(), Qt::white);
+
+    // vypocet scale tak aby se do pixelmapy vlezla nejdelsi strana
+    float scale = (float)pixmap.width() / qMax(c_w, layer->getSize().width());
+    // pokud je samotna vrstva mensi nez minimalni velikost nahledu (height x height) -> musi zvetsit
+    if(layer->getSize().width() < height && layer->getSize().height()) {
+        scale *= (float)height / qMax(layer->getSize().width(), layer->getSize().height());
+    }
+    painter.scale(scale, scale);
+
+    // vykresli vrstvu do nahledu
+    painter.setPen(Qt::black);
+    painter.drawPixmap(0, 0, *this->layer->getMask());
+
+    // vykresli preskrtnuty masky pokud neni aktivni
+    if(!this->layer->getMaskActive()) {
+        float inv = 1.0 / scale;
+        painter.setPen(QPen(Qt::red, (int)(3 * inv)));
+        painter.drawLine(0, 0, c_w * inv, c_h * inv);
+        painter.drawLine(0, c_h * inv, c_w * inv, 0);
+    }
+
+    painter.end();
+
+    // labelu nastavi pixmapu
+    this->mask->setPixmap(pixmap);
 }
 
 void LayerWidget::setName(const QString &name)
@@ -299,6 +356,18 @@ void LayerManager::updateLayerList()
     }
 }
 
+void LayerManager::selectMode(ProjectEditMode_t mode)
+{
+    switch (mode) {
+    case PROJECT_EDIT:
+        this->comboBox_editMode->setCurrentIndex(0);
+        break;
+    case MASK_EDIT:
+        this->comboBox_editMode->setCurrentIndex(1);
+        break;
+    }
+}
+
 void LayerManager::changeEvent(QEvent * event)
 {
     // vzdy fixni velikost
@@ -336,6 +405,7 @@ void LayerManager::on_project_repaintSignal(Layer *layer)
         if(widget == NULL) continue;
         if(widget->getLayer() == layer) {
             widget->repaintLayer();
+            widget->repaintMask();
             widget->repaint();
             break;
         }
@@ -480,7 +550,7 @@ void LayerManager::on_button_mask_clicked() {
     if(this->project == NULL) {
         QMessageBox::warning(
                     this,
-                    tr("Move layer down"),
+                    tr("Mask Add/Remove"),
                     DIALOG_PROJECT_NOT_EXISTS);
         return;
     }
@@ -489,7 +559,7 @@ void LayerManager::on_button_mask_clicked() {
     if(l == NULL) {
         QMessageBox::warning(
                     this,
-                    tr("Move layer down"),
+                    tr("Mask Add/Remove"),
                     DIALOG_NO_LAYER);
         return;
     }
@@ -509,6 +579,19 @@ void LayerManager::on_button_mask_clicked() {
             l->deleteMask();
         }
     }
+
+    // proveda zmeni v listu (zobrazi/skryje masku)
+    LayerWidget *widget;
+    for(int i = 0; i < this->listWidget->count(); ++i) {
+        widget = (LayerWidget*)this->listWidget->itemWidget(this->listWidget->item(i));
+        if(widget == NULL) continue;
+        if(widget->getLayer() == l) {
+            widget->repaintMask();
+            break;
+        }
+    }
+
+    // prekresli projekt
     this->project->requestRepaint();
 }
 
@@ -577,6 +660,43 @@ void LayerManager::on_layer_duplicate()
                     this,
                     tr("Duplicate layer"),
                     tr("Failed to duplicate layer"));
+    }
+}
+
+void LayerManager::on_mask_active_deactivate()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Mask Activate/Deactivate"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Mask Activate/Deactivate"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    // aktivuje / deaktivuje masku vybrane vrstvy
+    l->setMaskActive(!l->getMaskActive());
+
+    // prekresli projekt
+    this->project->requestRepaint();
+
+    // proveda zmeni v listu (prekresleni masky widgetu vybrane vrstvy)
+    LayerWidget *widget;
+    for(int i = 0; i < this->listWidget->count(); ++i) {
+        widget = (LayerWidget*)this->listWidget->itemWidget(this->listWidget->item(i));
+        if(widget == NULL) continue;
+        if(widget->getLayer() == l) {
+            widget->repaintMask();
+            break;
+        }
     }
 }
 
@@ -672,6 +792,10 @@ void LayerManager::showContextMenu(const QPoint &pos)
     connect(&action7, SIGNAL(triggered()), this, SLOT(on_layer_duplicate()));
     QAction action8(tr("Merge Down"), this->listWidget);
     connect(&action8, SIGNAL(triggered()), this, SLOT(on_layer_merge_down()));
+    QAction action9(tr("Add/Remove Mask"), this->listWidget);
+    connect(&action9, SIGNAL(triggered()), this, SLOT(on_button_mask_clicked()));
+    QAction action10(tr("Activate/Deactivate Mask"), this->listWidget);
+    connect(&action10, SIGNAL(triggered()), this, SLOT(on_mask_active_deactivate()));
 
     contextMenu.addAction(&action1);
     contextMenu.addSeparator();
@@ -681,8 +805,10 @@ void LayerManager::showContextMenu(const QPoint &pos)
     contextMenu.addAction(&action5);
     contextMenu.addAction(&action6);
     contextMenu.addAction(&action7);
-    contextMenu.addSeparator();
     contextMenu.addAction(&action8);
+    contextMenu.addSeparator();
+    contextMenu.addAction(&action9);
+    contextMenu.addAction(&action10);
 
     contextMenu.exec(this->listWidget->mapToGlobal(pos));
 }

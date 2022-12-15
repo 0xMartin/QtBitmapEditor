@@ -292,8 +292,10 @@ void Project::paintEvent(QPainter &painter) {
                     break;
                 }
                 // aplikuje masku vrtvy pokud existuje
-                if(layer->getMask() != NULL)  {
-                    layer->applyLayerMask(painter);
+                if(layer->getMaskActive()) {
+                    if(layer->getMask() != NULL)  {
+                        layer->applyLayerMask(painter);
+                    }
                 }
                 // vykresli vrstvu do projektu
                 layer->paintEvent(painter);
@@ -305,7 +307,17 @@ void Project::paintEvent(QPainter &painter) {
         if(this->selected_layer != NULL) {
             QBitmap *mask = this->selected_layer->getMask();
             if(mask != NULL) {
+                // maska
+                painter.setPen(Qt::black);
                 painter.drawPixmap(0, 0, *mask);
+
+                // vykresli vrstvu do projektu
+                painter.setOpacity(0.5);
+                this->selected_layer->paintEvent(painter);
+            } else {
+                painter.setPen(QPen(Qt::red, 5));
+                painter.drawLine(3, 3, this->size.width() - 3, this->size.height() - 3);
+                painter.drawLine(3, this->size.height() - 3, this->size.width(), 3);
             }
         }
         break;

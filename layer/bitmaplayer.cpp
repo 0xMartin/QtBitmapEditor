@@ -39,9 +39,13 @@ Layer *BitmapLayer::createDuplicate() const
 {
     // vytvoreni duplikatu
     BitmapLayer *layer = new BitmapLayer(this->parent(), this->name, this->size);
+    layer->mask = this->duplicateMask();
+    layer->maskActive = this->maskActive;
     layer->opacity = this->opacity;
     layer->blendMode = this->blendMode;
     layer->antialiasing = this->antialiasing;
+    // #############################
     layer->image = this->image;
+    // #############################
     return layer;
 }
