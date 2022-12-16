@@ -1,7 +1,6 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#include <QPen>
 #include <QSpinBox>
 #include <QSpacerItem>
 #include <QVBoxLayout>
@@ -13,11 +12,13 @@
 #include "../utility/fontselector.h"
 #include "../utility/mouseeventhelper.h"
 
+#include "../layer/textlayer.h"
+
 
 #define TOOL_TEXT 1005
 
 /**
- * @brief Nastroj pro pridavani textu
+ * @brief Nastroj pro pridavani a editaci textu
  */
 class Text : public Tool
 {
@@ -40,12 +41,6 @@ public:
     virtual void outOfAreaEvent(const QPointF &pos) override;
 
 protected:
-    // helper pro mouse eventy
-    MouseEventHelper mouseHelper;
-
-    // Painter pro kresleni do vrstvy
-    QPainter painter;
-
     // UI controllers
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
@@ -53,6 +48,12 @@ protected:
     QSpinBox *spinbox_x;
     QSpinBox *spinbox_y;
     QCheckBox *checkBox_Antialiasing;
+
+private slots:
+    void on_colorPicker_colorChange(const QColor &color);
+    void on_spinbox_x_valueChanged(int val);
+    void on_spinbox_y_valueChanged(int val);
+    void on_fontSelector_fontChanged(const QFont &font);
 
 };
 

@@ -321,9 +321,11 @@ LayerManager::~LayerManager() {
 
 void LayerManager::setProject(Project *project)
 {
+    if(project == NULL) return;
     this->project = project;
     this->updateLayerList();
     connect(this->project, SIGNAL(repaintSignal(Layer*)), this, SLOT(on_project_repaintSignal(Layer*)));
+    connect(this->project, SIGNAL(layerListChanged()), this, SLOT(on_project_layerListChanged()));
     this->updateLayerControllBinding();
 }
 
@@ -410,6 +412,12 @@ void LayerManager::on_project_repaintSignal(Layer *layer)
             break;
         }
     }
+}
+
+void LayerManager::on_project_layerListChanged()
+{
+    this->updateLayerList();
+    this->updateLayerControllBinding();
 }
 
 /*********************************************************************************************************************/

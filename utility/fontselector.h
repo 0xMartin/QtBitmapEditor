@@ -15,6 +15,12 @@ public:
 
     const QFont &getFont() const;
 
+    /**
+     * @brief Vybere font
+     * @param font - Font
+     */
+    void setSelectedFont(const QFont &font);
+
 public slots:
     /**
      * @brief Zobrazi dialog pro vyber fontu
@@ -25,7 +31,7 @@ signals:
     /**
      * @brief Signal bude vyvolan v okamziku zmeni fontu
      */
-    void fontChanged(QFont &font);
+    void fontChanged(const QFont &font);
 
 protected:
     // aktualne vybrany font

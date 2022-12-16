@@ -159,10 +159,15 @@ protected:
 
 private slots:
     /**
-     * @brief Prekresleni vrstvy
+     * @brief Prekresleni vrstvy (vyvolano signale z projektu)
      * @param layer - Vrstva jejiz nahled se ma prekreslit
      */
     void on_project_repaintSignal(Layer *layer);
+
+    /**
+     * @brief Pozmenen list vrstev v projektu (vyvolano signale z projektu)
+     */
+    void on_project_layerListChanged();
 
     /*****************************************************************************************/
     // LIST CONTROLL

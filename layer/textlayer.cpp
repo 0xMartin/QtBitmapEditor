@@ -6,7 +6,7 @@ TextLayer::TextLayer(QObject *project, const QString &name,
     this->text = text;
     this->position = pos;
     this->font.setFamily("Times");
-    this->font.setPixelSize(40);
+    this->font.setPointSize(40);
     this->font.setStyle(QFont::StyleNormal);
 }
 
@@ -25,7 +25,8 @@ int TextLayer::getType()
 Layer *TextLayer::createDuplicate() const
 {
     // vytvoreni duplikatu
-    TextLayer *layer = new TextLayer(this->parent(), this->name, this->text, this->position);
+    TextLayer *layer = new TextLayer(this->parent(), this->name,
+                                     this->text, this->position);
     layer->mask = this->duplicateMask();
     layer->maskActive = this->maskActive;
     layer->opacity = this->opacity;
@@ -36,4 +37,44 @@ Layer *TextLayer::createDuplicate() const
     layer->color = this->color;
     // #############################
     return layer;
+}
+
+const QString &TextLayer::getText() const
+{
+    return text;
+}
+
+void TextLayer::setText(const QString &newText)
+{
+    text = newText;
+}
+
+const QFont &TextLayer::getFont() const
+{
+    return font;
+}
+
+void TextLayer::setFont(const QFont &newFont)
+{
+    font = newFont;
+}
+
+const QColor &TextLayer::getColor() const
+{
+    return color;
+}
+
+void TextLayer::setColor(const QColor &newColor)
+{
+    color = newColor;
+}
+
+QPoint TextLayer::getPosition() const
+{
+    return position;
+}
+
+void TextLayer::setPosition(QPoint newPosition)
+{
+    position = newPosition;
 }

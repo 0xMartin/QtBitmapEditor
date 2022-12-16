@@ -9,14 +9,13 @@
 #define TEXT_LAYER_TYPE 1001
 
 
+/**
+ * @brief Textova vrstva. Obsahuje jen poze jeden retezec.
+ */
 class TextLayer : public Layer
 {
+    Q_OBJECT
 public:
-    QString text; /** Zobrazovany text */
-    QFont font; /** Font textu */
-    QColor color; /** Barva textu */
-    QPoint position; /** Pozice textu*/
-
     /**
      * @brief Vytvori bitmapovou vrstvu
      * @param project - Projekt ve kterem se vrstva nachazi
@@ -33,6 +32,27 @@ public:
     virtual int getType() override;
 
     virtual Layer *createDuplicate() const override;
+
+
+    /**GET/SET**********************************************/
+    const QString &getText() const;
+    void setText(const QString &newText);
+
+    const QFont &getFont() const;
+    void setFont(const QFont &newFont);
+
+    const QColor &getColor() const;
+    void setColor(const QColor &newColor);
+
+    QPoint getPosition() const;
+    void setPosition(QPoint newPosition);
+    /**GET/SET**********************************************/
+
+protected:
+    QString text; /** Zobrazovany text */
+    QFont font; /** Font textu */
+    QColor color; /** Barva textu */
+    QPoint position; /** Pozice textu*/
 
 };
 

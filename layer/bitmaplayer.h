@@ -11,6 +11,7 @@
 
 class BitmapLayer : public Layer
 {
+    Q_OBJECT
 public:
     QImage image; /** Obraz vrstvy */
 

@@ -16,6 +16,12 @@ const QFont &FontSelector::getFont() const
     return this->font;
 }
 
+void FontSelector::setSelectedFont(const QFont &font)
+{
+    this->font = font;
+    this->updateFontName();
+}
+
 void FontSelector::selectFont()
 {
     bool ok;
