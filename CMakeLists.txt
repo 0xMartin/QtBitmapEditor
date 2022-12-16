@@ -17,8 +17,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 # TOOL
 set(QBE_TOOL
-    tool/pen.h
-    tool/pen.cpp
+    tool/pencil.h
+    tool/pencil.cpp
     tool/eraser.h
     tool/eraser.cpp
     tool/brush.h

@@ -1,4 +1,4 @@
-#include "pen.h"
+#include "pencil.h"
 
 #include <QVBoxLayout>
 #include <QPainterPath>
@@ -7,9 +7,9 @@
 #include "../layer/bitmaplayer.h"
 
 
-Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
+Pencil::Pencil(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 {
-    this->name = tr("PEN");
+    this->name = tr("PENCIL");
     this->mouseHelper = MouseEventHelper(DEFAULT_MOUSE_HELPER_DIST);
     this->colorPicker = colorPicker; 
 
@@ -40,14 +40,14 @@ Pen::Pen(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
                 new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
-Pen::~Pen()
+Pencil::~Pencil()
 {
     if(this->layout) delete this->layout;
     if(this->spinbox_size) delete this->spinbox_size;
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
-void Pen::updatTool(float scale)
+void Pencil::updatTool(float scale)
 {
     // update mouse helper
     this->mouseHelper.updateDistance(mapFunc(scale, 1.0, PIXEL_GRID_MIN_SCALE, DEFAULT_MOUSE_HELPER_DIST, 1.0));
@@ -58,7 +58,7 @@ void Pen::updatTool(float scale)
                      Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
 }
 
-void Pen::paintEvent(const QPointF &pos, float scale, QPainter &painter)
+void Pencil::paintEvent(const QPointF &pos, float scale, QPainter &painter)
 {
     // vykresleni tvaru a veliskota nastroje do horni nahledove vrstvy
     int size = this->spinbox_size->value();
@@ -67,14 +67,14 @@ void Pen::paintEvent(const QPointF &pos, float scale, QPainter &painter)
     painter.drawEllipse(pos.x() - s/2, pos.y() - s/2, s, s);
 }
 
-bool Pen::overLayerPainting() const
+bool Pencil::overLayerPainting() const
 {
     return true;
 }
 
-int Pen::getType() const
+int Pencil::getType() const
 {
-    return TOOL_PEN;
+    return TOOL_PENCIL;
 }
 
 
@@ -82,7 +82,7 @@ int Pen::getType() const
 // EVENTY PRO EDITACI BITMAPY
 /*****************************************************************************************/
 
-void Pen::mousePressEvent(const QPointF &pos)
+void Pencil::mousePressEvent(const QPointF &pos)
 {
     this->mouseHelper.processMoveEvent(pos);
 
@@ -107,17 +107,17 @@ void Pen::mousePressEvent(const QPointF &pos)
     this->painter.end();
 }
 
-void Pen::mouseReleaseEvent(const QPointF &pos)
+void Pencil::mouseReleaseEvent(const QPointF &pos)
 {
     this->mouseHelper.resetMove();
 }
 
-void Pen::mouseDoubleClickEvent(const QPointF &pos)
+void Pencil::mouseDoubleClickEvent(const QPointF &pos)
 {
 
 }
 
-void Pen::mouseMoveEvent(const QPointF &pos)
+void Pencil::mouseMoveEvent(const QPointF &pos)
 {
     if(this->mouseHelper.processMoveEvent(pos)) {
         // po definovanych vzdalenost dela tah
@@ -142,7 +142,7 @@ void Pen::mouseMoveEvent(const QPointF &pos)
     }
 }
 
-void Pen::outOfAreaEvent(const QPointF &pos)
+void Pencil::outOfAreaEvent(const QPointF &pos)
 {
     // dokonci tah
     const QPointF *last = this->mouseHelper.getLast();

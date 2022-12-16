@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "layer/bitmaplayer.h"
-#include "tool/pen.h"
+#include "tool/pencil.h"
 #include "tool/eraser.h"
 #include "tool/brush.h"
 #include "tool/fillcolor.h"
@@ -45,13 +45,13 @@ MainWindow::MainWindow(QWidget *parent)
     this->context->setWorkspace(new Workspace(Workspace_defaultConfig(), this));
     this->context->setToolController(new ToolController(this));
     this->context->setLayerManager(new LayerManager(this));
-    this->context->addTool(new Pen(this, this->colorPicker));
+    this->context->addTool(new Pencil(this, this->colorPicker));
     this->context->addTool(new Eraser(this));
     this->context->addTool(new Brush(this, this->colorPicker));
     this->context->addTool(new FillColor(this, this->colorPicker));
     this->context->addTool(new EyeDropper(this, this->colorPicker));
     this->context->addTool(new Text(this));
-    this->context->selectToolFromList(TOOL_PEN);
+    this->context->selectToolFromList(TOOL_PENCIL);
     /*****************************************************************************/
 
 
@@ -182,7 +182,7 @@ void MainWindow::on_actionEye_Dropper_triggered()
 void MainWindow::on_actionPen_triggered()
 {
     if(this->context == NULL) return;
-    this->context->selectToolFromList(TOOL_PEN);
+    this->context->selectToolFromList(TOOL_PENCIL);
     this->highlightToolbar(this->ui->actionPen);
 }
 

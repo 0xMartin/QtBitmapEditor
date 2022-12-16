@@ -1,5 +1,5 @@
-#ifndef PEN_H
-#define PEN_H
+#ifndef PENCIL_H
+#define PENCIL_H
 
 #include <QPen>
 #include <QSpinBox>
@@ -13,18 +13,18 @@
 #include "../utility/mouseeventhelper.h"
 
 
-#define TOOL_PEN 1000
+#define TOOL_PENCIL 1000
 
 /**
  * @brief Nastroj tuzka
  */
-class Pen : public Tool
+class Pencil : public Tool
 {
     Q_OBJECT
 public:
-    Pen(QObject *parent, ColorPicker *colorPicker);
+    Pencil(QObject *parent, ColorPicker *colorPicker);
 
-    ~Pen();
+    ~Pencil();
 
     virtual void updatTool(float scale) override;
 
