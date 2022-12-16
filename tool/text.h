@@ -8,8 +8,9 @@
 #include <QCheckBox>
 #include <QLabel>
 
-#include "../utility/colorpicker.h"
 #include "../base/tool.h"
+#include "../utility/colorpicker.h"
+#include "../utility/fontselector.h"
 #include "../utility/mouseeventhelper.h"
 
 
@@ -22,7 +23,7 @@ class Text : public Tool
 {
     Q_OBJECT
 public:
-    Text(QObject *parent, ColorPicker *colorPicker);
+    Text(QObject *parent);
 
     ~Text();
 
@@ -45,13 +46,12 @@ protected:
     // Painter pro kresleni do vrstvy
     QPainter painter;
 
-    // tuzka
-    QPen pen;
-
     // UI controllers
     QVBoxLayout *layout;
     ColorPicker *colorPicker;
-    QSpinBox *spinbox_size;
+    FontSelector *fontSelector;
+    QSpinBox *spinbox_x;
+    QSpinBox *spinbox_y;
     QCheckBox *checkBox_Antialiasing;
 
 };

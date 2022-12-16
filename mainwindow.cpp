@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->context->addTool(new Brush(this, this->colorPicker));
     this->context->addTool(new FillColor(this, this->colorPicker));
     this->context->addTool(new EyeDropper(this, this->colorPicker));
-    this->context->addTool(new Text(this, this->colorPicker));
+    this->context->addTool(new Text(this));
     this->context->selectToolFromList(TOOL_PEN);
     /*****************************************************************************/
 

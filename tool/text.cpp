@@ -7,11 +7,10 @@
 #include "../layer/textlayer.h"
 
 
-Text::Text(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
+Text::Text(QObject *parent) : Tool(parent)
 {
     this->name = tr("TEXT");
     this->mouseHelper = MouseEventHelper(DEFAULT_MOUSE_HELPER_DIST);
-    this->colorPicker = colorPicker; 
 
     //****************************************************************************************
     // sestaveni UI pro ovladani nastroje
@@ -20,14 +19,31 @@ Text::Text(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     this->layout = new QVBoxLayout(this->ui);
     this->ui->setLayout(this->layout);
 
-    // velikost pera
-    this->spinbox_size = new QSpinBox();
-    this->spinbox_size->setPrefix(tr("Pen Size:"));
-    this->spinbox_size->setSuffix("px");
-    this->spinbox_size->setMinimum(MIN_TOOL_SIZE);
-    this->spinbox_size->setMaximum(MAX_TOOL_SIZE);
-    this->spinbox_size->setValue(DEFAULT_TOOL_SIZE);
-    this->layout->addWidget(this->spinbox_size);
+    // barva textu
+    this->colorPicker = new ColorPicker(this->ui);
+    this->layout->addWidget(this->colorPicker);
+
+    // font
+    this->fontSelector = new FontSelector(this->ui);
+    this->layout->addWidget(this->fontSelector);
+
+    // x pozice
+    this->spinbox_x = new QSpinBox();
+    this->spinbox_x->setPrefix(tr("X:"));
+    this->spinbox_x->setSuffix("px");
+    this->spinbox_x->setMinimum(POSITION_MIN);
+    this->spinbox_x->setMaximum(POSITION_MAX);
+    this->spinbox_x->setValue(DEFAULT_TOOL_SIZE);
+    this->layout->addWidget(this->spinbox_x);
+
+    // y pozice
+    this->spinbox_y = new QSpinBox();
+    this->spinbox_y->setPrefix(tr("Y:"));
+    this->spinbox_y->setSuffix("px");
+    this->spinbox_y->setMinimum(POSITION_MIN);
+    this->spinbox_y->setMaximum(POSITION_MAX);
+    this->spinbox_y->setValue(DEFAULT_TOOL_SIZE);
+    this->layout->addWidget(this->spinbox_y);
 
     // antialiasing
     this->checkBox_Antialiasing = new QCheckBox();
@@ -43,7 +59,10 @@ Text::Text(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 Text::~Text()
 {
     if(this->layout) delete this->layout;
-    if(this->spinbox_size) delete this->spinbox_size;
+    if(this->colorPicker) delete this->colorPicker;
+    if(this->fontSelector) delete this->fontSelector;
+    if(this->spinbox_x) delete this->spinbox_x;
+    if(this->spinbox_y) delete this->spinbox_y;
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
@@ -51,11 +70,6 @@ void Text::updatTool(float scale)
 {
     // update mouse helper
     this->mouseHelper.updateDistance(mapFunc(scale, 1.0, PIXEL_GRID_MIN_SCALE, DEFAULT_MOUSE_HELPER_DIST, 1.0));
-
-    // update pen
-    this->pen = QPen(this->colorPicker->getColor(),
-                     this->spinbox_size->value(),
-                     Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
 }
 
 void Text::paintEvent(const QPointF &pos, float scale, QPainter &painter)

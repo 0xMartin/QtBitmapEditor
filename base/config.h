@@ -26,5 +26,11 @@
 // zakladni tolerance pro nastroj "fill color"
 #define DEFAULT_FILL_TOLERANCE 10
 
+// minimalni pozice
+#define POSITION_MIN -99999
+
+// maximalni pozice
+#define POSITION_MAX 99999
+
 
 #endif // CONFIG_H

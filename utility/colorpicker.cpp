@@ -2,9 +2,9 @@
 
 #include <QColorDialog>
 
-ColorPicker::ColorPicker( QWidget* parent ): QWidget(parent)
+ColorPicker::ColorPicker(QWidget* parent): QWidget(parent)
 {
-    this->setToolTip(QString("Current color"));
+    this->setToolTip(tr("Select Color"));
     this->setCursor(Qt::PointingHandCursor);
     this->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
     this->layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
@@ -37,7 +37,7 @@ void ColorPicker::changeColor()
     }
 }
 
-void ColorPicker::setColor( const QColor& color )
+void ColorPicker::setColor(const QColor& color)
 {
     this->color = color;
     emit this->colorChange(color);
