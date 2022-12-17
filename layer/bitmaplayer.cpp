@@ -1,5 +1,7 @@
 #include "bitmaplayer.h"
 
+#include <QPainter>
+
 BitmapLayer::BitmapLayer(QObject *project, const QString &name, const QSize &size) : Layer(project, name)
 {
     this->size = size;
@@ -48,4 +50,26 @@ Layer *BitmapLayer::createDuplicate() const
     layer->image = this->image;
     // #############################
     return layer;
+}
+
+BitmapLayer *ResterizeLayer(Layer *layer)
+{
+    if(layer == NULL) return NULL;
+
+    // vytvoreni duplikatu
+    BitmapLayer *bitmapLayer = new BitmapLayer(layer->parent(), layer->getName(), layer->getSize());
+    bitmapLayer->maskPaste(layer->duplicateMask());
+    bitmapLayer->setMaskActive(layer->isMaskActive());
+    bitmapLayer->setOpacity(layer->getOpacity());
+    bitmapLayer->setBlendMode(layer->getBlendMode());
+    bitmapLayer->enableAntialiasing(layer->isAntialiasingEnabled());
+
+    // #############################
+    QPainter painter;
+    painter.begin(&bitmapLayer->image);
+    layer->paintEvent(painter);
+    painter.end();
+    // ############################
+
+    return bitmapLayer;
 }

@@ -6,6 +6,9 @@
 #include <QPainter>
 #include <QtMath>
 #include <QFile>
+#include <QFileInfo>
+
+#include "../layer/bitmaplayer.h"
 
 
 Project::Project(QObject *parent, const QString &name, const QString &path, const QSize &size) : QObject(parent)
@@ -42,6 +45,12 @@ bool Project::setName(const QString &name) {
 const QString &Project::getPath() const
 {
     return this->path;
+}
+
+QString Project::getDirPath()
+{
+    QFileInfo fi(this->path);
+    return fi.absolutePath() + '/';
 }
 
 void Project::setPath(const QString &path)
@@ -115,7 +124,7 @@ bool Project::removeLayer(Layer *layer)
         if(l == layer) {
             // pokud odebrana vrstava byla v projektu oznacena tak zrusi oznaceni
             if(layer == this->selected_layer)
-                this->selected_layer = NULL;
+                this->setSelectedLayer(NULL);
             // odstrani vrstvu (delete + odebrani z listu)
             delete (this->layers->takeAt(index));
             emit this->layerListChanged();
@@ -197,20 +206,29 @@ bool Project::mergaSeletedLayerDown()
 {
     if(this->selected_layer == NULL) return false;
     if(this->layers->length() < 2) return false;
+
     qsizetype index = 0;
     for(Layer *l : *this->layers) {
         if(l == this->selected_layer) {
             if(index > 0) {
-                Layer *buttom = this->layers->at(index - 1);
+                if(this->layers->at(index - 1)->getType() != BITMAP_LAYER_TYPE) return false;
+                BitmapLayer *buttom = (BitmapLayer *)this->layers->at(index - 1);
                 Layer *top = this->layers->takeAt(index);
-                //########################################################################
-                //merge TODO
-                //########################################################################
+
+                QPainter painter;
+                painter.begin(&buttom->image);
+                top->paintEvent(painter);
+                painter.end();
+
+                this->setSelectedLayer(buttom);
+
+                delete top;
                 return true;
             }
         }
         ++index;
     }
+
     return true;
 }
 
@@ -230,6 +248,30 @@ bool Project::dupliceteLayer()
         ++index;
     }
     return true;
+}
+
+bool Project::rasterizeLayer()
+{
+    if(this->selected_layer == NULL) return false;
+    if(this->selected_layer->getType() == BITMAP_LAYER_TYPE) return false;
+
+    qsizetype index = 0;
+    for(Layer *l : *this->layers) {
+        if(l == this->selected_layer) {
+            Layer *layer = this->layers->takeAt(index);
+            if(layer == NULL) return false;
+
+            BitmapLayer *bitmapLayer = ResterizeLayer(layer);
+            this->setSelectedLayer(bitmapLayer);
+            this->layers->insert(index, bitmapLayer);
+
+            delete layer;
+            return true;
+        }
+        ++index;
+    }
+
+    return false;
 }
 
 ProjectEditMode_t Project::getMode() const

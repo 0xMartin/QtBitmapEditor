@@ -45,4 +45,10 @@ protected:
     QSize size; /** Velikost bitmapy */
 };
 
+/**
+ * @brief Rasterizuje vybranou vrstvu vrstvu
+ * @param layer - Vrstva
+ */
+Q_DECL_EXPORT BitmapLayer  *ResterizeLayer(Layer *layer);
+
 #endif // BITMAPLAYER_H

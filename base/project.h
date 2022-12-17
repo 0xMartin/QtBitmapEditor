@@ -62,6 +62,12 @@ public:
     const QString &getPath() const;
 
     /**
+     * @brief Navrati absolutni cestu k adresari ve kterem se projekt nachazi
+     * @return Absolutni cesta
+     */
+    QString getDirPath();
+
+    /**
      * @brief Nastavi cestu k souboru projektu (misto ulozeni na disku)
      * @param path - Cesta k souboru
      */
@@ -163,6 +169,12 @@ public:
      * @return True -> uspesne provedeno
      */
     bool dupliceteLayer();
+
+    /**
+     * @brief Rasterizuje aktulane vybranou vrstvu
+     * @return True -> uspesne provedeno
+     */
+    bool rasterizeLayer();
 
     /**
      * @brief Navrati pracovni mod

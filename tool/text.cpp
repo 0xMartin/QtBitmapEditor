@@ -18,6 +18,10 @@ Text::Text(QObject *parent) : Tool(parent)
     this->layout = new QVBoxLayout(this->ui);
     this->ui->setLayout(this->layout);
 
+    // text
+    this->lineEdit_text = new QLineEdit(this->ui);
+    this->layout->addWidget(this->lineEdit_text);
+
     // barva textu
     this->colorPicker = new ColorPicker(this->ui);
     this->layout->addWidget(this->colorPicker);
@@ -52,6 +56,8 @@ Text::Text(QObject *parent) : Tool(parent)
 
 
     // events
+    connect(this->lineEdit_text, SIGNAL(textChanged(QString)),
+            this, SLOT(on_text_textChanged(QString)));
     connect(this->colorPicker, SIGNAL(colorChange(QColor)),
             this, SLOT(on_colorPicker_colorChange(QColor)));
     connect(this->fontSelector, SIGNAL(fontChanged(QFont)),
@@ -69,6 +75,7 @@ Text::Text(QObject *parent) : Tool(parent)
 Text::~Text()
 {
     if(this->layout) delete this->layout;
+    if(this->lineEdit_text) delete this->lineEdit_text;
     if(this->colorPicker) delete this->colorPicker;
     if(this->fontSelector) delete this->fontSelector;
     if(this->spinbox_x) delete this->spinbox_x;
@@ -80,6 +87,7 @@ void Text::updatTool(float scale)
 {
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {
+        this->lineEdit_text->setText(layer->getText());
         this->colorPicker->setColor(layer->getColor());
         this->fontSelector->setSelectedFont(layer->getFont());
         this->spinbox_x->setValue(layer->getPosition().x());
@@ -142,6 +150,17 @@ void Text::mouseMoveEvent(const QPointF &pos)
 
 void Text::outOfAreaEvent(const QPointF &pos)
 {
+}
+
+void Text::on_text_textChanged(const QString &text)
+{
+    TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
+    if(layer != NULL) {
+        layer->setText(text);
+    }
+    if(this->project != NULL) {
+        this->project->requestRepaint();
+    }
 }
 
 void Text::on_colorPicker_colorChange(const QColor &color)

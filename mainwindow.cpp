@@ -81,6 +81,9 @@ MainWindow::MainWindow(QWidget *parent)
     // inicializace oken
     this->window_newProject = new NewProject();
     this->window_newProject->setContext(this->context);
+
+    this->window_importImage = new ImportImage();
+    this->window_importImage->setContext(this->context);
     /*****************************************************************************/
 
 
@@ -106,12 +109,14 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
-
     delete this->context;
 
     if(this->colorPicker) delete this->colorPicker;
     if(this->splitter_horizontal) delete this->splitter_horizontal;
     if(this->statusLabel) delete this->statusLabel;
+
+    if(this->window_newProject) delete this->window_newProject;
+    if(this->window_importImage) delete this->window_importImage;
 }
 
 void MainWindow::updateStatusBar()
@@ -145,7 +150,7 @@ void MainWindow::on_actionSave_project_triggered()
 
 void MainWindow::on_actionImport_image_triggered()
 {
-
+    this->window_importImage->show();
 }
 
 

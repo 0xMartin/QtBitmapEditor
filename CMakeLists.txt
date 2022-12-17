@@ -37,6 +37,8 @@ set(QBE_LAYER
     layer/bitmaplayer.cpp
     layer/textlayer.h
     layer/textlayer.cpp
+    layer/imagelayer.h
+    layer/imagelayer.cpp
 )
 
 # UTILITY
@@ -61,6 +63,9 @@ set(QBE_UI
     newproject.h
     newproject.cpp
     newproject.ui
+    importimage.h
+    importimage.cpp
+    importimage.ui
 )
 
 # RESOURCES

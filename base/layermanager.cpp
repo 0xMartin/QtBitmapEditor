@@ -671,6 +671,30 @@ void LayerManager::on_layer_duplicate()
     }
 }
 
+void LayerManager::on_layer_rasterize()
+{
+    if(this->project == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Rasterize layer"),
+                    DIALOG_PROJECT_NOT_EXISTS);
+        return;
+    }
+
+    Layer *l = this->project->getSelectedLayer();
+    if(l == NULL) {
+        QMessageBox::warning(
+                    this,
+                    tr("Rasterize layer"),
+                    DIALOG_NO_LAYER);
+        return;
+    }
+
+    this->project->rasterizeLayer();
+    this->updateLayerList();
+    this->project->requestRepaint();
+}
+
 void LayerManager::on_mask_active_deactivate()
 {
     if(this->project == NULL) {
@@ -784,6 +808,15 @@ void LayerManager::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 
 void LayerManager::showContextMenu(const QPoint &pos)
 {
+    bool bitmap_type = true;
+    if(this->project != NULL) {
+        Layer *l = this->project->getSelectedLayer();
+        if(l != NULL) {
+            bitmap_type = l->getType() == BITMAP_LAYER_TYPE;
+        }
+    }
+
+
     QMenu contextMenu(tr("Menu"), this->listWidget);
 
     QAction action1(tr("Rename Layer"), this->listWidget);
@@ -798,21 +831,25 @@ void LayerManager::showContextMenu(const QPoint &pos)
     connect(&action6, SIGNAL(triggered()), this, SLOT(on_button_removeLayer_clicked()));
     QAction action7(tr("Duplicate Layer"), this->listWidget);
     connect(&action7, SIGNAL(triggered()), this, SLOT(on_layer_duplicate()));
+    QAction action11(tr("Rasterize Layer"), this->listWidget);
+    connect(&action11, SIGNAL(triggered()), this, SLOT(on_layer_rasterize()));
     QAction action8(tr("Merge Down"), this->listWidget);
     connect(&action8, SIGNAL(triggered()), this, SLOT(on_layer_merge_down()));
-    QAction action9(tr("Add/Remove Mask"), this->listWidget);
+    QAction action9(tr("Add / Remove Mask"), this->listWidget);
     connect(&action9, SIGNAL(triggered()), this, SLOT(on_button_mask_clicked()));
-    QAction action10(tr("Activate/Deactivate Mask"), this->listWidget);
+    QAction action10(tr("Activate / Deactivate Mask"), this->listWidget);
     connect(&action10, SIGNAL(triggered()), this, SLOT(on_mask_active_deactivate()));
 
     contextMenu.addAction(&action1);
-    contextMenu.addSeparator();
     contextMenu.addAction(&action3);
     contextMenu.addAction(&action4);
     contextMenu.addSeparator();
     contextMenu.addAction(&action5);
     contextMenu.addAction(&action6);
     contextMenu.addAction(&action7);
+    if(!bitmap_type) {
+        contextMenu.addAction(&action11);
+    }
     contextMenu.addAction(&action8);
     contextMenu.addSeparator();
     contextMenu.addAction(&action9);

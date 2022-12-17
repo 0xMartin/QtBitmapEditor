@@ -8,11 +8,11 @@
 #include <QSplitter>
 #include <QLabel>
 
+
 #include "base/app_context.h"
 #include "utility/colorpicker.h"
 #include "newproject.h"
-
-
+#include "importimage.h"
 
 
 /**
@@ -40,6 +40,7 @@ protected:
 
     // windows
     NewProject * window_newProject;
+    ImportImage *window_importImage;
 
 private slots:
     /**

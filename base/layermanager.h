@@ -209,6 +209,11 @@ private slots:
     void on_layer_duplicate();
 
     /**
+     * @brief Rasterizuje vybranou vrstvu
+     */
+    void on_layer_rasterize();
+
+    /**
      * @brief Aktivuje/Deaktivuje masku aktualne vybrane vrstvy
      */
     void on_mask_active_deactivate();

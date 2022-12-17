@@ -2,6 +2,7 @@
 #define TEXT_H
 
 #include <QSpinBox>
+#include <QLineEdit>
 #include <QSpacerItem>
 #include <QVBoxLayout>
 #include <QCheckBox>
@@ -10,10 +11,6 @@
 #include "../base/tool.h"
 #include "../utility/colorpicker.h"
 #include "../utility/fontselector.h"
-#include "../utility/mouseeventhelper.h"
-
-#include "../layer/textlayer.h"
-
 
 #define TOOL_TEXT 1005
 
@@ -43,6 +40,7 @@ public:
 protected:
     // UI controllers
     QVBoxLayout *layout;
+    QLineEdit *lineEdit_text;
     ColorPicker *colorPicker;
     FontSelector *fontSelector;
     QSpinBox *spinbox_x;
@@ -50,6 +48,7 @@ protected:
     QCheckBox *checkBox_Antialiasing;
 
 private slots:
+    void on_text_textChanged(const QString &text);
     void on_colorPicker_colorChange(const QColor &color);
     void on_spinbox_x_valueChanged(int val);
     void on_spinbox_y_valueChanged(int val);

@@ -28,7 +28,6 @@ void NewProject::setContext(AppContext *context)
 
 void NewProject::on_pushButton_clicked()
 {
-    // vytvoreni noveho projektu
     if(this->context == NULL) {
         qDebug() << "NewProject: app context is NULL";
         return;
