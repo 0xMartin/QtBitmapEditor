@@ -16,6 +16,7 @@
 #include "openproject.h"
 #include "importimage.h"
 #include "exportproject.h"
+#include "about.h"
 
 
 /**
@@ -45,6 +46,7 @@ protected:
     OpenProject *window_openProject;
     ImportImage *window_importImage;
     ExportProject *window_exportProject;
+    About *window_about;
 
     virtual void showEvent(QShowEvent *event) override;
 

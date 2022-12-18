@@ -157,6 +157,61 @@ protected:
      */
     void updateLayerControllBinding();
 
+public slots:
+    /*****************************************************************************************/
+    // LIST CONTROLL
+    /*****************************************************************************************/
+
+    /**
+     * @brief Pridani nove vrstvy
+     */
+    void addLayer();
+
+    /**
+     * @brief Odebrani aktualne vybrane vrstvy
+     */
+    void removeLayer();
+
+    /**
+     * @brief Presunuti aktualne vybrane vrstvy o jedno nahoru
+     */
+    void moveLayerUp();
+
+    /**
+     * @brief Presunuti aktualne vybrane vrstvy o jedno dolu
+     */
+    void moveLayerDown();
+
+    /**
+     * @brief Vytvoreni/Odstraneni masky u aktualne vybrane vrstvy
+     */
+    void createOrRemoveMask();
+
+    /**
+     * @brief Spojeni dvou vrstev
+     */
+    void layerMergeDown();
+
+    /**
+     * @brief Duplikovani vybrane vrstev
+     */
+    void duplicateLayer();
+
+    /**
+     * @brief Rasterizuje vybranou vrstvu
+     */
+    void rasterizeLayer();
+
+    /**
+     * @brief Aktivuje/Deaktivuje masku aktualne vybrane vrstvy
+     */
+    void activeOrDeactivateMask();
+
+    /**
+     * @brief Prejmenovani vybrane vrstvy
+     */
+    void renameLayer();
+
 private slots:
     /**
      * @brief Prekresleni vrstvy (vyvolano signale z projektu)
@@ -168,60 +223,6 @@ private slots:
      * @brief Pozmenen list vrstev v projektu (vyvolano signale z projektu)
      */
     void on_project_layerListChanged();
-
-    /*****************************************************************************************/
-    // LIST CONTROLL
-    /*****************************************************************************************/
-
-    /**
-     * @brief Pridani nove vrstvy
-     */
-    void on_button_addLayer_clicked();
-
-    /**
-     * @brief Odebrani aktualne vybrane vrstvy
-     */
-    void on_button_removeLayer_clicked();
-
-    /**
-     * @brief Presunuti aktualne vybrane vrstvy o jedno nahoru
-     */
-    void on_button_up_clicked();
-
-    /**
-     * @brief Presunuti aktualne vybrane vrstvy o jedno dolu
-     */
-    void on_button_down_clicked();
-
-    /**
-     * @brief Vytvoreni/Odstraneni masky u aktualne vybrane vrstvy
-     */
-    void on_button_mask_clicked();
-
-    /**
-     * @brief Spojeni dvou vrstev
-     */
-    void on_layer_merge_down();
-
-    /**
-     * @brief Duplikovani vybrane vrstev
-     */
-    void on_layer_duplicate();
-
-    /**
-     * @brief Rasterizuje vybranou vrstvu
-     */
-    void on_layer_rasterize();
-
-    /**
-     * @brief Aktivuje/Deaktivuje masku aktualne vybrane vrstvy
-     */
-    void on_mask_active_deactivate();
-
-    /**
-     * @brief Prejmenovani vybrane vrstvy
-     */
-    void on_layer_rename();
 
     /**
      * @brief V projektu nastavi aktualne vybranou vrstvu z listu
@@ -261,10 +262,6 @@ private slots:
      * @param value - Hodnota opacity
      */
     void on_layer_opacity_changed(int value);
-
-    /*****************************************************************************************/
-    // LAYER CONTROLL
-    /*****************************************************************************************/
 
     /**
      * @brief Zmena editacniho modu projektu

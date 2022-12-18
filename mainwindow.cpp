@@ -93,6 +93,8 @@ MainWindow::MainWindow(AppContext *context, QWidget *parent)
     this->window_importImage = new ImportImage(this->context);
     this->window_exportProject = new ExportProject(this->context);
 
+    this->window_about = new About();
+
     connect(this->window_newProject, SIGNAL(projectCreated()),
             this, SLOT(updateStatusBar()));
     connect(this->window_openProject, SIGNAL(projectOpened()),
@@ -124,6 +126,8 @@ MainWindow::~MainWindow()
     if(this->window_newProject) delete this->window_newProject;
     if(this->window_openProject) delete this->window_openProject;
     if(this->window_importImage) delete this->window_importImage;
+    if(this->window_exportProject) delete this->window_exportProject;
+    if(this->window_about) delete this->window_about;
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -247,7 +251,7 @@ void MainWindow::printerPaint(QPrinter *printer) {
 
 void MainWindow::on_actionAbout_triggered()
 {
-
+    this->window_about->show();
 }
 
 void MainWindow::on_actionEye_Dropper_triggered()
@@ -299,14 +303,23 @@ void MainWindow::on_actionEraser_triggered()
 
 void MainWindow::on_actionAdd_layer_triggered()
 {
-
+    if(this->context == NULL) return;
+    LayerManager *lm = this->context->getLayerManager();
+    if(lm) {
+        lm->addLayer();
+    }
 }
 
 
 void MainWindow::on_actionRemove_layer_triggered()
 {
-
+    if(this->context == NULL) return;
+    LayerManager *lm = this->context->getLayerManager();
+    if(lm) {
+        lm->removeLayer();
+    }
 }
+
 
 void MainWindow::highlightToolbar(QAction *action)
 {

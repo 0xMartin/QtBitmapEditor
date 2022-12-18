@@ -79,6 +79,9 @@ set(QBE_UI
     exportproject.h
     exportproject.cpp
     exportproject.ui
+    about.h
+    about.cpp
+    about.ui
 )
 
 # RESOURCES

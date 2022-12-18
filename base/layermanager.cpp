@@ -276,35 +276,40 @@ LayerManager::LayerManager(QWidget *parent) : QWidget(parent)
 
     // add layer tlacitko
     this->button_addLayer = new QPushButton(this->listControl);
-    connect(this->button_addLayer, SIGNAL(clicked()), this, SLOT(on_button_addLayer_clicked()));
+    connect(this->button_addLayer, SIGNAL(clicked()),
+            this, SLOT(addLayer()));
     this->button_addLayer->setToolTip(QString(tr("Add Layer")));
     this->button_addLayer->setIcon(QIcon(":/src/icons/new_layer.png"));
     this->listControllLayout->addWidget(this->button_addLayer);
 
     // remove  tlacitko
     this->button_removeLayer = new QPushButton(this->listControl);
-    connect(this->button_removeLayer, SIGNAL(clicked()), this, SLOT(on_button_removeLayer_clicked()));
+    connect(this->button_removeLayer, SIGNAL(clicked()),
+            this, SLOT(removeLayer()));
     this->button_removeLayer->setToolTip(QString(tr("Remove Layer")));
     this->button_removeLayer->setIcon(QIcon(":/src/icons/remove_layer.png"));
     this->listControllLayout->addWidget(this->button_removeLayer);
 
     // up tlacitko
     this->button_up = new QPushButton(this->listControl);
-    connect(this->button_up, SIGNAL(clicked()), this, SLOT(on_button_up_clicked()));
+    connect(this->button_up, SIGNAL(clicked()),
+            this, SLOT(moveLayerUp()));
     this->button_up->setToolTip(QString(tr("Move Layer Up")));
     this->button_up->setIcon(QIcon(":/src/icons/arrow_up.png"));
     this->listControllLayout->addWidget(this->button_up);
 
     // down tlacitko
     this->button_down = new QPushButton(this->listControl);
-    connect(this->button_down, SIGNAL(clicked()), this, SLOT(on_button_down_clicked()));
+    connect(this->button_down, SIGNAL(clicked()),
+            this, SLOT(moveLayerDown()));
     this->button_down->setToolTip(QString(tr("Move Layer Down")));
     this->button_down->setIcon(QIcon(":/src/icons/arrow_down.png"));
     this->listControllLayout->addWidget(this->button_down);
 
     // mask tlacitko
     this->button_mask = new QPushButton(this->listControl);
-    connect(this->button_mask, SIGNAL(clicked()), this, SLOT(on_button_mask_clicked()));
+    connect(this->button_mask, SIGNAL(clicked()),
+            this, SLOT(createOrRemoveMask()));
     this->button_mask->setToolTip(QString(tr("Layer Mask")));
     this->button_mask->setIcon(QIcon(":/src/icons/layer_mask.png"));
     this->listControllLayout->addWidget(this->button_mask);
@@ -424,7 +429,7 @@ void LayerManager::on_project_layerListChanged()
 // LayerManager - EVENTY PRO OVLADACI PRVKY
 /*********************************************************************************************************************/
 
-void LayerManager::on_button_addLayer_clicked()
+void LayerManager::addLayer()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -454,7 +459,7 @@ void LayerManager::on_button_addLayer_clicked()
     }
 }
 
-void LayerManager::on_button_removeLayer_clicked()
+void LayerManager::removeLayer()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -500,7 +505,7 @@ void LayerManager::on_button_removeLayer_clicked()
     }
 }
 
-void LayerManager::on_button_up_clicked()
+void LayerManager::moveLayerUp()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -527,7 +532,7 @@ void LayerManager::on_button_up_clicked()
     this->project->requestRepaint();
 }
 
-void LayerManager::on_button_down_clicked()
+void LayerManager::moveLayerDown()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -554,7 +559,7 @@ void LayerManager::on_button_down_clicked()
     this->project->requestRepaint();
 }
 
-void LayerManager::on_button_mask_clicked() {
+void LayerManager::createOrRemoveMask() {
     if(this->project == NULL) {
         QMessageBox::warning(
                     this,
@@ -603,7 +608,7 @@ void LayerManager::on_button_mask_clicked() {
     this->project->requestRepaint();
 }
 
-void LayerManager::on_layer_merge_down()
+void LayerManager::layerMergeDown()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -641,7 +646,7 @@ void LayerManager::on_layer_merge_down()
     }
 }
 
-void LayerManager::on_layer_duplicate()
+void LayerManager::duplicateLayer()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -671,7 +676,7 @@ void LayerManager::on_layer_duplicate()
     }
 }
 
-void LayerManager::on_layer_rasterize()
+void LayerManager::rasterizeLayer()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -695,7 +700,7 @@ void LayerManager::on_layer_rasterize()
     this->project->requestRepaint();
 }
 
-void LayerManager::on_mask_active_deactivate()
+void LayerManager::activeOrDeactivateMask()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -732,7 +737,7 @@ void LayerManager::on_mask_active_deactivate()
     }
 }
 
-void LayerManager::on_layer_rename()
+void LayerManager::renameLayer()
 {
     if(this->project == NULL) {
         QMessageBox::warning(
@@ -803,7 +808,7 @@ void LayerManager::on_listWidget_itemSelectionChanged()
 
 void LayerManager::on_listWidget_itemDoubleClicked(QListWidgetItem *item)
 {
-    this->on_layer_rename();
+    this->renameLayer();
 }
 
 void LayerManager::showContextMenu(const QPoint &pos)
@@ -820,25 +825,25 @@ void LayerManager::showContextMenu(const QPoint &pos)
     QMenu contextMenu(tr("Menu"), this->listWidget);
 
     QAction action1(tr("Rename Layer"), this->listWidget);
-    connect(&action1, SIGNAL(triggered()), this, SLOT(on_layer_rename()));
+    connect(&action1, SIGNAL(triggered()), this, SLOT(renameLayer()));
     QAction action3(tr("Move Up"), this->listWidget);
-    connect(&action3, SIGNAL(triggered()), this, SLOT(on_button_up_clicked()));
+    connect(&action3, SIGNAL(triggered()), this, SLOT(moveLayerUp()));
     QAction action4(tr("Move Down"), this->listWidget);
-    connect(&action4, SIGNAL(triggered()), this, SLOT(on_button_down_clicked()));
+    connect(&action4, SIGNAL(triggered()), this, SLOT(moveLayerDown()));
     QAction action5(tr("Add Layer"), this->listWidget);
-    connect(&action5, SIGNAL(triggered()), this, SLOT(on_button_addLayer_clicked()));
+    connect(&action5, SIGNAL(triggered()), this, SLOT(addLayer()));
     QAction action6(tr("Remove Layer"), this->listWidget);
-    connect(&action6, SIGNAL(triggered()), this, SLOT(on_button_removeLayer_clicked()));
+    connect(&action6, SIGNAL(triggered()), this, SLOT(removeLayer()));
     QAction action7(tr("Duplicate Layer"), this->listWidget);
-    connect(&action7, SIGNAL(triggered()), this, SLOT(on_layer_duplicate()));
+    connect(&action7, SIGNAL(triggered()), this, SLOT(duplicateLayer()));
     QAction action11(tr("Rasterize Layer"), this->listWidget);
-    connect(&action11, SIGNAL(triggered()), this, SLOT(on_layer_rasterize()));
+    connect(&action11, SIGNAL(triggered()), this, SLOT(rasterizeLayer()));
     QAction action8(tr("Merge Down"), this->listWidget);
-    connect(&action8, SIGNAL(triggered()), this, SLOT(on_layer_merge_down()));
+    connect(&action8, SIGNAL(triggered()), this, SLOT(layerMergeDown()));
     QAction action9(tr("Add / Remove Mask"), this->listWidget);
-    connect(&action9, SIGNAL(triggered()), this, SLOT(on_button_mask_clicked()));
+    connect(&action9, SIGNAL(triggered()), this, SLOT(createOrRemoveMask()));
     QAction action10(tr("Activate / Deactivate Mask"), this->listWidget);
-    connect(&action10, SIGNAL(triggered()), this, SLOT(on_mask_active_deactivate()));
+    connect(&action10, SIGNAL(triggered()), this, SLOT(activeOrDeactivateMask()));
 
     contextMenu.addAction(&action1);
     contextMenu.addAction(&action3);
