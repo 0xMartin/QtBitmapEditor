@@ -11,13 +11,7 @@ ImageLayer::ImageLayer(QObject *project, const QString &name, const QString &URL
     this->size = size;
     this->position = QPoint(0, 0);
     this->URL = URL;
-    if(size.width() >= 1 && size.height() >= 1) {
-        this->image = QImage(((Project*)project)->getDirPath() + URL);
-        this->image = this->image.scaled(
-                    (this->size.width() / 100) * this->image.width(),
-                    (this->size.height() / 100) * this->image.height(),
-                    Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    }
+    this->reloadImage();
 }
 
 const QSize &ImageLayer::getSize() const
@@ -29,11 +23,7 @@ void ImageLayer::setSize(const QSize &newSize)
 {
     if(newSize.width() >= 1 && newSize.height() >= 1) {
         this->size = newSize;
-        this->image = QImage(((Project*)this->parent())->getDirPath() + URL);
-        this->image = this->image.scaled(
-                    (this->size.width() / 100) * this->image.width(),
-                    (this->size.height() / 100) * this->image.height(),
-                    Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        this->reloadImage();
     }
 }
 
@@ -74,4 +64,19 @@ void ImageLayer::deserialize(QDataStream &stream)
     Layer::deserialize(stream);
     stream >> this->size;
     stream >> this->URL;
+    this->reloadImage();
+}
+
+void ImageLayer::reloadImage()
+{
+    Project* p = (Project*)this->parent();
+    if(p == NULL) return;
+
+    if(size.width() >= 1 && size.height() >= 1) {
+        this->image = QImage(p->getDirPath() + URL);
+        this->image = this->image.scaled(
+                    ((float)this->size.width() / 100.0) * this->image.width(),
+                    ((float)this->size.height() / 100.0) * this->image.height(),
+                    Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    }
 }

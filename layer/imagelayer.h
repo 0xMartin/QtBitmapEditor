@@ -52,6 +52,8 @@ public:
 
     virtual void deserialize(QDataStream &stream) override;
 
+    void reloadImage();
+
 protected:
     QString URL; /** Cesta k obrazku */
     QPoint position; /** Pozice obrazku */
