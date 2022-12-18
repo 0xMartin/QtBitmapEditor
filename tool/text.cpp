@@ -121,11 +121,6 @@ void TextTool::mousePressEvent(const QPointF &pos)
     if(layer != NULL) {
         layer->setPosition(QPoint(pos.x(), pos.y()));
         this->updatTool(1.0);
-    } else {
-        QMessageBox::warning(
-                    this->ui,
-                    tr("Text Tool"),
-                    tr("The currently selected layer does not support this tool."));
     }
 }
 

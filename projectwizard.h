@@ -43,12 +43,7 @@ private slots:
     /**
      * @brief Pokud je vytvoren projekt
      */
-    void on_project_create();
-
-    /**
-     * @brief Pokud je otevren projekt
-     */
-    void on_project_open();
+    void projectCreated();
 
 private:
     Ui::ProjectWizard *ui;

@@ -173,7 +173,7 @@ void Layer::serialize(QDataStream &stream)
     stream << this->antialiasing;
     stream << (bool) (this->mask != NULL);
     if(this->mask != NULL) {
-        stream << this->mask;
+        stream << *this->mask;
     }
     stream << this->maskActive;
 }

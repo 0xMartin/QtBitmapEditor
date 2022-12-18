@@ -15,17 +15,17 @@ ProjectWizard::ProjectWizard(AppContext *context, QWidget *parent) :
     // novy projekt
     this->window_newProject = new NewProject(this->context);
     connect(this->window_newProject, SIGNAL(projectCreated()),
-            this, SLOT(on_project_create()));
+            this, SLOT(projectCreated()));
 
     // otevrit projekt
     this->window_openProject = new OpenProject(this->context);
     connect(this->window_openProject, SIGNAL(projectOpened()),
-            this, SLOT(on_project_open()));
+            this, SLOT(projectCreated()));
 
     // vytvori projekt z obrazku
     this->window_projectFromImage = new ProjectFromImage(this->context);
     connect(this->window_projectFromImage, SIGNAL(projectCreated()),
-            this, SLOT(on_project_create()));
+            this, SLOT(projectCreated()));
 
     this->hightLightButton(this->ui->pushButtonCreate);
     this->selectWidget(this->window_newProject);
@@ -58,14 +58,7 @@ void ProjectWizard::on_pushButtonFromImage_clicked()
     this->selectWidget(this->window_projectFromImage);
 }
 
-void ProjectWizard::on_project_create()
-{
-    MainWindow *main = new MainWindow(this->context, NULL);
-    main->showMaximized();
-    this->close();
-}
-
-void ProjectWizard::on_project_open()
+void ProjectWizard::projectCreated()
 {
     MainWindow *main = new MainWindow(this->context, NULL);
     main->showMaximized();

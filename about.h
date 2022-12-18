@@ -15,6 +15,9 @@ public:
     explicit About(QWidget *parent = nullptr);
     ~About();
 
+private slots:
+    void on_label_9_linkActivated(const QString &link);
+
 private:
     Ui::About *ui;
 };
