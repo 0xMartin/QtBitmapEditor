@@ -41,7 +41,8 @@ public:
     void setProject(Project *newProject);
 
     /**
-     * @brief Event pro obnoveni nastroje
+     * @brief Event pro obnoveni nastroje (je volana pri kliknuti do workspacu (PRESS & RELEASE), pri zmene oznacene vrstvy, pri zmene nastroje)
+     * !!!!!!JE ZAKAZANO V TETO METODE VOLAT METODU PROJEKTU PRO ZMENU VYBERU OZNACENE VRSTVY!!!!!!
      */
     virtual void updatTool(float scale) = 0;
 
@@ -111,9 +112,10 @@ protected:
      * @brief Pomocna funkce pro navrace aktualne vybrane vrstvy s konrolou typu vrstvy
      * @param type - ID typu vrstvy. Pokud aktualne vybrana vrstvy neodpovida typu pak
      *  funkce navrati NULL.
+     *  @param maskAllowed - Jsou povolene i masky jako navratove vrstvy
      * @return Layer
      */
-    Layer *layerCheck(int type);
+    Layer *layerCheck(int type, bool maskAllowed = true);
 private:
     Q_PROPERTY(Project *project READ getProject WRITE setProject NOTIFY projectChanged)
 };

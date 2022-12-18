@@ -85,6 +85,12 @@ MainWindow::MainWindow(AppContext *context, QWidget *parent)
     this->window_newProject = new NewProject(this->context);
     this->window_openProject = new OpenProject(this->context);
     this->window_importImage = new ImportImage(this->context);
+
+    connect(this->window_newProject, SIGNAL(projectCreated()),
+            this, SLOT(updateStatusBar()));
+    connect(this->window_openProject, SIGNAL(projectOpened()),
+            this, SLOT(updateStatusBar()));
+
     /*****************************************************************************/
 
 
@@ -131,7 +137,7 @@ void MainWindow::on_actionNew_project_triggered()
 
 void MainWindow::on_actionOpen_project_triggered()
 {
-
+    this->window_openProject->show();
 }
 
 

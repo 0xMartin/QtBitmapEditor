@@ -51,6 +51,11 @@ public:
     Project *getProject() const;
 
     /**
+     * @brief Nastavy vhodnou velikost meritka tak aby projek byl dobre viditelny
+     */
+    void setDefaultScale();
+
+    /**
      * @brief Nastavi nove meritko pro zobrazovani obrazku
      * @param scale - Meritko
      */
@@ -171,6 +176,12 @@ public slots:
      * @param pos - Pozice
      */
     void showContextMenu(const QPoint &pos);
+
+    /**
+     * @brief Pokud byla v projektu zmena oznacena vrstva
+     * @param layer - Oznacena vrstva
+     */
+    void on_project_selectedLayerChanged(Layer *layer);
 
     /**
      * @brief Zmeni barvu masky (jen pro usnadneni pri praci "zabraneni splynuti barev")

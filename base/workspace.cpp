@@ -44,20 +44,30 @@ Workspace::Workspace(const Config_Workspace_t &config, QWidget *parent): QWidget
 }
 
 void Workspace::setProject(Project *project) {
+    if(project == NULL) return;
     this->project = project;
     this->project->setParent(this);
 
+    connect(this->project, SIGNAL(selectedLayerChanged(Layer*)),
+            this, SLOT(on_project_selectedLayerChanged(Layer*)));
+
     // vypocet vhodneho meritka pri prvnim nacteni projektu
-    if(this->project->getSize().width() > this->project->getSize().height()) {
-        this->setScale(this->width() * 0.8 / this->project->getSize().width());
-    } else {
-        this->setScale(this->scale = this->height() * 0.8 / this->project->getSize().height());
-    }
+    this->setDefaultScale();
     this->repaint();
 }
 
 Project *Workspace::getProject() const {
     return this->project;
+}
+
+void Workspace::setDefaultScale()
+{
+    if(this->project == NULL) return;
+    if(this->project->getSize().width() > this->project->getSize().height()) {
+        this->setScale(this->width() * 0.8 / this->project->getSize().width());
+    } else {
+        this->setScale(this->scale = this->height() * 0.8 / this->project->getSize().height());
+    }
 }
 
 void Workspace::setScale(float scale)
@@ -171,6 +181,10 @@ void Workspace::mousePressEvent(QMouseEvent *event)
 
 void Workspace::mouseReleaseEvent(QMouseEvent *event)
 {
+    if(this->tool) {
+        this->tool->updatTool(this->scale);
+    }
+
     // release event  -> nastroj
     if(event->buttons() != Qt::LeftButton) {
         if(this->tool != NULL) {
@@ -534,6 +548,13 @@ void Workspace::showContextMenu(const QPoint &pos)
         contextMenu.exec(this->mapToGlobal(pos));
     } else {
         // nyni neni implementovano #########################################
+    }
+}
+
+void Workspace::on_project_selectedLayerChanged(Layer *layer)
+{
+    if(this->tool != NULL) {
+        this->tool->updatTool(this->scale);
     }
 }
 

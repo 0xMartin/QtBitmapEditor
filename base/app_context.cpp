@@ -23,7 +23,11 @@ AppContext::~AppContext()
 
 void AppContext::setProject(Project *project)
 {
+    if(project == NULL) return;
+
+    if(this->project) delete this->project;
     this->project = project;
+
     if(this->tool) this->tool->setProject(project);
     if(this->workspace) this->workspace->setProject(project);
     if(this->toolController) this->toolController->setProject(project);

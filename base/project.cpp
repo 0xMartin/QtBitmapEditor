@@ -113,7 +113,9 @@ bool Project::insertLayerAbove(Layer *layer)
         ++index;
     }
 
-    return false;
+    this->layers->push_back(layer);
+    emit this->layerListChanged();
+    return true;
 }
 
 bool Project::removeLayer(Layer *layer)
@@ -161,6 +163,7 @@ Layer *Project::getSelectedLayer() const
 void Project::setSelectedLayer(Layer *newSelected_layer)
 {
     this->selected_layer = newSelected_layer;
+    emit this->selectedLayerChanged(this->selected_layer);
 }
 
 void Project::requestRepaint()
@@ -296,6 +299,8 @@ void Project::paintEvent(QPainter &painter) {
         for(Layer *layer : *this->layers) {
             if(layer != NULL) {
                 if(!layer->isVisible()) continue;
+                // ulozeni aktualniho stavu
+                painter.save();
                 // antialiasing
                 painter.setRenderHint(QPainter::Antialiasing, layer->isAntialiasingEnabled());
                 // opacity
@@ -350,6 +355,8 @@ void Project::paintEvent(QPainter &painter) {
                 }
                 // vykresli vrstvu do projektu
                 layer->paintEvent(painter);
+                // obnoveni
+                painter.restore();
             }
         }
         break;

@@ -206,6 +206,12 @@ signals:
      */
     void layerListChanged();
 
+    /**
+     * @brief Signal je vyvoval ve chvili kdy je zmenena oznacena vrstva
+     * @param layer - Aktualne vybrana vrstva
+     */
+    void selectedLayerChanged(Layer *layer);
+
 protected:
     // jmeno projektu
     QString name;

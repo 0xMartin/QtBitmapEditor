@@ -31,7 +31,6 @@ public:
     MainWindow(AppContext *context, QWidget *parent = nullptr);
     ~MainWindow();
 
-    void updateStatusBar();
 protected:
     // kontext aplikace
     AppContext *context;
@@ -130,6 +129,12 @@ private slots:
     void on_actionZoom_out_triggered();
 
     void on_actionSwitch_Image_Mask_triggered();
+
+public slots:
+    /**
+     * @brief Update staus baru
+     */
+    void updateStatusBar();
 
 private:
     // UI

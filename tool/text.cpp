@@ -2,6 +2,7 @@
 
 #include <QVBoxLayout>
 #include <QPainterPath>
+#include <QMessageBox>
 
 #include "../base/config.h"
 #include "../layer/textlayer.h"
@@ -85,7 +86,7 @@ TextTool::~TextTool()
 
 void TextTool::updatTool(float scale)
 {
-    TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
+    TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE, false);
     if(layer != NULL) {
         this->lineEdit_text->setText(layer->getText());
         this->colorPicker->setColor(layer->getColor());
@@ -119,6 +120,12 @@ void TextTool::mousePressEvent(const QPointF &pos)
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {
         layer->setPosition(QPoint(pos.x(), pos.y()));
+        this->updatTool(1.0);
+    } else {
+        QMessageBox::warning(
+                    this->ui,
+                    tr("Text Tool"),
+                    tr("The currently selected layer does not support this tool."));
     }
 }
 
