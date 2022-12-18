@@ -60,9 +60,18 @@ set(QBE_UI
     mainwindow.h
     mainwindow.cpp
     mainwindow.ui
+    projectwizard.h
+    projectwizard.cpp
+    projectwizard.ui
     newproject.h
     newproject.cpp
     newproject.ui
+    openproject.h
+    openproject.cpp
+    openproject.ui
+    projectfromimage.h
+    projectfromimage.cpp
+    projectfromimage.ui
     importimage.h
     importimage.cpp
     importimage.ui

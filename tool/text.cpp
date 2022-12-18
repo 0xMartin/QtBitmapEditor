@@ -7,7 +7,7 @@
 #include "../layer/textlayer.h"
 
 
-Text::Text(QObject *parent) : Tool(parent)
+TextTool::TextTool(QObject *parent) : Tool(parent)
 {
     this->name = tr("TEXT");
 
@@ -72,7 +72,7 @@ Text::Text(QObject *parent) : Tool(parent)
                 new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
-Text::~Text()
+TextTool::~TextTool()
 {
     if(this->layout) delete this->layout;
     if(this->lineEdit_text) delete this->lineEdit_text;
@@ -83,7 +83,7 @@ Text::~Text()
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
-void Text::updatTool(float scale)
+void TextTool::updatTool(float scale)
 {
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {
@@ -95,16 +95,16 @@ void Text::updatTool(float scale)
     }
 }
 
-void Text::paintEvent(const QPointF &pos, float scale, QPainter &painter)
+void TextTool::paintEvent(const QPointF &pos, float scale, QPainter &painter)
 {
 }
 
-bool Text::overLayerPainting() const
+bool TextTool::overLayerPainting() const
 {
     return false;
 }
 
-int Text::getType() const
+int TextTool::getType() const
 {
     return TOOL_TEXT;
 }
@@ -114,7 +114,7 @@ int Text::getType() const
 // EVENTY PRO EDITACI TEXTU
 /*****************************************************************************************/
 
-void Text::mousePressEvent(const QPointF &pos)
+void TextTool::mousePressEvent(const QPointF &pos)
 {
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {
@@ -122,11 +122,11 @@ void Text::mousePressEvent(const QPointF &pos)
     }
 }
 
-void Text::mouseReleaseEvent(const QPointF &pos)
+void TextTool::mouseReleaseEvent(const QPointF &pos)
 {
 }
 
-void Text::mouseDoubleClickEvent(const QPointF &pos)
+void TextTool::mouseDoubleClickEvent(const QPointF &pos)
 {
     // prida novou textovou vrstvu do projektu
     if(this->project != NULL) {
@@ -144,15 +144,15 @@ void Text::mouseDoubleClickEvent(const QPointF &pos)
     }
 }
 
-void Text::mouseMoveEvent(const QPointF &pos)
+void TextTool::mouseMoveEvent(const QPointF &pos)
 {
 }
 
-void Text::outOfAreaEvent(const QPointF &pos)
+void TextTool::outOfAreaEvent(const QPointF &pos)
 {
 }
 
-void Text::on_text_textChanged(const QString &text)
+void TextTool::on_text_textChanged(const QString &text)
 {
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {
@@ -163,7 +163,7 @@ void Text::on_text_textChanged(const QString &text)
     }
 }
 
-void Text::on_colorPicker_colorChange(const QColor &color)
+void TextTool::on_colorPicker_colorChange(const QColor &color)
 {
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {
@@ -174,7 +174,7 @@ void Text::on_colorPicker_colorChange(const QColor &color)
     }
 }
 
-void Text::on_spinbox_x_valueChanged(int val)
+void TextTool::on_spinbox_x_valueChanged(int val)
 {
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {
@@ -187,7 +187,7 @@ void Text::on_spinbox_x_valueChanged(int val)
     }
 }
 
-void Text::on_spinbox_y_valueChanged(int val)
+void TextTool::on_spinbox_y_valueChanged(int val)
 {
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {
@@ -200,7 +200,7 @@ void Text::on_spinbox_y_valueChanged(int val)
     }
 }
 
-void Text::on_fontSelector_fontChanged(const QFont &font)
+void TextTool::on_fontSelector_fontChanged(const QFont &font)
 {
     TextLayer *layer = (TextLayer*) this->layerCheck(TEXT_LAYER_TYPE);
     if(layer != NULL) {

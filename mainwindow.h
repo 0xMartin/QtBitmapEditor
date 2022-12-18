@@ -12,6 +12,7 @@
 #include "base/app_context.h"
 #include "utility/colorpicker.h"
 #include "newproject.h"
+#include "openproject.h"
 #include "importimage.h"
 
 
@@ -27,7 +28,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(AppContext *context, QWidget *parent = nullptr);
     ~MainWindow();
 
     void updateStatusBar();
@@ -39,7 +40,8 @@ protected:
     ColorPicker *colorPicker;
 
     // windows
-    NewProject * window_newProject;
+    NewProject *window_newProject;
+    OpenProject *window_openProject;
     ImportImage *window_importImage;
 
 private slots:

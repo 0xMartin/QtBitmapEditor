@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QBitmap>
+#include <QDataStream>
 
 
 /**
@@ -44,6 +45,12 @@ public:
     virtual ~Layer();
 
     /**
+     * @brief Navrati unikatni ID ktere jednoznacne urcuje typ vrstvy
+     * @return ID
+     */
+    virtual qint32 getType() const;
+
+    /**
      * @brief Nastavi viditelnost vrstvy
      * @param visibility - Viditelnost vrstvy
      */
@@ -65,7 +72,7 @@ public:
      * @brief Navrati nazev vrstvy
      * @return Nazev vrstvy
      */
-    QString &getName();
+    const QString &getName() const;
 
     /**
      * @brief Navrati nepruhlednost vrsty
@@ -166,12 +173,6 @@ public:
     virtual void paintEvent(QPainter &painter) = 0;
 
     /**
-     * @brief Navrati unikatni ID ktere jednoznacne urcuje typ vrstvy
-     * @return ID
-     */
-    virtual int getType() = 0;
-
-    /**
      * @brief Vyrvori duplikat aktualni masky
      */
     QBitmap *duplicateMask() const;
@@ -181,6 +182,19 @@ public:
      * @return Layer
      */
     virtual Layer *createDuplicate() const = 0;
+
+    /**
+     * @brief Serializuje vrstvu
+     * @param stream - QDataStream (output stream)
+     */
+    virtual void serialize(QDataStream &stream);
+
+    /**
+     * @brief Deserializuje vrstvu. Pred samotnou deserializaci vrstvy je nutne
+     * z input stream precit typ vrstvy (int)!!!
+     * @param stream - QDataStream (input stream)
+     */
+    virtual void deserialize(QDataStream &stream);
 
 protected:
     QString name; /** Nazev vrstvy */
@@ -203,5 +217,6 @@ protected:
  */
 Q_DECL_EXPORT void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,
                                      const QSize &size, const float step);
+
 
 #endif // LAYER_H

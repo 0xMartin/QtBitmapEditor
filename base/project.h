@@ -5,7 +5,6 @@
 #include <QString>
 #include <QList>
 
-#include "config.h"
 #include "layer.h"
 
 
@@ -83,7 +82,7 @@ public:
      * @brief Navrati velikost obrazku
      * @return Velikost obrazku
      */
-    QSize &getSize();
+    const QSize &getSize() const;
 
     /**
      * @brief Navrati referenci na vektr vrstev
@@ -188,7 +187,6 @@ public:
      */
     void setMode(ProjectEditMode_t newMode);
 
-
     /**
      * @brief Paint event. Vykresli  projekt do workspacu (projekt = obrazek slozeny z vice vrstev)
      * @param offset - Offset vykreslovani
@@ -228,5 +226,18 @@ protected:
     ProjectEditMode_t mode;
 
 };
+
+/**
+ * @brief Zapise projekt do souboru
+ * @param project - Projekt
+ */
+Q_DECL_EXPORT void WriteProjectToFile(const Project *project);
+
+/**
+ * @brief Precte projekt ze souboru
+ * @param projectPath - Cesta k projektu
+ * @return Projekt
+ */
+Q_DECL_EXPORT Project *ReadProjectFromFile(const QString &projectPath);
 
 #endif // PROJECT_H

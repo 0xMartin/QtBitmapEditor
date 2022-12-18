@@ -59,6 +59,7 @@ void AppContext::setWorkspace(Workspace *newWorkspace)
         return;
     this->workspace = newWorkspace;
     this->workspace->setContext(this);
+    this->workspace->setProject(this->project);
     emit workspaceChanged();
 }
 
@@ -87,6 +88,7 @@ void AppContext::setLayerManager(LayerManager *newLayerManager)
         return;
     this->layerManager = newLayerManager;
     this->layerManager->setContext(this);
+    this->layerManager->setProject(this->project);
     emit layerManagerChanged();
 }
 

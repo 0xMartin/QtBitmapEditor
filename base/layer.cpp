@@ -20,6 +20,11 @@ Layer::~Layer() {
     if(this->mask) delete this->mask;
 }
 
+qint32 Layer::getType() const
+{
+    return 0;
+}
+
 void Layer::setVisible(bool visibility) {
     this->visibility = visibility;
 }
@@ -32,7 +37,7 @@ void Layer::setName(const QString &name) {
     this->name = name;
 }
 
-QString & Layer::getName() {
+const QString & Layer::getName() const {
     return this->name;
 }
 
@@ -149,12 +154,45 @@ void Layer::setMaskActive(bool newMaskActive)
     this->maskActive = newMaskActive;
 }
 
+
 QBitmap *Layer::duplicateMask() const
 {
     if(this->mask == NULL) return NULL;
     QBitmap *duplicate = new QBitmap(this->mask->size());
     *duplicate = *mask;
     return duplicate;
+}
+
+void Layer::serialize(QDataStream &stream)
+{
+    stream << this->getType();
+    stream << this->name;
+    stream << this->blendMode;
+    stream << this->visibility;
+    stream << this->opacity;
+    stream << this->antialiasing;
+    stream << (bool) (this->mask != NULL);
+    if(this->mask != NULL) {
+        stream << this->mask;
+    }
+    stream << this->maskActive;
+}
+
+void Layer::deserialize(QDataStream &stream)
+{
+    stream >> this->name;
+    stream >> this->blendMode;
+    stream >> this->visibility;
+    stream >> this->opacity;
+    stream >> this->antialiasing;
+    bool mask_is_not_null;
+    stream >> mask_is_not_null;
+    if(mask_is_not_null) {
+        QBitmap mask;
+        stream >> mask;
+        this->maskPaste(&mask);
+    }
+    stream >> this->maskActive;
 }
 
 void Layer_paintBgGrid(QPainter &painter, const QPoint &offset, const QSize &viewPort,

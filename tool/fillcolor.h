@@ -16,13 +16,13 @@
 /**
  * @brief Nastroj pro vyplneni barvou
  */
-class FillColor : public Tool
+class FillColorTool : public Tool
 {
     Q_OBJECT
 public:
-    FillColor(QObject *parent, ColorPicker *colorPicker);
+    FillColorTool(QObject *parent, ColorPicker *colorPicker);
 
-    ~FillColor();
+    ~FillColorTool();
 
     virtual void updatTool(float scale) override;
 

@@ -20,12 +20,12 @@
 /**
  * @brief Nastroj stetec
  */
-class Brush : public Tool
+class BrushTool : public Tool
 {
     Q_OBJECT
 public:
-    Brush(QObject *parent, ColorPicker *colorPicker);
-    ~Brush();
+    BrushTool(QObject *parent, ColorPicker *colorPicker);
+    ~BrushTool();
 
     virtual void updatTool(float scale) override;
 

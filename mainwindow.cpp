@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QMessageBox>
+
 #include "layer/bitmaplayer.h"
 #include "tool/pencil.h"
 #include "tool/eraser.h"
@@ -10,10 +12,12 @@
 #include "tool/text.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(AppContext *context, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    this->context = context;
+
     /*****************************************************************************/
     // zakladni inicializace UI
     this->ui->setupUi(this);
@@ -41,16 +45,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     /*****************************************************************************/
     // inicializace kontextu
-    this->context = new AppContext();
     this->context->setWorkspace(new Workspace(Workspace_defaultConfig(), this));
     this->context->setToolController(new ToolController(this));
     this->context->setLayerManager(new LayerManager(this));
-    this->context->addTool(new Pencil(this, this->colorPicker));
-    this->context->addTool(new Eraser(this));
-    this->context->addTool(new Brush(this, this->colorPicker));
-    this->context->addTool(new FillColor(this, this->colorPicker));
-    this->context->addTool(new EyeDropper(this, this->colorPicker));
-    this->context->addTool(new Text(this));
+    this->context->addTool(new PencilTool(this, this->colorPicker));
+    this->context->addTool(new EraserTool(this));
+    this->context->addTool(new BrushTool(this, this->colorPicker));
+    this->context->addTool(new FillColorTool(this, this->colorPicker));
+    this->context->addTool(new EyeDropperTool(this, this->colorPicker));
+    this->context->addTool(new TextTool(this));
     this->context->selectToolFromList(TOOL_PENCIL);
     /*****************************************************************************/
 
@@ -79,11 +82,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     /*****************************************************************************/
     // inicializace oken
-    this->window_newProject = new NewProject();
-    this->window_newProject->setContext(this->context);
-
-    this->window_importImage = new ImportImage();
-    this->window_importImage->setContext(this->context);
+    this->window_newProject = new NewProject(this->context);
+    this->window_openProject = new OpenProject(this->context);
+    this->window_importImage = new ImportImage(this->context);
     /*****************************************************************************/
 
 
@@ -92,14 +93,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->splitter_horizontal->setStyleSheet("QWidget#bg-widget {background: rgb(49, 49, 49);}");
     /*****************************************************************************/
 
-
-    // TEST
-    QSize s = QSize(900, 500);
-    Project *p = new Project(NULL, "Test", "/home/martin/aaa.qbe", s);
-    BitmapLayer *l = new BitmapLayer(p, "Layer 1", s);
-    p->addLayerAtTop(l);
-    p->setSelectedLayer(l);
-    this->context->setProject(p);
 
     // finish
     this->updateStatusBar();
@@ -116,13 +109,13 @@ MainWindow::~MainWindow()
     if(this->statusLabel) delete this->statusLabel;
 
     if(this->window_newProject) delete this->window_newProject;
+    if(this->window_openProject) delete this->window_openProject;
     if(this->window_importImage) delete this->window_importImage;
 }
 
 void MainWindow::updateStatusBar()
 {
-    if(this->context->getWorkspace() == NULL) return;
-    Project *p = this->context->getWorkspace()->getProject();
+    Project *p = this->context->getProject();
     if(p == NULL) {
         this->statusLabel->setText(tr("Project: None"));
     } else {
@@ -144,7 +137,10 @@ void MainWindow::on_actionOpen_project_triggered()
 
 void MainWindow::on_actionSave_project_triggered()
 {
-    this->statusLabel->setText(tr("Project saved"));
+    if(this->context == NULL) return;
+    if(this->context->getProject() == NULL) return;
+    WriteProjectToFile(this->context->getProject());
+    QMessageBox::information(this, tr("Project"), tr("Project saved successfully"));
 }
 
 

@@ -2,6 +2,16 @@
 
 #include <QPainter>
 
+BitmapLayer::BitmapLayer(QObject *project) : Layer(project, "")
+{
+}
+
+BitmapLayer::BitmapLayer(QObject *project, const QString &name, const QString &URL) : Layer(project, name)
+{
+    this->image = QImage(URL);
+    this->size = this->image.size();
+}
+
 BitmapLayer::BitmapLayer(QObject *project, const QString &name, const QSize &size) : Layer(project, name)
 {
     this->size = size;
@@ -32,7 +42,7 @@ void BitmapLayer::paintEvent(QPainter &painter)
                 this->image);
 }
 
-int BitmapLayer::getType()
+qint32 BitmapLayer::getType() const
 {
     return BITMAP_LAYER_TYPE;
 }
@@ -50,6 +60,18 @@ Layer *BitmapLayer::createDuplicate() const
     layer->image = this->image;
     // #############################
     return layer;
+}
+
+void BitmapLayer::serialize(QDataStream &stream)
+{
+    Layer::serialize(stream);
+    stream << this->image;
+}
+
+void BitmapLayer::deserialize(QDataStream &stream)
+{
+    Layer::deserialize(stream);
+    stream >> this->image;
 }
 
 BitmapLayer *ResterizeLayer(Layer *layer)

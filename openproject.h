@@ -1,5 +1,5 @@
-#ifndef NEWPROJECT_H
-#define NEWPROJECT_H
+#ifndef OPENPROJECT_H
+#define OPENPROJECT_H
 
 #include <QWidget>
 
@@ -7,19 +7,19 @@
 
 
 namespace Ui {
-class NewProject;
+class OpenProject;
 }
 
 /**
  * @brief The NewProject class
  */
-class NewProject : public QWidget
+class OpenProject : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit NewProject(AppContext *context, QWidget *parent = nullptr);
-    ~NewProject();
+    explicit OpenProject(AppContext *context, QWidget *parent = nullptr);
+    ~OpenProject();
 
 private slots:
     /**
@@ -33,13 +33,13 @@ private slots:
     void on_pushButton_path_clicked();
 
 private:
-    Ui::NewProject *ui;
+    Ui::OpenProject *ui;
 
     // kontext aplikace
     AppContext *context;
 
 signals:
-    void projectCreated();
+    void projectOpened();
 };
 
 #endif // NEWPROJECT_H

@@ -2,12 +2,13 @@
 
 #include <QVBoxLayout>
 #include <QPainterPath>
+#include <QMessageBox>
 
 #include "../base/config.h"
 #include "../layer/bitmaplayer.h"
 
 
-Pencil::Pencil(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
+PencilTool::PencilTool(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 {
     this->name = tr("PENCIL");
     this->mouseHelper = MouseEventHelper(DEFAULT_MOUSE_HELPER_DIST);
@@ -40,14 +41,14 @@ Pencil::Pencil(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
                 new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
-Pencil::~Pencil()
+PencilTool::~PencilTool()
 {
     if(this->layout) delete this->layout;
     if(this->spinbox_size) delete this->spinbox_size;
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
-void Pencil::updatTool(float scale)
+void PencilTool::updatTool(float scale)
 {
     // update mouse helper
     this->mouseHelper.updateDistance(mapFunc(scale, 1.0, PIXEL_GRID_MIN_SCALE, DEFAULT_MOUSE_HELPER_DIST, 1.0));
@@ -58,7 +59,7 @@ void Pencil::updatTool(float scale)
                      Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
 }
 
-void Pencil::paintEvent(const QPointF &pos, float scale, QPainter &painter)
+void PencilTool::paintEvent(const QPointF &pos, float scale, QPainter &painter)
 {
     // vykresleni tvaru a veliskota nastroje do horni nahledove vrstvy
     int size = this->spinbox_size->value();
@@ -67,12 +68,12 @@ void Pencil::paintEvent(const QPointF &pos, float scale, QPainter &painter)
     painter.drawEllipse(pos.x() - s/2, pos.y() - s/2, s, s);
 }
 
-bool Pencil::overLayerPainting() const
+bool PencilTool::overLayerPainting() const
 {
     return true;
 }
 
-int Pencil::getType() const
+int PencilTool::getType() const
 {
     return TOOL_PENCIL;
 }
@@ -82,14 +83,21 @@ int Pencil::getType() const
 // EVENTY PRO EDITACI BITMAPY
 /*****************************************************************************************/
 
-void Pencil::mousePressEvent(const QPointF &pos)
+void PencilTool::mousePressEvent(const QPointF &pos)
 {
     this->mouseHelper.processMoveEvent(pos);
 
     // vykreleni po dotiku
     int size = this->spinbox_size->value();
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
-    if(layer == NULL) return;
+    if(layer == NULL) {
+        QMessageBox::warning(
+                    this->ui,
+                    tr("Pencil Tool"),
+                    tr("The selected layer is not a bitmap format! It must be converted to bitmap format."));
+        return;
+    }
+
     switch(this->project->getMode()) {
     case PROJECT_EDIT:
         this->painter.begin(&layer->image);
@@ -107,17 +115,17 @@ void Pencil::mousePressEvent(const QPointF &pos)
     this->painter.end();
 }
 
-void Pencil::mouseReleaseEvent(const QPointF &pos)
+void PencilTool::mouseReleaseEvent(const QPointF &pos)
 {
     this->mouseHelper.resetMove();
 }
 
-void Pencil::mouseDoubleClickEvent(const QPointF &pos)
+void PencilTool::mouseDoubleClickEvent(const QPointF &pos)
 {
 
 }
 
-void Pencil::mouseMoveEvent(const QPointF &pos)
+void PencilTool::mouseMoveEvent(const QPointF &pos)
 {
     if(this->mouseHelper.processMoveEvent(pos)) {
         // po definovanych vzdalenost dela tah
@@ -142,7 +150,7 @@ void Pencil::mouseMoveEvent(const QPointF &pos)
     }
 }
 
-void Pencil::outOfAreaEvent(const QPointF &pos)
+void PencilTool::outOfAreaEvent(const QPointF &pos)
 {
     // dokonci tah
     const QPointF *last = this->mouseHelper.getLast();

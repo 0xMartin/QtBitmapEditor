@@ -8,7 +8,10 @@
 #include <QFile>
 #include <QFileInfo>
 
+#include "layer.h"
 #include "../layer/bitmaplayer.h"
+#include "../layer/textlayer.h"
+#include "../layer/imagelayer.h"
 
 
 Project::Project(QObject *parent, const QString &name, const QString &path, const QSize &size) : QObject(parent)
@@ -64,7 +67,7 @@ bool Project::setSize(const QSize &size) {
     return true;
 }
 
-QSize &Project::getSize() {
+const QSize &Project::getSize() const {
     return this->size;
 }
 
@@ -369,4 +372,80 @@ void Project::paintEvent(QPainter &painter) {
         }
         break;
     }
+}
+
+void WriteProjectToFile(const Project *project)
+{
+    if(project == NULL) return;
+
+    QFile file(project->getPath());
+    file.open(QIODevice::WriteOnly);
+    QDataStream out(&file);
+
+    // PROJECT #############################
+    out << project->getName();
+    out << project->getPath();
+    out << project->getSize();
+    out << project->getMode();
+
+    // LAYERS ##############################
+    if(project->getLayers() != NULL) {
+        for(Layer *layer : *project->getLayers()) {
+            layer->serialize(out);
+        }
+    }
+
+    file.close();
+}
+
+Project *ReadProjectFromFile(const QString &projectPath)
+{
+    QFile file(projectPath);
+    file.open(QIODevice::ReadOnly);
+    QDataStream in(&file);
+
+    // PROJECT #############################
+    QString name;
+    QString path;
+    QSize size;
+    ProjectEditMode_t mode;
+    in >> name;
+    in >> path;
+    in >> size;
+    in >> mode;
+    Project *project = new Project(NULL, name, path, size);
+
+    // LAYERS ##############################
+    qint32 type;
+    Layer *layer;
+    bool end = false;
+    while(!in.atEnd() && !end) {
+        layer = NULL;
+        // precte typ vrstvy a podle typy urci vrstvu
+        in >> type;
+        switch(type) {
+        case BITMAP_LAYER_TYPE:
+            layer = new BitmapLayer(project);
+            break;
+        case TEXT_LAYER_TYPE:
+            layer = new TextLayer(project);
+            break;
+        case IMAGE_LAYER_TYPE:
+            layer = new ImageLayer(project);
+            break;
+        default:
+            end = true;
+            break;
+        }
+        // deserializuje konkretni vrstvu a prida ji do projektu
+        if(layer != NULL) {
+            layer->deserialize(in);
+            project->addLayerAtTop(layer);
+            project->setSelectedLayer(layer);
+        }
+    }
+
+    file.close();
+
+    return project;
 }

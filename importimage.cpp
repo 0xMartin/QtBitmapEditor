@@ -9,21 +9,17 @@
 #include "layer/imagelayer.h"
 
 
-ImportImage::ImportImage(QWidget *parent) :
+ImportImage::ImportImage(AppContext *context, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ImportImage)
 {
+    this->context = context;
     ui->setupUi(this);
 }
 
 ImportImage::~ImportImage()
 {
     delete ui;
-}
-
-void ImportImage::setContext(AppContext *context)
-{
-    this->context = context;
 }
 
 void ImportImage::on_pushButton_import_clicked()

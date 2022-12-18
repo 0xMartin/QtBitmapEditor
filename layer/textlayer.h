@@ -16,6 +16,13 @@ class TextLayer : public Layer
 {
     Q_OBJECT
 public:
+
+    /**
+     * @brief Prazdny konstruktor
+     * @param project - Projekt ve kterem se vrstva nachazi
+     */
+    TextLayer(QObject *project);
+
     /**
      * @brief Vytvori bitmapovou vrstvu
      * @param project - Projekt ve kterem se vrstva nachazi
@@ -29,9 +36,13 @@ public:
 
     virtual void paintEvent(QPainter &painter) override;
 
-    virtual int getType() override;
+    virtual qint32 getType() const override;
 
     virtual Layer *createDuplicate() const override;
+
+    virtual void serialize(QDataStream &stream) override;
+
+    virtual void deserialize(QDataStream &stream) override;
 
 
     /**GET/SET**********************************************/

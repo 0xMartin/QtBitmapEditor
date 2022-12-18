@@ -10,23 +10,31 @@ namespace Ui {
 class ImportImage;
 }
 
+/**
+ * @brief The ImportImage class
+ */
 class ImportImage : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ImportImage(QWidget *parent = nullptr);
+    explicit ImportImage(AppContext *context, QWidget *parent = nullptr);
     ~ImportImage();
 
-    void setContext(AppContext *context);
-
 private slots:
+    /**
+     * @brief on_pushButton_import_clicked
+     */
     void on_pushButton_import_clicked();
 
+    /**
+     * @brief on_pushButton_path_clicked
+     */
     void on_pushButton_path_clicked();
 
 private:
     Ui::ImportImage *ui;
 
+    // kontext aplikace
     AppContext *context;
 };
 

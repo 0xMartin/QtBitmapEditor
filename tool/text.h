@@ -17,13 +17,13 @@
 /**
  * @brief Nastroj pro pridavani a editaci textu
  */
-class Text : public Tool
+class TextTool : public Tool
 {
     Q_OBJECT
 public:
-    Text(QObject *parent);
+    TextTool(QObject *parent);
 
-    ~Text();
+    ~TextTool();
 
     virtual void updatTool(float scale) override;
 

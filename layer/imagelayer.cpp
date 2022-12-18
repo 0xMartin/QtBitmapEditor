@@ -2,13 +2,16 @@
 
 #include "../base/project.h"
 
+ImageLayer::ImageLayer(QObject *project) : Layer(project, "")
+{
+}
+
 ImageLayer::ImageLayer(QObject *project, const QString &name, const QString &URL, const QSize &size) : Layer(project, name)
 {
     this->size = size;
     this->position = QPoint(0, 0);
     this->URL = URL;
     if(size.width() >= 1 && size.height() >= 1) {
-        qDebug() << ((Project*)project)->getDirPath() + URL;
         this->image = QImage(((Project*)project)->getDirPath() + URL);
         this->image = this->image.scaled(
                     (this->size.width() / 100) * this->image.width(),
@@ -39,7 +42,7 @@ void ImageLayer::paintEvent(QPainter &painter)
     painter.drawImage(this->position, this->image);
 }
 
-int ImageLayer::getType()
+qint32 ImageLayer::getType() const
 {
     return IMAGE_LAYER_TYPE;
 }
@@ -54,7 +57,21 @@ Layer *ImageLayer::createDuplicate() const
     layer->blendMode = this->blendMode;
     layer->antialiasing = this->antialiasing;
     // #############################
-    layer->image = this->image;
+    layer->position = this->position;
     // #############################
     return layer;
+}
+
+void ImageLayer::serialize(QDataStream &stream)
+{
+    Layer::serialize(stream);
+    stream << this->size;
+    stream << this->URL;
+}
+
+void ImageLayer::deserialize(QDataStream &stream)
+{
+    Layer::deserialize(stream);
+    stream >> this->size;
+    stream >> this->URL;
 }

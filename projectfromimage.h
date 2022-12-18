@@ -1,5 +1,5 @@
-#ifndef NEWPROJECT_H
-#define NEWPROJECT_H
+#ifndef PROJECTFROMIMAGE_H
+#define PROJECTFROMIMAGE_H
 
 #include <QWidget>
 
@@ -7,19 +7,19 @@
 
 
 namespace Ui {
-class NewProject;
+class ProjectFromImage;
 }
 
 /**
  * @brief The NewProject class
  */
-class NewProject : public QWidget
+class ProjectFromImage : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit NewProject(AppContext *context, QWidget *parent = nullptr);
-    ~NewProject();
+    explicit ProjectFromImage(AppContext *context, QWidget *parent = nullptr);
+    ~ProjectFromImage();
 
 private slots:
     /**
@@ -32,8 +32,10 @@ private slots:
      */
     void on_pushButton_path_clicked();
 
+    void on_pushButton_path_2_clicked();
+
 private:
-    Ui::NewProject *ui;
+    Ui::ProjectFromImage *ui;
 
     // kontext aplikace
     AppContext *context;

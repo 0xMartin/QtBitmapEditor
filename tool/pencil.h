@@ -18,13 +18,13 @@
 /**
  * @brief Nastroj tuzka
  */
-class Pencil : public Tool
+class PencilTool : public Tool
 {
     Q_OBJECT
 public:
-    Pencil(QObject *parent, ColorPicker *colorPicker);
+    PencilTool(QObject *parent, ColorPicker *colorPicker);
 
-    ~Pencil();
+    ~PencilTool();
 
     virtual void updatTool(float scale) override;
 

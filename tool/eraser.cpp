@@ -2,12 +2,13 @@
 
 #include <QVBoxLayout>
 #include <QPainterPath>
+#include <QMessageBox>
 
 #include "../base/config.h"
 #include "../layer/bitmaplayer.h"
 
 
-Eraser::Eraser(QObject *parent) : Tool(parent)
+EraserTool::EraserTool(QObject *parent) : Tool(parent)
 {
     this->name = tr("ERASER");
     this->mouseHelper = MouseEventHelper(DEFAULT_MOUSE_HELPER_DIST);
@@ -38,14 +39,14 @@ Eraser::Eraser(QObject *parent) : Tool(parent)
     this->layout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
-Eraser::~Eraser()
+EraserTool::~EraserTool()
 {
     if(this->layout) delete this->layout;
     if(this->spinbox_size) delete this->spinbox_size;
     if(this->checkBox_Antialiasing) delete this->checkBox_Antialiasing;
 }
 
-void Eraser::updatTool(float scale)
+void EraserTool::updatTool(float scale)
 {
     // update mouse helper
     this->mouseHelper.updateDistance(mapFunc(scale, 1.0, PIXEL_GRID_MIN_SCALE, DEFAULT_MOUSE_HELPER_DIST, 1.0));
@@ -56,7 +57,7 @@ void Eraser::updatTool(float scale)
                      Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
 }
 
-void Eraser::paintEvent(const QPointF &pos, float scale, QPainter &painter)
+void EraserTool::paintEvent(const QPointF &pos, float scale, QPainter &painter)
 {
     // vykresleni tvaru a veliskota nastroje do horni nahledove vrstvy
     int size = this->spinbox_size->value();
@@ -65,12 +66,12 @@ void Eraser::paintEvent(const QPointF &pos, float scale, QPainter &painter)
     painter.drawEllipse(pos.x() - s/2, pos.y() - s/2, s, s);
 }
 
-bool Eraser::overLayerPainting() const
+bool EraserTool::overLayerPainting() const
 {
     return true;
 }
 
-int Eraser::getType() const
+int EraserTool::getType() const
 {
     return TOOL_ERASER;
 }
@@ -80,14 +81,21 @@ int Eraser::getType() const
 // EVENTY PRO EDITACI BITMAPY
 /*****************************************************************************************/
 
-void Eraser::mousePressEvent(const QPointF &pos)
+void EraserTool::mousePressEvent(const QPointF &pos)
 {
     this->mouseHelper.processMoveEvent(pos);
 
     // vykreleni po dotiku
     int size = this->spinbox_size->value();
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
-    if(layer == NULL) return;
+    if(layer == NULL) {
+        QMessageBox::warning(
+                    this->ui,
+                    tr("Eraser Tool"),
+                    tr("The selected layer is not a bitmap format! It must be converted to bitmap format."));
+        return;
+    }
+
     switch(this->project->getMode()) {
     case PROJECT_EDIT:
         this->painter.begin(&layer->image);
@@ -105,17 +113,17 @@ void Eraser::mousePressEvent(const QPointF &pos)
     this->painter.end();
 }
 
-void Eraser::mouseReleaseEvent(const QPointF &pos)
+void EraserTool::mouseReleaseEvent(const QPointF &pos)
 {
     this->mouseHelper.resetMove();
 }
 
-void Eraser::mouseDoubleClickEvent(const QPointF &pos)
+void EraserTool::mouseDoubleClickEvent(const QPointF &pos)
 {
 
 }
 
-void Eraser::mouseMoveEvent(const QPointF &pos)
+void EraserTool::mouseMoveEvent(const QPointF &pos)
 {
     if(this->mouseHelper.processMoveEvent(pos)) {
         // po definovanych vzdalenost dela tah
@@ -141,7 +149,7 @@ void Eraser::mouseMoveEvent(const QPointF &pos)
     }
 }
 
-void Eraser::outOfAreaEvent(const QPointF &pos)
+void EraserTool::outOfAreaEvent(const QPointF &pos)
 {
     // dokonci tah
     const QPointF *last = this->mouseHelper.getLast();

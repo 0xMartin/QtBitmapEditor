@@ -6,7 +6,7 @@
 #include "../utility/coloritem.h"
 
 
-EyeDropper::EyeDropper(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
+EyeDropperTool::EyeDropperTool(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 {
     this->name = tr("EYEDROPPER");
     this->colorPicker = colorPicker; 
@@ -24,7 +24,7 @@ EyeDropper::EyeDropper(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
     this->layout->addWidget(this->listWidget);
 }
 
-EyeDropper::~EyeDropper()
+EyeDropperTool::~EyeDropperTool()
 {
     if(this->layout) delete this->layout;
     if(this->listWidget) {
@@ -33,7 +33,7 @@ EyeDropper::~EyeDropper()
     }
 }
 
-void EyeDropper::updatTool(float scale)
+void EyeDropperTool::updatTool(float scale)
 {
     this->updateTime = time(NULL);
     this->buffer = QImage(this->project->getSize(), QImage::Format_ARGB32);
@@ -43,7 +43,7 @@ void EyeDropper::updatTool(float scale)
     painter.end();
 }
 
-void EyeDropper::paintEvent(const QPointF &pos, float scale, QPainter &painter)
+void EyeDropperTool::paintEvent(const QPointF &pos, float scale, QPainter &painter)
 {
     const int radius = 70;
 
@@ -111,12 +111,12 @@ void EyeDropper::paintEvent(const QPointF &pos, float scale, QPainter &painter)
     painter.drawText(QPointF(pos.x() - rect.width()/2, pos.y() - radius - 10), buffer);
 }
 
-bool EyeDropper::overLayerPainting() const
+bool EyeDropperTool::overLayerPainting() const
 {
     return true;
 }
 
-int EyeDropper::getType() const
+int EyeDropperTool::getType() const
 {
     return TOOL_EYEDROPPER;
 }
@@ -126,7 +126,7 @@ int EyeDropper::getType() const
 // EVENTY PRO EDITACI BITMAPY
 /*****************************************************************************************/
 
-void EyeDropper::mousePressEvent(const QPointF &pos)
+void EyeDropperTool::mousePressEvent(const QPointF &pos)
 {
     if(this->colorPicker != NULL) {
         if(this->buffer.rect().contains(this->pos)) {
@@ -145,15 +145,15 @@ void EyeDropper::mousePressEvent(const QPointF &pos)
     }
 }
 
-void EyeDropper::mouseReleaseEvent(const QPointF &pos)
+void EyeDropperTool::mouseReleaseEvent(const QPointF &pos)
 {
 }
 
-void EyeDropper::mouseDoubleClickEvent(const QPointF &pos)
+void EyeDropperTool::mouseDoubleClickEvent(const QPointF &pos)
 {
 }
 
-void EyeDropper::mouseMoveEvent(const QPointF &pos)
+void EyeDropperTool::mouseMoveEvent(const QPointF &pos)
 {
     // ulozeni posledni aktualni pozice
     this->pos = QPoint(pos.x(), pos.y());
@@ -165,7 +165,7 @@ void EyeDropper::mouseMoveEvent(const QPointF &pos)
     }
 }
 
-void EyeDropper::outOfAreaEvent(const QPointF &pos)
+void EyeDropperTool::outOfAreaEvent(const QPointF &pos)
 {
 }
 

@@ -2,13 +2,14 @@
 
 #include <QVBoxLayout>
 #include <QPainterPath>
+#include <QMessageBox>
 #include <queue>
 
 #include "../layer/bitmaplayer.h"
 #include "../base/config.h"
 
 
-FillColor::FillColor(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
+FillColorTool::FillColorTool(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
 {
     this->name = tr("FILL COLOR");
     this->colorPicker = colorPicker;
@@ -70,7 +71,7 @@ FillColor::FillColor(QObject *parent, ColorPicker *colorPicker) : Tool(parent)
                 new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }
 
-FillColor::~FillColor()
+FillColorTool::~FillColorTool()
 {
     if(this->layout) delete this->layout;
     if(this->spinbox_tolerance_red) delete this->spinbox_tolerance_red;
@@ -80,20 +81,20 @@ FillColor::~FillColor()
     if(this->slider_tolerance_all) delete this->slider_tolerance_all;
 }
 
-void FillColor::updatTool(float scale)
+void FillColorTool::updatTool(float scale)
 {
 }
 
-void FillColor::paintEvent(const QPointF &pos, float scale, QPainter &painter)
+void FillColorTool::paintEvent(const QPointF &pos, float scale, QPainter &painter)
 {
 }
 
-bool FillColor::overLayerPainting() const
+bool FillColorTool::overLayerPainting() const
 {
     return false;
 }
 
-int FillColor::getType() const
+int FillColorTool::getType() const
 {
     return TOOL_FILLCOLOR;
 }
@@ -103,9 +104,10 @@ int FillColor::getType() const
 // EVENTY PRO EDITACI BITMAPY
 /*****************************************************************************************/
 
-void FillColor::mousePressEvent(const QPointF &pos)
+void FillColorTool::mousePressEvent(const QPointF &pos)
 {
     BitmapLayer *layer = (BitmapLayer *)this->layerCheck(BITMAP_LAYER_TYPE);
+
     if(layer != NULL) {
         int tR = (this->spinbox_tolerance_red->value() / 100.0) * 255;
         int tG = (this->spinbox_tolerance_green->value() / 100.0) * 255;
@@ -117,22 +119,28 @@ void FillColor::mousePressEvent(const QPointF &pos)
                     QPoint(pos.x(), pos.y()),
                     this->colorPicker->getColor(),
                     tR, tG, tB, tA);
+    } else {
+        QMessageBox::warning(
+                    this->ui,
+                    tr("Fill Color Tool"),
+                    tr("The selected layer is not a bitmap format! It must be converted to bitmap format."));
+        return;
     }
 }
 
-void FillColor::mouseReleaseEvent(const QPointF &pos)
+void FillColorTool::mouseReleaseEvent(const QPointF &pos)
 {
 }
 
-void FillColor::mouseDoubleClickEvent(const QPointF &pos)
+void FillColorTool::mouseDoubleClickEvent(const QPointF &pos)
 {
 }
 
-void FillColor::mouseMoveEvent(const QPointF &pos)
+void FillColorTool::mouseMoveEvent(const QPointF &pos)
 {
 }
 
-void FillColor::outOfAreaEvent(const QPointF &pos)
+void FillColorTool::outOfAreaEvent(const QPointF &pos)
 {
 }
 
@@ -141,7 +149,7 @@ void FillColor::outOfAreaEvent(const QPointF &pos)
 // PRIVATNI FUNKCE
 /*****************************************************************************************/
 
-void FillColor::floodFill(QImage &image, const QPoint &start, const QColor &color,
+void FillColorTool::floodFill(QImage &image, const QPoint &start, const QColor &color,
                           int toleranceR, int toleranceG, int toleranceB, int toleranceA)
 {
     const QRgb startColor = image.pixel(start);
@@ -175,7 +183,7 @@ void FillColor::floodFill(QImage &image, const QPoint &start, const QColor &colo
     }
 }
 
-void FillColor::valueChanged(int value)
+void FillColorTool::valueChanged(int value)
 {
     this->spinbox_tolerance_red->setValue(this->slider_tolerance_all->value());
     this->spinbox_tolerance_green->setValue(this->slider_tolerance_all->value());

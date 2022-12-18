@@ -16,6 +16,12 @@ public:
     QImage image; /** Obraz vrstvy */
 
     /**
+     * @brief Prazdny konstruktor
+     * @param project - Projekt ve kterem se vrstva nachazi
+     */
+    ImageLayer(QObject *project);
+
+    /**
      * @brief Vytvori vrstvu z obrazkem
      * @param project - Projekt ve kterem se vrstva nachazi
      * @param name - Jmeno vrstvy
@@ -38,9 +44,13 @@ public:
 
     virtual void paintEvent(QPainter &painter) override;
 
-    virtual int getType() override;
+    virtual qint32 getType() const override;
 
     virtual Layer *createDuplicate() const override;
+
+    virtual void serialize(QDataStream &stream) override;
+
+    virtual void deserialize(QDataStream &stream) override;
 
 protected:
     QString URL; /** Cesta k obrazku */

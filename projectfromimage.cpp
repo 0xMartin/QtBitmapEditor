@@ -1,31 +1,32 @@
-#include "newproject.h"
-#include "ui_newproject.h"
+#include "projectfromimage.h"
+#include "ui_projectfromimage.h"
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QImageReader>
 
 #include "base/project.h"
 #include "layer/bitmaplayer.h"
 
 
-NewProject::NewProject(AppContext *context, QWidget *parent) :
+ProjectFromImage::ProjectFromImage(AppContext *context, QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::NewProject)
+    ui(new Ui::ProjectFromImage)
 {
     this->context = context;
     ui->setupUi(this);
     this->setWindowTitle("New Project");
 }
 
-NewProject::~NewProject()
+ProjectFromImage::~ProjectFromImage()
 {
     delete ui;
 }
 
-void NewProject::on_pushButton_clicked()
+void ProjectFromImage::on_pushButton_clicked()
 {
     if(this->context == NULL) {
-        qDebug() << "New Project: app context is NULL";
+        qDebug() << "Open Project: app context is NULL";
         return;
     }
 
@@ -34,7 +35,7 @@ void NewProject::on_pushButton_clicked()
     if(name.length() < PROJECT_MIN_NAME_LENGTH) {
        QMessageBox::warning(
                    this,
-                   tr("New Project"),
+                   tr("Project From Image"),
                    tr("Name of the project is too short. The name must have at least 3 characters."));
        return;
     }
@@ -44,7 +45,7 @@ void NewProject::on_pushButton_clicked()
     if(path.length() == 0) {
        QMessageBox::warning(
                    this,
-                   tr("New Project"),
+                   tr("Project From Image"),
                    tr("Path of project is not set"));
        return;
     }
@@ -54,7 +55,7 @@ void NewProject::on_pushButton_clicked()
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(
                     this,
-                    tr("New Project"),
+                    tr("Project From Image"),
                     tr("Name of the project is same as the name of existing file. Do you want to create a project?"),
                     QMessageBox::Yes|QMessageBox::No);
         if(reply == QMessageBox::No) {
@@ -62,19 +63,28 @@ void NewProject::on_pushButton_clicked()
         }
     }
 
-    // nacteni velikosti obrazku
-    int width = this->ui->spinBox_width->value();
-    int height = this->ui->spinBox_height->value();
+    // nacteni a overeni cesty obrazku
+    QString pathImg = this->ui->lineEdit_path_img->text();
+    if(path.length() == 0) {
+       QMessageBox::warning(
+                   this,
+                   tr("Project From Image"),
+                   tr("Path of image is not set"));
+       return;
+    }
+
+    // velikost obrazku
+    QImageReader imgReader(pathImg);
 
     // vytvori novy projekt a priradi ho do workspacu
-    Project *p = new Project(NULL, name, path, QSize(width, height));
-    BitmapLayer *l = new BitmapLayer(p, "Background", QSize(width, height));
+    Project *p = new Project(NULL, name, path, imgReader.size());
+    BitmapLayer *l = new BitmapLayer(p, "Background", pathImg);
     p->addLayerAtTop(l);
     p->setSelectedLayer(l);
     this->context->setProject(p);
 
     // info + zavreni okna
-    QMessageBox::information(this, tr("New Project"), tr("New project successfully created"));
+    QMessageBox::information(this, tr("Open Project"), tr("Project successfully opened"));
     this->close();
 
     // singnal -> project vytvoren
@@ -82,7 +92,7 @@ void NewProject::on_pushButton_clicked()
 }
 
 
-void NewProject::on_pushButton_path_clicked()
+void ProjectFromImage::on_pushButton_path_clicked()
 {
     // zobrazeni file dialogu pro umisteni projektoveho souboru
     QString filter = QString("QT-BE Project (*%1)").arg(PROJECT_FILE_EXTENSION);
@@ -96,5 +106,16 @@ void NewProject::on_pushButton_path_clicked()
     } else {
         this->ui->lineEdit_path->setText(path + PROJECT_FILE_EXTENSION);
     }
+}
+
+
+void ProjectFromImage::on_pushButton_path_2_clicked()
+{
+    // zobrazeni file dialogu pro otevreni obrazku
+    QString path = QFileDialog::getOpenFileName(
+                this,
+                "Open Image",
+                QDir::homePath(), tr("Image Files (*.png *.jpg *.bmp)"));
+    this->ui->lineEdit_path_img->setText(path);
 }
 

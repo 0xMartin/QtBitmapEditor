@@ -17,12 +17,12 @@
 /**
  * @brief Nastroj pro ziskani barvy z workspacu
  */
-class EyeDropper : public Tool
+class EyeDropperTool : public Tool
 {
     Q_OBJECT
 public:
-    EyeDropper(QObject *parent, ColorPicker *colorPicker);
-    ~EyeDropper();
+    EyeDropperTool(QObject *parent, ColorPicker *colorPicker);
+    ~EyeDropperTool();
 
     virtual void updatTool(float scale) override;
 

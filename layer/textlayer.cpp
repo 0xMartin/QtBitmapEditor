@@ -1,5 +1,9 @@
 #include "textlayer.h"
 
+TextLayer::TextLayer(QObject *project) : Layer(project, "")
+{
+}
+
 TextLayer::TextLayer(QObject *project, const QString &name,
                      const QString &text, const QPoint &pos) : Layer(project, name)
 {
@@ -17,7 +21,7 @@ void TextLayer::paintEvent(QPainter &painter)
     painter.drawText(this->position, this->text);
 }
 
-int TextLayer::getType()
+qint32 TextLayer::getType() const
 {
     return TEXT_LAYER_TYPE;
 }
@@ -33,10 +37,30 @@ Layer *TextLayer::createDuplicate() const
     layer->blendMode = this->blendMode;
     layer->antialiasing = this->antialiasing;
     // #############################
+    layer->text = this->text;
     layer->font = this->font;
     layer->color = this->color;
+    layer->position = this->position;
     // #############################
     return layer;
+}
+
+void TextLayer::serialize(QDataStream &stream)
+{
+    Layer::serialize(stream);
+    stream << this->text;
+    stream << this->font;
+    stream << this->color;
+    stream << this->position;
+}
+
+void TextLayer::deserialize(QDataStream &stream)
+{
+    Layer::deserialize(stream);
+    stream >> this->text;
+    stream >> this->font;
+    stream >> this->color;
+    stream >> this->position;
 }
 
 const QString &TextLayer::getText() const

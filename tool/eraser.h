@@ -15,12 +15,12 @@
 /**
  * @brief Nastroj guma
  */
-class Eraser : public Tool
+class EraserTool : public Tool
 {
     Q_OBJECT
 public:
-    Eraser(QObject *parent);
-    ~Eraser();
+    EraserTool(QObject *parent);
+    ~EraserTool();
 
     virtual void updatTool(float scale) override;
 
