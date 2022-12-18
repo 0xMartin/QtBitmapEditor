@@ -2,14 +2,20 @@
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
+#include <QPainter>
+#include <QPrintDialog>
+#include <QPrintPreviewDialog>
+#include <QTimer>
 
-#include "layer/bitmaplayer.h"
 #include "tool/pencil.h"
 #include "tool/eraser.h"
 #include "tool/brush.h"
 #include "tool/fillcolor.h"
 #include "tool/eyedropper.h"
 #include "tool/text.h"
+
+
+#define DIALOG_CLOSE_MSG tr("Are you sure you want to quit the app? If you haven't saved the project, you will lose your last unsaved work.")
 
 
 MainWindow::MainWindow(AppContext *context, QWidget *parent)
@@ -85,6 +91,7 @@ MainWindow::MainWindow(AppContext *context, QWidget *parent)
     this->window_newProject = new NewProject(this->context);
     this->window_openProject = new OpenProject(this->context);
     this->window_importImage = new ImportImage(this->context);
+    this->window_exportProject = new ExportProject(this->context);
 
     connect(this->window_newProject, SIGNAL(projectCreated()),
             this, SLOT(updateStatusBar()));
@@ -117,6 +124,28 @@ MainWindow::~MainWindow()
     if(this->window_newProject) delete this->window_newProject;
     if(this->window_openProject) delete this->window_openProject;
     if(this->window_importImage) delete this->window_importImage;
+}
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    QTimer::singleShot(200, this, SLOT(workspace_setDefaultScale()));
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(
+                this,
+                tr("Exit"),
+                DIALOG_CLOSE_MSG,
+                QMessageBox::Yes|QMessageBox::No);
+
+    if(reply == QMessageBox::Yes) {
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 
 void MainWindow::updateStatusBar()
@@ -158,19 +187,61 @@ void MainWindow::on_actionImport_image_triggered()
 
 void MainWindow::on_actionExport_image_triggered()
 {
-
+    this->window_exportProject->show();
 }
 
 
 void MainWindow::on_actionExit_triggered()
 {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(
+                this,
+                tr("Exit"),
+                DIALOG_CLOSE_MSG,
+                QMessageBox::Yes|QMessageBox::No);
 
+    if(reply == QMessageBox::Yes) {
+        this->close();
+    }
 }
 
 
 void MainWindow::on_actionPrint_triggered()
 {
+    if(this->context == NULL) return;
+    if(this->context->getProject() == NULL) {
+        return;
+    }
 
+    QPrinter printer(QPrinter::HighResolution);
+    QPrintPreviewDialog printPreviewDialog(&printer, this);
+    connect(&printPreviewDialog, &QPrintPreviewDialog::paintRequested,
+            this, &MainWindow::printerPaint);
+    printPreviewDialog.exec();
+}
+
+void MainWindow::printerPaint(QPrinter *printer) {
+    if(printer == NULL) return;
+
+    Project *p = this->context->getProject();
+    if(p == NULL) {
+        return;
+    }
+
+    QPainter painter;
+    painter.begin(printer);
+
+    QPrinter::Unit unit = QPrinter::DevicePixel;
+    double xscale = printer->pageRect(unit).width() / double(p->getSize().width());
+    double yscale = printer->pageRect(unit).height() / double(p->getSize().height());
+    double scale = qMin(xscale, yscale);
+    painter.translate(printer->paperRect(unit).x() + printer->pageRect(unit).width()/2,
+                      printer->paperRect(unit).y() + printer->pageRect(unit).height()/2);
+    painter.scale(scale, scale);
+    painter.translate(-p->getSize().width()/2, -p->getSize().height()/2);
+
+    p->paintEvent(painter);
+    painter.end();
 }
 
 
@@ -286,5 +357,13 @@ void MainWindow::on_actionSwitch_Image_Mask_triggered()
             this->context->getLayerManager()->selectMode(PROJECT_EDIT);
         }
     }
+}
+
+void MainWindow::workspace_setDefaultScale()
+{
+    if(this->context == NULL) return;
+    Workspace *w = this->context->getWorkspace();
+    if(w == NULL) return;
+    w->setDefaultScale();
 }
 

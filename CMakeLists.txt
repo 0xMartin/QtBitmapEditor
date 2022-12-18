@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS PrintSupport)
 
 
 # TOOL
@@ -75,6 +76,9 @@ set(QBE_UI
     importimage.h
     importimage.cpp
     importimage.ui
+    exportproject.h
+    exportproject.cpp
+    exportproject.ui
 )
 
 # RESOURCES
@@ -141,6 +145,7 @@ else()
 endif()
 
 target_link_libraries(QtBitmapEditor PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(QtBitmapEditor PRIVATE Qt${QT_VERSION_MAJOR}::PrintSupport)
 
 set_target_properties(QtBitmapEditor PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

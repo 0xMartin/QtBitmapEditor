@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QSplitter>
 #include <QLabel>
+#include <QPrinter>
 
 
 #include "base/app_context.h"
@@ -14,6 +15,7 @@
 #include "newproject.h"
 #include "openproject.h"
 #include "importimage.h"
+#include "exportproject.h"
 
 
 /**
@@ -42,6 +44,11 @@ protected:
     NewProject *window_newProject;
     OpenProject *window_openProject;
     ImportImage *window_importImage;
+    ExportProject *window_exportProject;
+
+    virtual void showEvent(QShowEvent *event) override;
+
+    virtual void closeEvent (QCloseEvent *event) override;
 
 private slots:
     /**
@@ -78,6 +85,12 @@ private slots:
      * @brief Otevre okno s nahledem tisku a moznosti tisku tohoto obrazku
      */
     void on_actionPrint_triggered();
+
+    /**
+     * @brief Printer paint event (pro print preview dialog)
+     * @param printer - QPrinter
+     */
+    void printerPaint(QPrinter *printer);
 
     /**
      * @brief Otevre okno s inforamacemi o teto aplikaci
@@ -124,11 +137,25 @@ private slots:
      */
     void on_actionRemove_layer_triggered();
 
+    /**
+     * @brief Priblizi workspace
+     */
     void on_actionZoom_in_triggered();
 
+    /**
+     * @brief Oddali workspace
+     */
     void on_actionZoom_out_triggered();
 
+    /**
+     * @brief Prepina mezi editacnim modem a modem pro editaci masek
+     */
     void on_actionSwitch_Image_Mask_triggered();
+
+    /**
+     * @brief Workspacu nastavi takovy scale ale byl dobre videt cely projekt
+     */
+    void workspace_setDefaultScale();
 
 public slots:
     /**

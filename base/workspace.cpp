@@ -68,6 +68,7 @@ void Workspace::setDefaultScale()
     } else {
         this->setScale(this->scale = this->height() * 0.8 / this->project->getSize().height());
     }
+    this->repaint();
 }
 
 void Workspace::setScale(float scale)

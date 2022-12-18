@@ -73,12 +73,12 @@ void NewProject::on_pushButton_clicked()
     p->setSelectedLayer(l);
     this->context->setProject(p);
 
+    // singnal -> project vytvoren
+    emit this->projectCreated();
+
     // info + zavreni okna
     QMessageBox::information(this, tr("New Project"), tr("New project successfully created"));
     this->close();
-
-    // singnal -> project vytvoren
-    emit this->projectCreated();
 }
 
 
