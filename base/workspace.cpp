@@ -74,8 +74,9 @@ void Workspace::setDefaultScale()
 void Workspace::setScale(float scale)
 {
     // update scale
-    if(scale <= 0.0) return;
-    if(scale > 40.0) {
+    if(f <= 0.05) {
+        f = 0.05;   
+    } else if(scale > 40.0) {
         scale = 40.0;
     }
     this->scale = scale;
@@ -86,8 +87,9 @@ void Workspace::addScale(float diff)
 {
     // update scale
     float f = this->scale + diff;
-    if(f <= 0.0) return;
-    if(f > 40.0 ) {
+    if(f <= 0.05) {
+        f = 0.05;   
+    } else if(f > 40.0 ) {
         f = 40.0;
     }
     this->scale = f;
@@ -282,9 +284,10 @@ void Workspace::mouseMoveEvent(QMouseEvent *event)
 
 void Workspace::wheelEvent(QWheelEvent *event)
 {
+    double delta = event->angleDelta().x() + event->angleDelta().y();
     if (QApplication::keyboardModifiers().testFlag(Qt::AltModifier) == true) {
         // zoom in & zoom out
-        if(event->angleDelta().y() > 0) {
+        if(delta > 0) {
             this->zoomIN();
         } else {
             this->zoomOUT();
