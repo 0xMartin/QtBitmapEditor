@@ -244,7 +244,7 @@ void MainWindow::printerPaint(QPrinter *printer) {
     painter.scale(scale, scale);
     painter.translate(-p->getSize().width()/2, -p->getSize().height()/2);
 
-    p->paintEvent(painter);
+    p->paintEvent(painter, true);
     painter.end();
 }
 

@@ -191,7 +191,7 @@ public:
      * @brief Paint event. Vykresli  projekt do workspacu (projekt = obrazek slozeny z vice vrstev)
      * @param offset - Offset vykreslovani
      */
-    void paintEvent(QPainter &painter);
+    void paintEvent(QPainter &painter, bool exportMode = false);
 
 signals:
     /**

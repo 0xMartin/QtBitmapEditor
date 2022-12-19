@@ -297,7 +297,7 @@ void Project::setMode(ProjectEditMode_t newMode)
     this->mode = newMode;
 }
 
-void Project::paintEvent(QPainter &painter) {
+void Project::paintEvent(QPainter &painter, bool exportMode) {
     if(this->layers == NULL) return;
 
     switch (this->mode) {
@@ -361,7 +361,15 @@ void Project::paintEvent(QPainter &painter) {
                     }
                 }
                 // vykresli vrstvu do projektu
-                layer->paintEvent(painter);
+                if(exportMode) {
+                    BitmapLayer *rasterized = ResterizeLayer(layer);
+                    if(rasterized) {
+                        rasterized->paintEvent(painter);
+                        delete rasterized;
+                    }
+                } else {
+                    layer->paintEvent(painter);
+                }
                 // obnoveni
                 painter.restore();
             }

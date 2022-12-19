@@ -99,7 +99,7 @@ void ExportProject::on_pushButton_export_clicked()
     QImage image(p->getSize(), QImage::Format_ARGB32);
     QPainter painter;
     painter.begin(&image);
-    p->paintEvent(painter);
+    p->paintEvent(painter, true);
     painter.end();
 
     // save image
