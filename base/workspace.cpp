@@ -74,8 +74,8 @@ void Workspace::setDefaultScale()
 void Workspace::setScale(float scale)
 {
     // update scale
-    if(f <= 0.05) {
-        f = 0.05;   
+    if(scale <= 0.05) {
+        scale = 0.05;
     } else if(scale > 40.0) {
         scale = 40.0;
     }
