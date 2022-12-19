@@ -221,10 +221,17 @@ bool Project::mergaSeletedLayerDown()
                 BitmapLayer *buttom = (BitmapLayer *)this->layers->at(index - 1);
                 Layer *top = this->layers->takeAt(index);
 
+                // image merge
                 QPainter painter;
                 painter.begin(&buttom->image);
                 top->paintEvent(painter);
                 painter.end();
+
+                // mask merge
+                if(top->getMask() != NULL) {
+                    if(buttom->getMask() == NULL) buttom->createMask();
+                    buttom->maskPaste(top->getMask());
+                }
 
                 this->setSelectedLayer(buttom);
 
