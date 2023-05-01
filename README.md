@@ -6,6 +6,7 @@
 <div align="center">
   <img alt="Made with QtCreator" src="https://img.shields.io/badge/Made%20with-QtCreator-23217346.svg?style=flat&logo=qt">
   <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/0xMartin/QtBitmapEditor">
+  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/0xMartin/QtBitmapEditor/total">
   <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/0xMartin/QtBitmapEditor">
 </div>
 
@@ -35,10 +36,9 @@ At the bottom-right corner of the software, there is a layer editor that allows 
 The first tool in the toolbar is the color selector, which allows the user to select a color to be used as the primary color when using other drawing tools. This tool is located at the beginning of the toolbar.
 
 ### Zoom in/out
-<div>
-    <img src="./doc/zoom_in.png" width="6%">
-    <img src="./doc/zoom_out.png" width="6%">
-</div>
+
+| Buttons | <img src="./doc/zoom_in.png" width="50px"> <img src="./doc/zoom_out.png" width="50px"> |
+| --- | --- |
 
 The second tool is the zoom in and zoom out tool, which allows the user to zoom in and out of the image. There is a wide range of zoom levels available. When the user zooms in on the image, a pixel grid is displayed, making it easier to edit individual pixels.
 
@@ -48,7 +48,8 @@ The second tool is the zoom in and zoom out tool, which allows the user to zoom 
 
 ### Color picker
 
-<img src="./doc/color_picker.png" width="6%">
+| Button | <img src="./doc/color_picker.png" width="50px">  |
+| --- | --- |
 
 The next tool is the color picker tool, which allows the user to select a color directly from the resulting image by clicking on a specific pixel. The current color of the pixel the user is pointing at is always displayed along with the currently selected primary color for comparison. If the user clicks on a chosen color in the image, it is selected as the primary color and saved to the color history.
 
@@ -58,31 +59,36 @@ The next tool is the color picker tool, which allows the user to select a color 
 
 ### Pencil
 
-<img src="./doc/pen.png" width="6%">
+| Button | <img src="./doc/pen.png" width="50px">  |
+| --- | --- |
 
 The pencil tool is the simplest tool, allowing the user to draw on the image with the selected color and thickness.
 
 ### Eraser
 
-<img src="./doc/eraser.png" width="6%">
+| Button | <img src="./doc/eraser.png" width="50px">  |
+| --- | --- |
 
 The eraser tool allows the user to erase pixels in the selected raster layer.
 
 ### Brush
 
-<img src="./doc/brush.png" width="6%">
+| Button | <img src="./doc/brush.png" width="50px">  |
+| --- | --- |
 
 The brush tool is similar to the pencil tool in that it allows the user to draw on the image, but with the added ability to draw patterns. There are several basic, simple patterns available and the option to draw gradients.
 
 ### Fill
 
-<img src="./doc/fill.png" width="6%">
+| Button | <img src="./doc/fill.png" width="50px">  |
+| --- | --- |
 
 The fill tool is designed to fill a certain area with a selected color. It is possible to choose the tolerance, overall or within each color spectrum (red, green, blue).
 
 ### Text
 
-<img src="./doc/text.png" width="6%">
+| Button | <img src="./doc/text.png" width="50px">  |
+| --- | --- |
 
 The text tool allows the user to insert any text into the raster image. Text can be customized by adjusting its color, size, font, and position. The text is created as a separate vector layer and cannot be edited using raster tools. To do so, the layer must be converted from vector to raster using the menu (right-click) in the layer editor.
 
@@ -99,28 +105,29 @@ In the top section, there are elements for setting the display and rendering of 
 
 ### Move up/down
 
-<div>
-    <img src="./doc/arrow_up.png" width="6%">
-    <img src="./doc/arrow_down.png" width="6%">
-</div>
+| Buttons | <img src="./doc/arrow_up.png" width="50px"> <img src="./doc/arrow_down.png" width="50px">  |
+| --- | --- |
 
 The Move Up/Down tool allows users to change the order of layers in the layer stack. With this tool, users can move a selected layer up or down in the stack, changing its position in the order of layers. This can be useful for changing the visibility of layers or adjusting the order of layers to achieve a desired effect in the final image.
 
 ### New layer
 
-<img src="./doc/new_layer.png" width="6%">
+| Button | <img src="./doc/new_layer.png" width="50px"> |
+| --- | --- |
 
 The New Layer tool creates a new layer in the image. Layers are used to organize and separate different elements of the image, allowing for easier editing and manipulation.
 
 ### Remove layer
 
-<img src="./doc/remove_layer.png" width="6%">
+| Button | <img src="./doc/remove_layer.png" width="50px"> |
+| --- | --- |
 
 The "Remove layer" button is a tool used in the layer editor panel to delete the selected layer from the image. 
 
 ### Mask create/remove
 
-<img src="./doc/layer_mask.png" width="6%">
+| Button | <img src="./doc/layer_mask.png" width="50px"> |
+| --- | --- |
 
 The Mask create/remove button allows the user to create or remove a mask for the currently selected layer. The mask will then be displayed next to the layer's image in the layer list. 
 
