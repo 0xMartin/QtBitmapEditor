@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
+
     // spash screen
 #ifndef DEBUG
     QPixmap pixmap(":/src/splash/splash.png");
